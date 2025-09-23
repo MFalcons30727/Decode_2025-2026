@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class FTCfile extends LinearOpMode {
@@ -12,10 +12,10 @@ public class FTCfile extends LinearOpMode {
     double forward;
     double strafe;
     public void initialsetup(){
-        right_front.setDirection.(DcMotor.Direction.REVERSE);
-        right_rear.setDirection.(DcMotor.Direction.REVERSE);
-        left_front.setDirection.(DcMotor.Direction.FORWARD);
-        left_rear.setDirection.(DcMotor.Direction.FORWARD);
+        right_front.setDirection(DcMotor.Direction.REVERSE);
+        right_rear.setDirection(DcMotor.Direction.REVERSE);
+        left_front.setDirection(DcMotor.Direction.FORWARD);
+        left_rear.setDirection(DcMotor.Direction.FORWARD);
     }
     public void gamepadDrive(){
         while(opModeIsActive()){
@@ -28,7 +28,7 @@ public class FTCfile extends LinearOpMode {
 
     }
     @Override
-    public void runOpMode{} throws InterruptedException {
+    public void runOpMode() throws InterruptedException {
 
     }
 }
