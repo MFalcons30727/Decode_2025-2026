@@ -19,6 +19,7 @@ public class AbbyMecanumDrive extends LinearOpMode {
     private DcMotor frontRightDrive = null;
     private DcMotor backLeftDrive = null;
     private DcMotor backRightDrive = null;
+    private DcMotor wheelSpin = null;
 
     @Override
     public void runOpMode() {
@@ -27,6 +28,7 @@ public class AbbyMecanumDrive extends LinearOpMode {
         frontRightDrive = hardwareMap.get(DcMotor.class, "front_Right_Drive");
         backLeftDrive = hardwareMap.get(DcMotor.class, "back_Left_Drive");
         backRightDrive = hardwareMap.get(DcMotor.class, "back_Right_Drive");
+        wheelSpin = hardwareMap.get(DcMotor.class, "wheel_spin");
 
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -59,6 +61,14 @@ public class AbbyMecanumDrive extends LinearOpMode {
             backLeftDrive.setPower(backRightPower);
             backRightDrive.setPower(backLeftPower);
 
+            if (gamepad1.bWasPressed()) {
+                wheelSpin.setPower(1);
+            }
+
+            else {
+                wheelSpin.setPower(0);
+            }
+
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
@@ -67,4 +77,4 @@ public class AbbyMecanumDrive extends LinearOpMode {
         }
 }
 
-    }
+    }}
