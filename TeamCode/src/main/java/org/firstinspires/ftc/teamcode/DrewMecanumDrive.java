@@ -18,6 +18,8 @@ public class DrewMecanumDrive extends LinearOpMode {
 
     private DcMotor rearRight = null;
 
+    private DcMotor topMotor = null;
+
     @Override
     public void runOpMode()  {
 
@@ -25,6 +27,7 @@ public class DrewMecanumDrive extends LinearOpMode {
         rearLeft = hardwareMap.get(DcMotor.class, "rearLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         rearRight = hardwareMap.get(DcMotor.class, "rearRight");
+        topMotor = hardwareMap.get(DcMotor.class,  "topMotor");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         rearLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -50,8 +53,17 @@ public class DrewMecanumDrive extends LinearOpMode {
 
             frontLeft.setPower(frontLeftPower);
             rearLeft.setPower(rearLeftPower);
-            frontLeft.setPower(frontRightPower);
-            frontLeft.setPower(rearRightPower);
+            frontRight.setPower(frontRightPower);
+            rearRight.setPower(rearRightPower);
+
+
+            if(gamepad1.right_bumper) {
+                topMotor.setPower(1);
+            }
+
+            else {
+                topMotor.setPower(0);
+            }
 
             telemetry.addData("Status", "Runtime: " + runtime.toString());
             telemetry.addData("Front left/right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
