@@ -24,11 +24,11 @@ public class AbbyMecanumDrive extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "front_Left_Drive");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "front_Right_Drive");
-        backLeftDrive = hardwareMap.get(DcMotor.class, "back_Left_Drive");
-        backRightDrive = hardwareMap.get(DcMotor.class, "back_Right_Drive");
-        wheelSpin = hardwareMap.get(DcMotor.class, "wheel_spin");
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "leftFront");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "rightFront");
+        backLeftDrive = hardwareMap.get(DcMotor.class, "leftRear");
+        backRightDrive = hardwareMap.get(DcMotor.class, "rightRear");
+        wheelSpin = hardwareMap.get(DcMotor.class, "lift");
 
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -61,13 +61,21 @@ public class AbbyMecanumDrive extends LinearOpMode {
             backLeftDrive.setPower(backRightPower);
             backRightDrive.setPower(backLeftPower);
 
-            if (gamepad1.bWasPressed()) {
+            if(gamepad1.right_bumper) {
                 wheelSpin.setPower(1);
             }
 
             else {
                 wheelSpin.setPower(0);
             }
+
+//            if (gamepad1.right_bumperWasPressed) {
+//                wheelSpin.setPower(1);
+//            }
+//
+//            else {
+//                wheelSpin.setPower(0);
+//            }
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
@@ -77,4 +85,4 @@ public class AbbyMecanumDrive extends LinearOpMode {
         }
 }
 
-    }}
+    }
