@@ -39,7 +39,7 @@ public class Abbytest extends LinearOpMode
         aprilTagProcessor = new AprilTagProcessor.Builder().build();
 
         visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "PutWebcamNameHere"))
+                .setCamera(hardwareMap.get(WebcamName.class, ""))
                 .addProcessor(aprilTagProcessor)
                 .build();
 
