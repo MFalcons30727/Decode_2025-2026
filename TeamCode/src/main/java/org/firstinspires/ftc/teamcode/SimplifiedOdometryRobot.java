@@ -96,10 +96,11 @@ public class SimplifiedOdometryRobot {
         // motor/device must match the names assigned during the robot configuration.
 
         // !!!  Set the drive direction to ensure positive power drives each wheel forward.
-        leftFrontDrive  = setupDriveMotor("leftfront_drive", DcMotor.Direction.REVERSE);
-        rightFrontDrive = setupDriveMotor("rightfront_drive", DcMotor.Direction.FORWARD);
-        leftBackDrive  = setupDriveMotor( "leftback_drive", DcMotor.Direction.REVERSE);
-        rightBackDrive = setupDriveMotor( "rightback_drive",DcMotor.Direction.FORWARD);
+        leftFrontDrive  = setupDriveMotor("left_front", DcMotor.Direction.REVERSE);
+        rightFrontDrive = setupDriveMotor("right_front", DcMotor.Direction.FORWARD);
+        leftBackDrive  = setupDriveMotor( "left_rear", DcMotor.Direction.REVERSE);
+        rightBackDrive = setupDriveMotor( "right_rear",DcMotor.Direction.FORWARD);
+
         imu = myOpMode.hardwareMap.get(IMU.class, "imu");
 
         //  Connect to the encoder channels using the name of that channel.

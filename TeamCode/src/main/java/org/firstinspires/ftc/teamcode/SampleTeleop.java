@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * The IMU gyro is used to stabilize the heading when the operator is not requesting a turn.
  */
 
-@TeleOp(name="Sample Teleop", group = "Mr. Phil")
+@TeleOp(name="Waffles0D0test", group = "Mr. Phil")
 public class SampleTeleop extends LinearOpMode
 {
     final double SAFE_DRIVE_SPEED   = 0.8 ; // Adjust this to your robot and your driver.  Slower usually means more accuracy.  Max value = 1.0
