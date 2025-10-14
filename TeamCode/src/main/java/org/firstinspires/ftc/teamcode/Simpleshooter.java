@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@TeleOp(name = "Shooter", group = "linear OpMode"  )
+
 public class Simpleshooter extends LinearOpMode {
-    
+
     private ElapsedTime runtime = new ElapsedTime();
 
     private DcMotor shootermotor = null;
@@ -18,13 +21,12 @@ public class Simpleshooter extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
-
-        if(gamepad1.right_bumper) {
-            shootermotor.setPower(1);
-        }
-
-        else {
-            shootermotor.setPower(0);
+        while (opModeIsActive()) {
+            if (gamepad1.right_bumper) {
+                shootermotor.setPower(1);
+            } else {
+                shootermotor.setPower(0);
+            }
         }
     }
 }
