@@ -39,7 +39,7 @@ public class TeleOptest extends LinearOpMode {
         indexer2 = hardwareMap.get(CRServo.class, "indexer2");
         shoot = hardwareMap.get(DcMotor.class, "shooter");
 
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -61,7 +61,7 @@ public class TeleOptest extends LinearOpMode {
             double x = gamepad1.left_stick_x * 1.1; //counteract thingy
             double rx = gamepad1.right_stick_x;
 
-            //denominator is max power aka 1 or absolute value
+            //denominator is max power, for right now we changed it from 1 to 0.5, or absolute value
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             double frontLeftPower = (y + x + rx) / denominator;
