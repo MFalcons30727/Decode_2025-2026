@@ -39,9 +39,9 @@ public class TeleOptest extends LinearOpMode {
         indexer2 = hardwareMap.get(CRServo.class, "indexer2");
         shoot = hardwareMap.get(DcMotor.class, "shooter");
 
-        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
         shoot.setDirection(DcMotor.Direction.REVERSE);
         indexer1.setDirection(CRServo.Direction.FORWARD);
@@ -101,7 +101,7 @@ public class TeleOptest extends LinearOpMode {
             }
 
             if(gamepad1.right_bumper) {
-                shoot.setPower(1);
+                shoot.setPower(0.8);
             }
             else {
                 shoot.setPower(0);
