@@ -1,32 +1,32 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.linearOpMode;
-
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "Intake Test", group = "linearOpMode" )
+@TeleOp(name = "Shooter", group = "linear OpMode"  )
 @Disabled
-public class Intake extends LinearOpMode {
+public class Simpleshooter extends LinearOpMode {
 
-    private DcMotor intake = null;
     private ElapsedTime runtime = new ElapsedTime();
 
-    @Override
-    public void runOpMode() {
+    private DcMotor shootermotor = null;
 
-        DcMotor intake = hardwareMap.get(DcMotor.class, "intake");
+    @Override public void runOpMode(){
+
+        shootermotor = hardwareMap.get(DcMotor.class, "shootermotor");
+
+        shootermotor.setDirection(DcMotor.Direction.REVERSE);
 
         waitForStart();
         runtime.reset();
-
         while (opModeIsActive()) {
             if (gamepad1.right_bumper) {
-                intake.setPower(1);
+                shootermotor.setPower(1);
+            } else {
+                shootermotor.setPower(0);
             }
         }
     }
