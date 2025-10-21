@@ -2,10 +2,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name="Abby Mecanum Auto Simple", group="Autonomous")
-public class Forward45Turn extends LinearOpMode {
+public class BasicAuto extends LinearOpMode {
 
     private DcMotor frontLeft, frontRight, backLeft, backRight;
 
@@ -14,6 +15,9 @@ public class Forward45Turn extends LinearOpMode {
     private static final double FORWARD_DISTANCE_INCHES = 36; // change at practice, this is just a random placeholder for now
     private static final double DRIVE_POWER = 0.5; // how fast we want the robot for now
     private static final double TURN_POWER = 0.4; // how fast it will turn
+    private DcMotor shoot = null;
+    private CRServo indexer1 = null;
+    private CRServo indexer2 = null;
 
     @Override
     public void runOpMode() {
@@ -23,6 +27,9 @@ public class Forward45Turn extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "rightFront");
         backLeft = hardwareMap.get(DcMotor.class, "leftRear");
         backRight = hardwareMap.get(DcMotor.class, "rightRear");
+        shoot = hardwareMap.get(DcMotor.class, "shooter");
+        indexer1 = hardwareMap.get(CRServo.class, "indexer1");
+        indexer2 = hardwareMap.get(CRServo.class, "indexer2");
 
         setMotorDirections();
 
@@ -35,7 +42,8 @@ public class Forward45Turn extends LinearOpMode {
             // steps being called
             moveForward(FORWARD_DISTANCE_INCHES, DRIVE_POWER);
             turnLeft45();
-            //    shoot(); // SCORING NOT FIGURED OUT YET
+            shoot();
+            indexers();
         }
     }
 
@@ -46,7 +54,7 @@ public class Forward45Turn extends LinearOpMode {
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
-
+        shoot.setDirection(DcMotor.Direction.REVERSE);
     }
 
     private void resetEncoders() {
@@ -106,10 +114,16 @@ public class Forward45Turn extends LinearOpMode {
 
     // Don't worry about shoot right now, this will not show on the driver hub because it is commented out
     private void shoot() {
-        // Placeholder for shooting mechanism
-        telemetry.addLine("Shooting!");
-        telemetry.update();
-        sleep(1000); // simulate shoot duration
+
+        shoot.setPower(1);
+
+    }
+
+    private void indexers(){
+
+        indexer1.setPower(1);
+        indexer2.setPower(1);
+
     }
     // this function is self explanatory, just stops it
     private void stopMotors() {

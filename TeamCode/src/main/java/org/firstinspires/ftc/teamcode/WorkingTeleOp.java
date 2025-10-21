@@ -55,6 +55,8 @@ public class WorkingTeleOp extends LinearOpMode {
             double x = gamepad1.left_stick_x * 1.1; //counteract thingy
             double rx = gamepad1.right_stick_x;
 
+            double shooterPower = gamepad1.right_trigger;
+
             //denominator is max power, for right now we changed it from 1 to 0.5, or absolute value
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
@@ -62,6 +64,8 @@ public class WorkingTeleOp extends LinearOpMode {
             double backLeftPower = (y - x + rx) / denominator;
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
+
+            shooterPower = Math.min(shooterPower, 0.7);
 
             frontLeftDrive.setPower(frontLeftPower);
             frontRightDrive.setPower(frontRightPower);
@@ -94,8 +98,8 @@ public class WorkingTeleOp extends LinearOpMode {
                 indexer2.setPower(0);
             }
 
-            if(gamepad1.right_bumper) {
-                shoot.setPower(0.8);
+            if(gamepad1.right_trigger > 0) {
+                shoot.setPower(shooterPower);
             }
             else {
                 shoot.setPower(0);
@@ -104,7 +108,10 @@ public class WorkingTeleOp extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
+            telemetry.addData("Shoot Speed", shoot.getPower());
             telemetry.update();
+
+
 
         }
     }
