@@ -11,7 +11,7 @@ public class Forward45Turn extends LinearOpMode {
 
     // Constants
     private static final double TICKS_PER_INCH = 50; // I am not sure the ticks per inch, go over calculations, this is placeholder
-    private static final double FORWARD_DISTANCE_INCHES = 36; // change at practice, this is just a random placeholder for now
+    private static final double FORWARD_DISTANCE_INCHES = -36; // change at practice, this is just a random placeholder for now
     private static final double DRIVE_POWER = 0.5; // how fast we want the robot for now
     private static final double TURN_POWER = 0.4; // how fast it will turn
 
