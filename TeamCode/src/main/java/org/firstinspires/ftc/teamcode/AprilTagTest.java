@@ -4,8 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
@@ -15,9 +14,10 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
+//Abby
 @TeleOp(name="Abby Test Omni Drive To AprilTag", group = "linear OpMode")
-public class Abbytest extends LinearOpMode
+@Disabled
+public class AprilTagTest extends LinearOpMode
 {
     final int TAG_ID_TO_MATCH = 20;
     final double STOP_DISTANCE_FROM_TAG_IN_INCHES = 12.0;

@@ -1,24 +1,23 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.linearOpMode;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-
-public class AbbyMecanumDrive extends LinearOpMode {
-private ElapsedTime runtime = new ElapsedTime();
+@TeleOp (name="TeleOp", group = "TeleOp")
+public class WorkingTeleOp extends LinearOpMode {
+    private ElapsedTime runtime = new ElapsedTime();
     private DcMotor frontLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backLeftDrive = null;
     private DcMotor backRightDrive = null;
-    private DcMotor wheelSpin = null;
+   // private DcMotor intake = null;
+    private CRServo indexer1 = null;
+    private CRServo indexer2 = null;
+    private DcMotor shoot = null;
 
     @Override
     public void runOpMode() {
@@ -27,12 +26,21 @@ private ElapsedTime runtime = new ElapsedTime();
         frontRightDrive = hardwareMap.get(DcMotor.class, "rightFront");
         backLeftDrive = hardwareMap.get(DcMotor.class, "leftRear");
         backRightDrive = hardwareMap.get(DcMotor.class, "rightRear");
-        wheelSpin = hardwareMap.get(DcMotor.class, "lift");
+        //intake = hardwareMap.get(DcMotor.class, "intake");
+//        indexer1 = hardwareMap.servo.get("indexer1");
+        indexer1 = hardwareMap.get(CRServo.class, "indexer1");
+//        indexer2 = hardwareMap.servo.get("indexer2");
+        indexer2 = hardwareMap.get(CRServo.class, "indexer2");
+        shoot = hardwareMap.get(DcMotor.class, "shooter");
 
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        shoot.setDirection(DcMotor.Direction.REVERSE);
+        indexer1.setDirection(CRServo.Direction.FORWARD);
+        indexer2.setDirection(CRServo.Direction.REVERSE);
+
 
         //wait for start (then player presses START)
         telemetry.addData("Status", "Initialized");
@@ -47,7 +55,7 @@ private ElapsedTime runtime = new ElapsedTime();
             double x = gamepad1.left_stick_x * 1.1; //counteract thingy
             double rx = gamepad1.right_stick_x;
 
-            //denominator is max power aka 1 or absolute value
+            //denominator is max power, for right now we changed it from 1 to 0.5, or absolute value
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             double frontLeftPower = (y + x + rx) / denominator;
@@ -60,21 +68,38 @@ private ElapsedTime runtime = new ElapsedTime();
             backLeftDrive.setPower(backRightPower);
             backRightDrive.setPower(backLeftPower);
 
-            if(gamepad1.right_bumper) {
-                wheelSpin.setPower(1);
-            }
-
-            else {
-                wheelSpin.setPower(0);
-            }
-
-//            if (gamepad1.right_bumperWasPressed) {
-//                wheelSpin.setPower(1);
+//            if(gamepad1.right_bumper){
+//                intake.setPower(1);
 //            }
 //
 //            else {
-//                wheelSpin.setPower(0);
+//                intake.setPower(0);
+//
 //            }
+//
+//            if(gamepad1.left_bumper){
+//                intake.setPower(-1);
+//            }
+//
+//            else {
+//                intake.setPower(0);
+//            }
+//
+            if(gamepad1.left_bumper) {
+                indexer1.setPower(1);
+                indexer2.setPower(1);
+            }
+            else {
+                indexer1.setPower(0);
+                indexer2.setPower(0);
+            }
+
+            if(gamepad1.right_bumper) {
+                shoot.setPower(0.8);
+            }
+            else {
+                shoot.setPower(0);
+            }
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
@@ -82,6 +107,7 @@ private ElapsedTime runtime = new ElapsedTime();
             telemetry.update();
 
         }
+    }
+
 }
 
-    }
