@@ -115,8 +115,8 @@ public class BasicAuto extends LinearOpMode {
     private void shoot() {
 
         shoot.setPower(0.7);
-        indexer1.setPower(-0.2);
-        indexer2.setPower(-0.2);
+        indexer1.setPower(0.1);
+        indexer2.setPower(-0.1);
         sleep(5000);
 
     }
