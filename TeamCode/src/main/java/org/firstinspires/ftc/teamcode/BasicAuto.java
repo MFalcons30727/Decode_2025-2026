@@ -13,7 +13,7 @@ public class BasicAuto extends LinearOpMode {
     // Constants
     private static final double TICKS_PER_INCH = 50; // I am not sure the ticks per inch, go over calculations, this is placeholder
     private static final double FORWARD_DISTANCE_INCHES = 70; // change at practice, this is just a random placeholder for now
-    private static final double DRIVE_POWER = 0.5; // how fast we want the robot for now
+    private static final double DRIVE_POWER = 0.8; // how fast we want the robot for now
     private static final double TURN_POWER = 0.4; // how fast it will turn
     private DcMotor shoot = null;
     private CRServo indexer1 = null;
@@ -40,8 +40,8 @@ public class BasicAuto extends LinearOpMode {
 
         if (opModeIsActive()) {
             // steps being called
-            //moveForward(FORWARD_DISTANCE_INCHES, DRIVE_POWER);
-            //turnLeft45();
+            moveForward(FORWARD_DISTANCE_INCHES, DRIVE_POWER);
+            turnLeft45();
             shoot();
         }
     }
@@ -111,14 +111,23 @@ public class BasicAuto extends LinearOpMode {
         stopMotors();
     }
 
-    // Don't worry about shoot right now, this will not show on the driver hub because it is commented out
+
     private void shoot() {
 
         shoot.setPower(0.7);
+<<<<<<< Updated upstream
         indexer1.setPower(0.1);
         indexer2.setPower(-0.1);
         sleep(5000);
+=======
+>>>>>>> Stashed changes
 
+        if(shoot.getPower() == 0.7){
+
+            indexer1.setPower(0.7);
+            indexer2.setPower(-0.7);
+        }
+        sleep(5000);
     }
     // this function is self explanatory, just stops it
     private void stopMotors() {
