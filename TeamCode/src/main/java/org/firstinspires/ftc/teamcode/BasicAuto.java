@@ -115,12 +115,6 @@ public class BasicAuto extends LinearOpMode {
     private void shoot() {
 
         shoot.setPower(0.7);
-<<<<<<< Updated upstream
-        indexer1.setPower(0.1);
-        indexer2.setPower(-0.1);
-        sleep(5000);
-=======
->>>>>>> Stashed changes
 
         if(shoot.getPower() == 0.7){
 
