@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
         private static final double FORWARD_DISTANCE_INCHES = 37; // change at practice, this is just a random placeholder for now
         private static final double DRIVE_POWER = 0.5; // how fast we want the robot for now
         private static final double TURN_POWER = 0.4; // how fast it will turn
+        private Limelight3A limelight;
 
         @Override
         public void runOpMode() {
