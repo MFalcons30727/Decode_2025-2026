@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name="Abby Mecanum Auto Simple", group="Autonomous")
-public class BasicAuto extends LinearOpMode {
+public class basicAuto2 extends LinearOpMode {
 
     private DcMotor frontLeft, frontRight, backLeft, backRight;
 
@@ -41,8 +41,8 @@ public class BasicAuto extends LinearOpMode {
         if (opModeIsActive()) {
             // steps being called
             moveForward(FORWARD_DISTANCE_INCHES, DRIVE_POWER);
-            turnLeft45();
-            shoot();
+            turnRight45();
+            //shoot();
         }
     }
 
@@ -99,14 +99,14 @@ public class BasicAuto extends LinearOpMode {
     }
     // this turning function is very basic right now, but you get the idea. :)
     // also remember that turn_power is defined at the top as 0.5 so it can be easily reused, and it is constant
-    private void turnLeft45() {
+    private void turnRight45() {
         // Simple time-based turn
         frontLeft.setPower(-TURN_POWER);
         backLeft.setPower(-TURN_POWER);
         frontRight.setPower(TURN_POWER);
         backRight.setPower(TURN_POWER);
         //this is currently time based which is not ideal, but it works for now
-        sleep(1750); // adjust for ~45° turn
+        sleep(500); // adjust for ~45° turn
 
         stopMotors();
     }

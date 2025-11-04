@@ -6,13 +6,13 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name="Abby Mecanum Auto Simple", group="Autonomous")
-public class BasicAuto extends LinearOpMode {
+public class backupLeftShoot extends LinearOpMode {
 
     private DcMotor frontLeft, frontRight, backLeft, backRight;
 
     // Constants
     private static final double TICKS_PER_INCH = 50; // I am not sure the ticks per inch, go over calculations, this is placeholder
-    private static final double FORWARD_DISTANCE_INCHES = 70; // change at practice, this is just a random placeholder for now
+    private static final double BACKWARD_DISTANCE_INCHES = -50; // change at practice, this is just a random placeholder for now
     private static final double DRIVE_POWER = 0.8; // how fast we want the robot for now
     private static final double TURN_POWER = 0.4; // how fast it will turn
     private DcMotor shoot = null;
@@ -40,9 +40,9 @@ public class BasicAuto extends LinearOpMode {
 
         if (opModeIsActive()) {
             // steps being called
-            moveForward(FORWARD_DISTANCE_INCHES, DRIVE_POWER);
-            turnLeft45();
-            shoot();
+            moveBackward(BACKWARD_DISTANCE_INCHES, DRIVE_POWER);
+            //turnLeft45();
+            //shoot();
         }
     }
 
@@ -68,7 +68,7 @@ public class BasicAuto extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    private void moveForward(double inches, double power) { // these parameters are saying we need to move forward a certain amount of inches, and also how much power we give the motors which is defined at the top.
+    private void moveBackward(double inches, double power) { // these parameters are saying we need to move forward a certain amount of inches, and also how much power we give the motors which is defined at the top.
         int ticks = (int)(inches * TICKS_PER_INCH); // this is saying basically how many inches we want to move multiplied by the ticks per inch. this calculates how many ticks in total we would have to move.
 
         frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + ticks); // lines 66-69 is saying "start from current pos and add the amount of ticks you want to move".
