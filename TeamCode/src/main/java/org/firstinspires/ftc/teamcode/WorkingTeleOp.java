@@ -65,7 +65,7 @@ public class WorkingTeleOp extends LinearOpMode {
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
-            shooterPower = Math.min(shooterPower, 0.7);
+            shooterPower = Math.min(shooterPower, 0.9);
 
             frontLeftDrive.setPower(frontLeftPower);
             frontRightDrive.setPower(frontRightPower);
