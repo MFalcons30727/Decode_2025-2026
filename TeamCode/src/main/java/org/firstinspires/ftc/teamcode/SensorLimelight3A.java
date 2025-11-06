@@ -71,7 +71,7 @@ import java.util.List;
 public class SensorLimelight3A extends LinearOpMode {
 
     private Limelight3A limelight;
-    int targetId = 0;
+    int tagID = 0;
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -140,12 +140,13 @@ public class SensorLimelight3A extends LinearOpMode {
                 List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
                 for (LLResultTypes.FiducialResult fr : fiducialResults) {
                     telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
-                    targetId = fr.getFiducialId();
+                    tagID = fr.getFiducialId();
                     telemetry.addData("ID", fr.getFiducialId()) ;
+                    telemetry.addData("target is", tagID);
 
-                    if(gamepad1.right_trigger > 1) {
-                        if (targetId == 20 ) {
-                            telemetry.addData("targetfound", targetId);
+                    while(gamepad1.right_trigger > 1) {
+                        if (tagID == 24 ) {
+                            telemetry.addData("targetfound", tagID);
                         }
                     }
 
@@ -164,8 +165,8 @@ public class SensorLimelight3A extends LinearOpMode {
             telemetry.update();
 
             if(gamepad1.aWasPressed()) {
-                if (targetId == 20 ) {
-                    telemetry.addData("targetfound", targetId);
+                if (tagID == 20 ) {
+                    telemetry.addData("targetfound", tagID);
                 }
             }
             else {
