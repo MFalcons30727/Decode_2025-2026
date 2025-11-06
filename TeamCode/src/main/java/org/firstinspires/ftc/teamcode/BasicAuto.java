@@ -128,9 +128,9 @@ public class BasicAuto extends LinearOpMode {
 
 
             // steps being called
-            //moveForward(FORWARD_DISTANCE_INCHES, DRIVE_POWER);
-           //turnLeft45();
-           // shoot();
+            moveForward(FORWARD_DISTANCE_INCHES, DRIVE_POWER);
+            turnLeft45();
+            shoot();
         }
     }
 
@@ -181,6 +181,9 @@ public class BasicAuto extends LinearOpMode {
                 backRight.isBusy()) {
             // Optional: telemetry here
 
+            telemetry.addData("Shoot Speed", shoot.getPower());
+            telemetry.update();
+
         }
 
         stopMotors();
@@ -202,19 +205,25 @@ public class BasicAuto extends LinearOpMode {
 
     private void shoot() {
 
-        shoot.setPower(0.7);
+        shoot.setPower(0.6);
+        if (shoot.getPower() == 0.6){
 
-        indexer1.setPower(0.1);
-        indexer2.setPower(-0.1);
-        sleep(5000);
+            sleep(4000);
+
+            indexer1.setPower(0.5);
+            indexer2.setPower(-0.5);
+            sleep(2000);
+            indexer1.setPower(0.5);
+            indexer2.setPower(-0.5);
+            sleep(2000);
+            indexer1.setPower(0.5);
+            indexer2.setPower(-0.5);
+            sleep(2000);
 
 
-        if(shoot.getPower() == 0.7){
 
-            indexer1.setPower(0.7);
-            indexer2.setPower(-0.7);
         }
-        sleep(5000);
+
     }
     // this function is self explanatory, just stops it
     private void stopMotors() {
@@ -227,5 +236,7 @@ public class BasicAuto extends LinearOpMode {
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
+
 }
