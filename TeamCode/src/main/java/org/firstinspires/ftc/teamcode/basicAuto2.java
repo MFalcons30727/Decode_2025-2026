@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name="Abby Mecanum Auto Simple", group="Autonomous")
+@Autonomous(name="Red far auto", group="Autonomous")
 public class basicAuto2 extends LinearOpMode {
 
     private DcMotor frontLeft, frontRight, backLeft, backRight;
@@ -42,7 +42,7 @@ public class basicAuto2 extends LinearOpMode {
             // steps being called
             moveForward(FORWARD_DISTANCE_INCHES, DRIVE_POWER);
             turnRight45();
-            //shoot();
+            shoot();
         }
     }
 
@@ -106,7 +106,7 @@ public class basicAuto2 extends LinearOpMode {
         frontRight.setPower(TURN_POWER);
         backRight.setPower(TURN_POWER);
         //this is currently time based which is not ideal, but it works for now
-        sleep(500); // adjust for ~45° turn
+        sleep(2000); // adjust for ~45° turn
 
         stopMotors();
     }
@@ -114,19 +114,46 @@ public class basicAuto2 extends LinearOpMode {
 
     private void shoot() {
 
-        shoot.setPower(0.7);
+        shoot.setPower(0.55);
+        if (shoot.getPower() == 0.55){
+            sleep(3000);
+            telemetry.addData("spinning Up", 100);
+            telemetry.update();
 
-        indexer1.setPower(0.1);
-        indexer2.setPower(-0.1);
-        sleep(5000);
 
+            indexer1.setPower(0.6);
+            indexer2.setPower(-0.6);
+            sleep(1000);
+            telemetry.addData("turning off power after shot", 100);
+            telemetry.update();
+            indexer1.setPower(0);
+            indexer2.setPower(0);
+            telemetry.addData("Waiting", 100);
+            telemetry.update();
+            sleep(2500);
 
-        if(shoot.getPower() == 0.7){
+            indexer1.setPower(0.6);
+            indexer2.setPower(-0.6);
+            sleep(100);
+            telemetry.addData("turning off power after shot", 100);
+            telemetry.update();
+            indexer1.setPower(0);
+            indexer2.setPower(0);
+            telemetry.addData("Waiting", 100);
+            telemetry.update();
+            sleep(2500);
 
-            indexer1.setPower(0.7);
-            indexer2.setPower(-0.7);
+            indexer1.setPower(0.6);
+            indexer2.setPower(-0.6);
+            sleep(100);
+            telemetry.addData("turning off power after shot", 100);
+            telemetry.update();
+            indexer1.setPower(0);
+            indexer2.setPower(0);
+            telemetry.addData("Waiting", 100);
+            telemetry.update();
+
         }
-        sleep(5000);
     }
     // this function is self explanatory, just stops it
     private void stopMotors() {
