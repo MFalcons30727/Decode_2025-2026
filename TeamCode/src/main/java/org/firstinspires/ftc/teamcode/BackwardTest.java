@@ -117,10 +117,46 @@ import com.qualcomm.robotcore.hardware.DcMotor;
         // Don't worry about shoot right now, this will not show on the driver hub because it is commented out
         private void shoot() {
 
-            shoot.setPower(0.7);
-            indexer1.setPower(0.1);
-            indexer2.setPower(-0.1);
-            sleep(5000);
+            shoot.setPower(0.55);
+            if (shoot.getPower() == 0.55) {
+                sleep(3000);
+                telemetry.addData("spinning Up", 100);
+                telemetry.update();
+
+
+                indexer1.setPower(0.6);
+                indexer2.setPower(-0.6);
+                sleep(1000);
+                telemetry.addData("turning off power after shot", 100);
+                telemetry.update();
+                indexer1.setPower(0);
+                indexer2.setPower(0);
+                telemetry.addData("Waiting", 100);
+                telemetry.update();
+                sleep(2500);
+
+                indexer1.setPower(0.6);
+                indexer2.setPower(-0.6);
+                sleep(100);
+                telemetry.addData("turning off power after shot", 100);
+                telemetry.update();
+                indexer1.setPower(0);
+                indexer2.setPower(0);
+                telemetry.addData("Waiting", 100);
+                telemetry.update();
+                sleep(2500);
+
+                indexer1.setPower(0.6);
+                indexer2.setPower(-0.6);
+                sleep(100);
+                telemetry.addData("turning off power after shot", 100);
+                telemetry.update();
+                indexer1.setPower(0);
+                indexer2.setPower(0);
+                telemetry.addData("Waiting", 100);
+                telemetry.update();
+
+            }
 
         }
         // this function is self explanatory, just stops it

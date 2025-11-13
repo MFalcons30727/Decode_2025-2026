@@ -106,7 +106,7 @@ public class basicAuto2 extends LinearOpMode {
         frontRight.setPower(TURN_POWER);
         backRight.setPower(TURN_POWER);
         //this is currently time based which is not ideal, but it works for now
-        sleep(2000); // adjust for ~45° turn
+        sleep(4000); // adjust for ~45° turn
 
         stopMotors();
     }
