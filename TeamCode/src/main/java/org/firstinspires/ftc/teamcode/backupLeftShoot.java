@@ -1,21 +1,23 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name="Abby Mecanum Auto Simple", group="Autonomous")
-@Disabled
-public class Forward45Turn extends LinearOpMode {
+public class backupLeftShoot extends LinearOpMode {
 
     private DcMotor frontLeft, frontRight, backLeft, backRight;
 
     // Constants
     private static final double TICKS_PER_INCH = 50; // I am not sure the ticks per inch, go over calculations, this is placeholder
-    private static final double FORWARD_DISTANCE_INCHES = -36; // change at practice, this is just a random placeholder for now
-    private static final double DRIVE_POWER = 0.5; // how fast we want the robot for now
+    private static final double BACKWARD_DISTANCE_INCHES = -50; // change at practice, this is just a random placeholder for now
+    private static final double DRIVE_POWER = 0.8; // how fast we want the robot for now
     private static final double TURN_POWER = 0.4; // how fast it will turn
+    private DcMotor shoot = null;
+    private CRServo indexer1 = null;
+    private CRServo indexer2 = null;
 
     @Override
     public void runOpMode() {
@@ -25,6 +27,9 @@ public class Forward45Turn extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "rightFront");
         backLeft = hardwareMap.get(DcMotor.class, "leftRear");
         backRight = hardwareMap.get(DcMotor.class, "rightRear");
+        shoot = hardwareMap.get(DcMotor.class, "shooter");
+        indexer1 = hardwareMap.get(CRServo.class, "indexer1");
+        indexer2 = hardwareMap.get(CRServo.class, "indexer2");
 
         setMotorDirections();
 
@@ -35,9 +40,9 @@ public class Forward45Turn extends LinearOpMode {
 
         if (opModeIsActive()) {
             // steps being called
-            moveForward(FORWARD_DISTANCE_INCHES, DRIVE_POWER);
-            turnLeft45();
-            //    shoot(); // SCORING NOT FIGURED OUT YET
+            moveBackward(BACKWARD_DISTANCE_INCHES, DRIVE_POWER);
+            //turnLeft45();
+            //shoot();
         }
     }
 
@@ -48,7 +53,7 @@ public class Forward45Turn extends LinearOpMode {
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
-
+        shoot.setDirection(DcMotor.Direction.REVERSE);
     }
 
     private void resetEncoders() {
@@ -63,7 +68,7 @@ public class Forward45Turn extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    private void moveForward(double inches, double power) { // these parameters are saying we need to move forward a certain amount of inches, and also how much power we give the motors which is defined at the top.
+    private void moveBackward(double inches, double power) { // these parameters are saying we need to move forward a certain amount of inches, and also how much power we give the motors which is defined at the top.
         int ticks = (int)(inches * TICKS_PER_INCH); // this is saying basically how many inches we want to move multiplied by the ticks per inch. this calculates how many ticks in total we would have to move.
 
         frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + ticks); // lines 66-69 is saying "start from current pos and add the amount of ticks you want to move".
@@ -101,17 +106,57 @@ public class Forward45Turn extends LinearOpMode {
         frontRight.setPower(TURN_POWER);
         backRight.setPower(TURN_POWER);
         //this is currently time based which is not ideal, but it works for now
-        sleep(500); // adjust for ~45° turn
+        sleep(1750); // adjust for ~45° turn
 
         stopMotors();
     }
 
-    // Don't worry about shoot right now, this will not show on the driver hub because it is commented out
+
     private void shoot() {
-        // Placeholder for shooting mechanism
-        telemetry.addLine("Shooting!");
-        telemetry.update();
-        sleep(1000); // simulate shoot duration
+
+
+        shoot.setPower(0.55);
+        if (shoot.getPower() == 0.55) {
+            sleep(3000);
+            telemetry.addData("spinning Up", 100);
+            telemetry.update();
+
+
+            indexer1.setPower(0.6);
+            indexer2.setPower(-0.6);
+            sleep(1000);
+            telemetry.addData("turning off power after shot", 100);
+            telemetry.update();
+            indexer1.setPower(0);
+            indexer2.setPower(0);
+            telemetry.addData("Waiting", 100);
+            telemetry.update();
+            sleep(2500);
+
+            indexer1.setPower(0.6);
+            indexer2.setPower(-0.6);
+            sleep(100);
+            telemetry.addData("turning off power after shot", 100);
+            telemetry.update();
+            indexer1.setPower(0);
+            indexer2.setPower(0);
+            telemetry.addData("Waiting", 100);
+            telemetry.update();
+            sleep(2500);
+
+            indexer1.setPower(0.6);
+            indexer2.setPower(-0.6);
+            sleep(100);
+            telemetry.addData("turning off power after shot", 100);
+            telemetry.update();
+            indexer1.setPower(0);
+            indexer2.setPower(0);
+            telemetry.addData("Waiting", 100);
+            telemetry.update();
+
+        }
+
+
     }
     // this function is self explanatory, just stops it
     private void stopMotors() {
