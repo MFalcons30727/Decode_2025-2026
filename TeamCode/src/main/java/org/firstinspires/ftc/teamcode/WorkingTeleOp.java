@@ -52,10 +52,10 @@ public class WorkingTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
 
             double y = -gamepad1.left_stick_y; //remember that Y stick value is reversed!!
-            double x = gamepad1.left_stick_x * 1.1; //counteract thingy
-            double rx = gamepad1.right_stick_x;
+            double x = gamepad1.right_stick_x * 1.1; //counteract thingy
+            double rx = gamepad1.left_stick_x;
 
-            double shooterPower = gamepad1.right_trigger;
+            double shooterPower = gamepad2.right_trigger;
 
             //denominator is max power, for right now we changed it from 1 to 0.5, or absolute value
 
@@ -89,7 +89,7 @@ public class WorkingTeleOp extends LinearOpMode {
 //                intake.setPower(0);
 //            }
 //
-            if(gamepad1.left_bumper) {
+            if(gamepad2.left_bumper) {
                 indexer1.setPower(1);
                 indexer2.setPower(1);
             }
@@ -98,7 +98,7 @@ public class WorkingTeleOp extends LinearOpMode {
                 indexer2.setPower(0);
             }
 
-            if(gamepad1.right_trigger > 0) {
+            if(gamepad2.right_trigger > 0) {
                 shoot.setPower(shooterPower);
             }
             else {

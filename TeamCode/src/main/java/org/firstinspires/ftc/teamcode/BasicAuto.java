@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
@@ -128,20 +129,29 @@ public class BasicAuto extends LinearOpMode {
 
 
             // steps being called
+
             moveForward(FORWARD_DISTANCE_INCHES, DRIVE_POWER);
             turnLeft45();
             shoot();
+            turnRight45();
+            moveForward(-20, DRIVE_POWER);
         }
     }
 
     // --- Helper Functions ---
 
     private void setMotorDirections() {
-        frontLeft.setDirection(DcMotor.Direction.FORWARD);
-        backLeft.setDirection(DcMotor.Direction.FORWARD);
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
         shoot.setDirection(DcMotor.Direction.REVERSE);
+
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
 
     private void resetEncoders() {
@@ -197,16 +207,29 @@ public class BasicAuto extends LinearOpMode {
         frontRight.setPower(TURN_POWER);
         backRight.setPower(TURN_POWER);
         //this is currently time based which is not ideal, but it works for now
-        sleep(1750); // adjust for ~45° turn
+        sleep(750); // adjust for ~45° turn
+
+        stopMotors();
+    }
+
+    private void turnRight45() {
+        // Simple time-based turn
+        frontLeft.setPower(TURN_POWER);
+        backLeft.setPower(TURN_POWER);
+        frontRight.setPower(-TURN_POWER);
+        backRight.setPower(-TURN_POWER);
+        //this is currently time based which is not ideal, but it works for now
+        sleep(750); // adjust for ~45° turn
 
         stopMotors();
     }
 
 
+
     private void shoot() {
 
-        shoot.setPower(0.55);
-        if (shoot.getPower() == 0.55){
+        shoot.setPower(0.53);
+        if (shoot.getPower() == 0.53){
             sleep(3000);
             telemetry.addData("spinning Up", 100);
             telemetry.update();
@@ -243,6 +266,8 @@ public class BasicAuto extends LinearOpMode {
             indexer2.setPower(0);
             telemetry.addData("Waiting", 100);
             telemetry.update();
+
+            sleep(500);
 
 
 
