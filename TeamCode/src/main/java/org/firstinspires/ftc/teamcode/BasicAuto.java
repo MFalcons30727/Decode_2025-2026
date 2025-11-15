@@ -237,7 +237,7 @@ public class BasicAuto extends LinearOpMode {
 
             indexer1.setPower(0.6);
             indexer2.setPower(-0.6);
-            sleep(1000);
+            sleep(800);
             telemetry.addData("turning off power after shot", 100);
             telemetry.update();
             indexer1.setPower(0);
