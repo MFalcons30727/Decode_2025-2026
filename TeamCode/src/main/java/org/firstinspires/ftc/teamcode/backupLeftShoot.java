@@ -5,14 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name="Abby Mecanum Auto Simple", group="Autonomous")
+@Autonomous(name="Blue Backup", group="Autonomous")
 public class backupLeftShoot extends LinearOpMode {
 
     private DcMotor frontLeft, frontRight, backLeft, backRight;
 
     // Constants
     private static final double TICKS_PER_INCH = 50; // I am not sure the ticks per inch, go over calculations, this is placeholder
-    private static final double BACKWARD_DISTANCE_INCHES = -50; // change at practice, this is just a random placeholder for now
+    private static final double BACKWARD_DISTANCE_INCHES = 50; // change at practice, this is just a random placeholder for now
     private static final double DRIVE_POWER = 0.8; // how fast we want the robot for now
     private static final double TURN_POWER = 0.4; // how fast it will turn
     private DcMotor shoot = null;
@@ -40,9 +40,13 @@ public class backupLeftShoot extends LinearOpMode {
 
         if (opModeIsActive()) {
             // steps being called
-            moveBackward(BACKWARD_DISTANCE_INCHES, DRIVE_POWER);
-            //turnLeft45();
-            //shoot();
+            moveForward(35, DRIVE_POWER);
+            shoot();
+            turnLeft45();
+            moveForward(25, DRIVE_POWER);
+
+
+
         }
     }
 
@@ -66,9 +70,16 @@ public class backupLeftShoot extends LinearOpMode {
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
 
-    private void moveBackward(double inches, double power) { // these parameters are saying we need to move forward a certain amount of inches, and also how much power we give the motors which is defined at the top.
+    private void moveForward(double inches, double power) { // these parameters are saying we need to move forward a certain amount of inches, and also how much power we give the motors which is defined at the top.
         int ticks = (int)(inches * TICKS_PER_INCH); // this is saying basically how many inches we want to move multiplied by the ticks per inch. this calculates how many ticks in total we would have to move.
 
         frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + ticks); // lines 66-69 is saying "start from current pos and add the amount of ticks you want to move".
@@ -106,10 +117,24 @@ public class backupLeftShoot extends LinearOpMode {
         frontRight.setPower(TURN_POWER);
         backRight.setPower(TURN_POWER);
         //this is currently time based which is not ideal, but it works for now
-        sleep(1750); // adjust for ~45° turn
+        sleep(750); // adjust for ~45° turn
 
         stopMotors();
     }
+
+    private void turnRight45() {
+        // Simple time-based turn
+        frontLeft.setPower(TURN_POWER);
+        backLeft.setPower(TURN_POWER);
+        frontRight.setPower(-TURN_POWER);
+        backRight.setPower(-TURN_POWER);
+        //this is currently time based which is not ideal, but it works for now
+        sleep(750); // adjust for ~45° turn
+
+        stopMotors();
+    }
+
+
 
 
     private void shoot() {
@@ -153,6 +178,7 @@ public class backupLeftShoot extends LinearOpMode {
             indexer2.setPower(0);
             telemetry.addData("Waiting", 100);
             telemetry.update();
+            sleep(500);
 
         }
 

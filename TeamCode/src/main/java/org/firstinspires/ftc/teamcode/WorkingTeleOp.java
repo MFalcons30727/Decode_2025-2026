@@ -41,6 +41,8 @@ public class WorkingTeleOp extends LinearOpMode {
         indexer1.setDirection(CRServo.Direction.FORWARD);
         indexer2.setDirection(CRServo.Direction.REVERSE);
 
+        shoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         //wait for start (then player presses START)
         telemetry.addData("Status", "Initialized");
@@ -65,7 +67,7 @@ public class WorkingTeleOp extends LinearOpMode {
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
-            shooterPower = Math.min(shooterPower, 0.6);
+            shooterPower = Math.min(shooterPower, 0.58);
 
             frontLeftDrive.setPower(frontLeftPower);
             frontRightDrive.setPower(frontRightPower);
