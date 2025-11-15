@@ -18,8 +18,8 @@ import java.util.List;
 public class RefinedBlueAuto extends LinearOpMode {
 
     // Constants
-    private static final boolean USE_LIMELIGHT = false;
-    private static final double TELEMETRY_TRANSMISSION_INTERVAL_IN_MILLISECONDS = 11;
+    private static final boolean USE_LIMELIGHT = true;
+    private static final int TELEMETRY_TRANSMISSION_INTERVAL_IN_MILLISECONDS = 11;
     private static final double TICKS_PER_INCH = 50; // I am not sure the ticks per inch, go over calculations, this is placeholder
     private static final double MILLISECONDS_PER_TURN_DEGREE = 16.666; // Right now this is calculated based on 45 degrees taking 750ms to turn
     
@@ -49,7 +49,7 @@ public class RefinedBlueAuto extends LinearOpMode {
             if (USE_LIMELIGHT) { refreshLimeLight(); }
 
             // Move, shoot, and retreat!
-            move(Direction.FORWARD, 70, DRIVE_POWER)
+            move(Direction.FORWARD, 70, DRIVE_POWER);
             turn(Direction.LEFT, 45);
             shootArtifacts(3);
             turn(Direction.RIGHT, 45);
@@ -127,31 +127,31 @@ public class RefinedBlueAuto extends LinearOpMode {
             telemetry.addData("Botpose", botpose.toString());
 
             switch (desiredResultType) {
-                case LimeLightResultType.FIDUCIAL:
-                    List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
+                case FIDUCIAL:
+                    List<LLResultTypes.FiducialResult> fiducialResults = limeLightResult.getFiducialResults();
                     for (LLResultTypes.FiducialResult fr : fiducialResults) {
                         telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
                     }
                     break;
-                case LimeLightResultType.BARCODE:
+                case BARCODE:
                     List<LLResultTypes.BarcodeResult> barcodeResults = limeLightResult.getBarcodeResults();
                     for (LLResultTypes.BarcodeResult br : barcodeResults) {
                         telemetry.addData("Barcode", "Data: %s", br.getData());
                     }
                     break;
-                case LimeLightResultType.CLASSIFIER:
+                case CLASSIFIER:
                     List<LLResultTypes.ClassifierResult> classifierResults = limeLightResult.getClassifierResults();
                     for (LLResultTypes.ClassifierResult cr : classifierResults) {
                         telemetry.addData("Classifier", "Class: %s, Confidence: %.2f", cr.getClassName(), cr.getConfidence());
                     }
                     break;
-                case LimeLightResultType.DETECTOR:
+                case DETECTOR:
                     List<LLResultTypes.DetectorResult> detectorResults = limeLightResult.getDetectorResults();
                     for (LLResultTypes.DetectorResult dr : detectorResults) {
                         telemetry.addData("Detector", "Class: %s, Area: %.2f", dr.getClassName(), dr.getTargetArea());
                     }             
                     break;
-                case LimeLightResultType.COLOR:
+                case COLOR:
                     List<LLResultTypes.ColorResult> colorResults = limeLightResult.getColorResults();
                     for (LLResultTypes.ColorResult cr : colorResults) {
                         telemetry.addData("Color", "X: %.2f, Y: %.2f", cr.getTargetXDegrees(), cr.getTargetYDegrees());
@@ -222,7 +222,7 @@ public class RefinedBlueAuto extends LinearOpMode {
             motorBackRight.setPower(-TURN_POWER);
         }
 
-        sleep(degreesToTurn * MILLISECONDS_PER_TURN_DEGREE);
+        sleep((long)(degreesToTurn * MILLISECONDS_PER_TURN_DEGREE));
         stopMotors();
     }
 
@@ -257,7 +257,7 @@ public class RefinedBlueAuto extends LinearOpMode {
             feedArtifactFromIndexers();
             telemetry.addData("waiting for next shot", 100);
             telemetry.update();
-            sleep(delayBetweenShotsInMilliseconds);
+            sleep((long)delayBetweenShotsInMilliseconds);
         }
     }
 
@@ -266,7 +266,7 @@ public class RefinedBlueAuto extends LinearOpMode {
 
         indexer1.setPower(INDEXER_FEED_POWER);
         indexer2.setPower(-INDEXER_FEED_POWER);
-        sleep(timeToFeedInMilliseconds);
+        sleep((long)timeToFeedInMilliseconds);
         telemetry.addData("feed complete", 100);
         telemetry.update();
         indexer1.setPower(0);
