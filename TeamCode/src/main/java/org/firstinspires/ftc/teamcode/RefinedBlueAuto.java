@@ -14,8 +14,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.List;
 
-@Autonomous(name="Blue far auto", group="Autonomous")
-public class BasicAuto extends LinearOpMode {
+@Autonomous(name="Refined blue far auto", group="Autonomous")
+public class RefinedBlueAuto extends LinearOpMode {
 
     // Constants
     private static final double TELEMETRY_TRANSMISSION_INTERVAL_IN_MILLISECONDS = 11;
@@ -286,4 +286,5 @@ public class BasicAuto extends LinearOpMode {
         DETECTOR,
         COLOR
     }
+
 }
