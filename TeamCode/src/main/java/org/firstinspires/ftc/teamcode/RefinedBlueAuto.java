@@ -18,6 +18,7 @@ import java.util.List;
 public class RefinedBlueAuto extends LinearOpMode {
 
     // Constants
+    private static final boolean USE_LIMELIGHT = false;
     private static final double TELEMETRY_TRANSMISSION_INTERVAL_IN_MILLISECONDS = 11;
     private static final double TICKS_PER_INCH = 50; // I am not sure the ticks per inch, go over calculations, this is placeholder
     private static final double MILLISECONDS_PER_TURN_DEGREE = 16.666; // Right now this is calculated based on 45 degrees taking 750ms to turn
@@ -36,7 +37,7 @@ public class RefinedBlueAuto extends LinearOpMode {
     public void runOpMode() {
         mapHardware();
         initializeMotors();
-        initializeLimeLight();
+        if (USE_LIMELIGHT) { initializeLimeLight(); }
 
         telemetry.setMsTransmissionInterval(TELEMETRY_TRANSMISSION_INTERVAL_IN_MILLISECONDS);
         telemetry.addData(">", "Robot Ready.  Press Play.");
@@ -45,7 +46,7 @@ public class RefinedBlueAuto extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            refreshLimeLight()
+            if (USE_LIMELIGHT) { refreshLimeLight(); }
 
             // Move, shoot, and retreat!
             move(Direction.FORWARD, 70, DRIVE_POWER)
@@ -288,3 +289,4 @@ public class RefinedBlueAuto extends LinearOpMode {
     }
 
 }
+
