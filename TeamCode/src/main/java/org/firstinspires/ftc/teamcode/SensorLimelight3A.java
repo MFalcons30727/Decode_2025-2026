@@ -144,13 +144,6 @@ public class SensorLimelight3A extends LinearOpMode {
                     telemetry.addData("ID", fr.getFiducialId()) ;
                     telemetry.addData("target is", tagID);
 
-                    while(gamepad1.right_trigger > 1) {
-                        if (tagID == 24 ) {
-                            telemetry.addData("targetfound", tagID);
-                        }
-                    }
-
-
                 }
 
 //                // Access color results
@@ -158,22 +151,12 @@ public class SensorLimelight3A extends LinearOpMode {
 //                for (LLResultTypes.ColorResult cr : colorResults) {
 //                    telemetry.addData("Color", "X: %.2f, Y: %.2f", cr.getTargetXDegrees(), cr.getTargetYDegrees());
 //                }
-            } else {
+            }
+            else{
                 telemetry.addData("Limelight", "No data available");
             }
 
             telemetry.update();
-
-            if(gamepad1.aWasPressed()) {
-                if (tagID == 20 ) {
-                    telemetry.addData("targetfound", tagID);
-                }
-            }
-            else {
-
-
-
-            }
         }
         limelight.stop();
     }

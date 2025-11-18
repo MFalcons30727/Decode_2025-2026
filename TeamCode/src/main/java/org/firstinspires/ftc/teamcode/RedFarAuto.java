@@ -8,14 +8,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.List;
 
 @Autonomous(name="Red far auto", group="Autonomous")
-public class basicAuto2 extends LinearOpMode {
+public class RedFarAuto extends LinearOpMode {
 
     private DcMotor frontLeft, frontRight, backLeft, backRight;
 
@@ -28,9 +27,11 @@ public class basicAuto2 extends LinearOpMode {
     private CRServo indexer1 = null;
     private CRServo indexer2 = null;
     private Limelight3A limelight;
+    int tagID = 0;
 
     @Override
     public void runOpMode() {
+
 
         // Initialize motors
         frontLeft = hardwareMap.get(DcMotor.class, "leftFront");
@@ -47,8 +48,6 @@ public class basicAuto2 extends LinearOpMode {
         // Reset encoders
         resetEncoders();
 
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-
         telemetry.setMsTransmissionInterval(11);
 
         limelight.pipelineSwitch(0);
@@ -63,16 +62,9 @@ public class basicAuto2 extends LinearOpMode {
 
         waitForStart();
 
-        if (opModeIsActive()) {
+        while(opModeIsActive()) {
 
             LLStatus status = limelight.getStatus();
-            telemetry.addData("Name", "%s",
-                    status.getName());
-            telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
-                    status.getTemp(), status.getCpu(), (int) status.getFps());
-            telemetry.addData("Pipeline", "Index: %d, Type: %s",
-                    status.getPipelineIndex(), status.getPipelineType());
-
             LLResult result = limelight.getLatestResult();
             if (result.isValid()) {
                 // Access general information
@@ -80,62 +72,34 @@ public class basicAuto2 extends LinearOpMode {
                 double captureLatency = result.getCaptureLatency();
                 double targetingLatency = result.getTargetingLatency();
                 double parseLatency = result.getParseLatency();
-                telemetry.addData("LL Latency", captureLatency + targetingLatency);
-                telemetry.addData("Parse Latency", parseLatency);
-                telemetry.addData("PythonOutput", java.util.Arrays.toString(result.getPythonOutput()));
 
-                telemetry.addData("tx", result.getTx());
-                telemetry.addData("txnc", result.getTxNC());
-                telemetry.addData("ty", result.getTy());
-                telemetry.addData("tync", result.getTyNC());
-
-                telemetry.addData("Botpose", botpose.toString());
-
-//                // Access barcode results
-//                List<LLResultTypes.BarcodeResult> barcodeResults = result.getBarcodeResults();
-//                for (LLResultTypes.BarcodeResult br : barcodeResults) {
-//                    telemetry.addData("Barcode", "Data: %s", br.getData());
-//                }
-//
-//                 //Access classifier results
-//                List<LLResultTypes.ClassifierResult> classifierResults = result.getClassifierResults();
-//                for (LLResultTypes.ClassifierResult cr : classifierResults) {
-//                    telemetry.addData("Classifier", "Class: %s, Confidence: %.2f", cr.getClassName(), cr.getConfidence());
-//                }
-//
-//                 //Access detector results
-//                List<LLResultTypes.DetectorResult> detectorResults = result.getDetectorResults();
-//                for (LLResultTypes.DetectorResult dr : detectorResults) {
-//                    telemetry.addData("Detector", "Class: %s, Area: %.2f", dr.getClassName(), dr.getTargetArea());
-//                }
-
-                //Access fiducial results
                 List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
                 for (LLResultTypes.FiducialResult fr : fiducialResults) {
                     telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
-//                }
-//
-//                 //Access color results
-//                List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-//                for (LLResultTypes.ColorResult cr : colorResults) {
-//                    telemetry.addData("Color", "X: %.2f, Y: %.2f", cr.getTargetXDegrees(), cr.getTargetYDegrees());
+                    tagID = fr.getFiducialId();
+                    telemetry.addData("ID", fr.getFiducialId());
+                    telemetry.addData("target is", tagID);
+
+
+
                 }
-            } else {
+            }
+            else {
                 telemetry.addData("Limelight", "No data available");
             }
 
             telemetry.update();
-            limelight.stop();
-
-
             // steps being called
+            if (tagID == 21) {
+                moveForward(FORWARD_DISTANCE_INCHES, DRIVE_POWER);
+                turnRight45();
+                shoot();
+                turnLeft45();
+                moveForward(-20, DRIVE_POWER);
+            }
 
-            moveForward(FORWARD_DISTANCE_INCHES, DRIVE_POWER);
-            turnRight45();
-            shoot();
-            turnLeft45();
-            moveForward(-20, DRIVE_POWER);
         }
+        limelight.stop();
     }
 
     // --- Helper Functions ---
@@ -190,9 +154,9 @@ public class basicAuto2 extends LinearOpMode {
                 frontRight.isBusy() &&
                 backRight.isBusy()) {
             // Optional: telemetry here
-
-            telemetry.addData("Shoot Speed", shoot.getPower());
-            telemetry.update();
+//
+//            telemetry.addData("Shoot Speed", shoot.getPower());
+//            telemetry.update();
 
         }
 
