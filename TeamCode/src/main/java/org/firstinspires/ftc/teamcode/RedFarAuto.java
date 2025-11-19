@@ -8,14 +8,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.List;
 
-@Autonomous(name="Blue far auto", group="Autonomous")
-public class BasicAuto extends LinearOpMode {
+@Autonomous(name="Red far auto", group="Autonomous")
+public class RedFarAuto extends LinearOpMode {
 
     private DcMotor frontLeft, frontRight, backLeft, backRight;
 
@@ -109,7 +108,7 @@ public class BasicAuto extends LinearOpMode {
 //                    telemetry.addData("Detector", "Class: %s, Area: %.2f", dr.getClassName(), dr.getTargetArea());
 //                }
 
-                 //Access fiducial results
+                //Access fiducial results
                 List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
                 for (LLResultTypes.FiducialResult fr : fiducialResults) {
                     telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
@@ -131,9 +130,9 @@ public class BasicAuto extends LinearOpMode {
             // steps being called
 
             moveForward(FORWARD_DISTANCE_INCHES, DRIVE_POWER);
-            turnLeft45();
-            shoot();
             turnRight45();
+            shoot();
+            turnLeft45();
             moveForward(-20, DRIVE_POWER);
         }
     }
@@ -200,24 +199,24 @@ public class BasicAuto extends LinearOpMode {
     }
     // this turning function is very basic right now, but you get the idea. :)
     // also remember that turn_power is defined at the top as 0.5 so it can be easily reused, and it is constant
-    private void turnLeft45() {
-        // Simple time-based turn
-        frontLeft.setPower(-TURN_POWER);
-        backLeft.setPower(-TURN_POWER);
-        frontRight.setPower(TURN_POWER);
-        backRight.setPower(TURN_POWER);
-        //this is currently time based which is not ideal, but it works for now
-        sleep(750); // adjust for ~45° turn
-
-        stopMotors();
-    }
-
     private void turnRight45() {
         // Simple time-based turn
         frontLeft.setPower(TURN_POWER);
         backLeft.setPower(TURN_POWER);
         frontRight.setPower(-TURN_POWER);
         backRight.setPower(-TURN_POWER);
+        //this is currently time based which is not ideal, but it works for now
+        sleep(750); // adjust for ~45° turn
+
+        stopMotors();
+    }
+
+    private void turnLeft45() {
+        // Simple time-based turn
+        frontLeft.setPower(-TURN_POWER);
+        backLeft.setPower(-TURN_POWER);
+        frontRight.setPower(TURN_POWER);
+        backRight.setPower(TURN_POWER);
         //this is currently time based which is not ideal, but it works for now
         sleep(750); // adjust for ~45° turn
 
