@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -17,7 +18,7 @@ public class WorkingTeleOp extends LinearOpMode {
    // private DcMotor intake = null;
     private CRServo indexer1 = null;
     private CRServo indexer2 = null;
-    private DcMotor shoot = null;
+    private DcMotorEx shooter = null;
 
     @Override
     public void runOpMode() {
@@ -27,21 +28,19 @@ public class WorkingTeleOp extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "leftRear");
         backRightDrive = hardwareMap.get(DcMotor.class, "rightRear");
         //intake = hardwareMap.get(DcMotor.class, "intake");
-//        indexer1 = hardwareMap.servo.get("indexer1");
         indexer1 = hardwareMap.get(CRServo.class, "indexer1");
-//        indexer2 = hardwareMap.servo.get("indexer2");
         indexer2 = hardwareMap.get(CRServo.class, "indexer2");
-        shoot = hardwareMap.get(DcMotor.class, "shooter");
+        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
 
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        shoot.setDirection(DcMotor.Direction.REVERSE);
+        shooter.setDirection(DcMotorEx.Direction.REVERSE);
         indexer1.setDirection(CRServo.Direction.FORWARD);
         indexer2.setDirection(CRServo.Direction.REVERSE);
 
-        shoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooter.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
 
         //wait for start (then player presses START)
@@ -101,20 +100,19 @@ public class WorkingTeleOp extends LinearOpMode {
             }
 
             if(gamepad2.right_trigger > 0) {
-                shoot.setPower(shooterPower);
+                shooter.setMotorEnable();
+                shooter.setVelocity(shooterPower);
             }
             else {
-                shoot.setPower(0);
+                shooter.setVelocity(0);
+                shooter.setMotorDisable();
             }
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
-            telemetry.addData("Shoot Speed", shoot.getPower());
+            telemetry.addData("Shoot Speed", shooter.getPower());
             telemetry.update();
-
-
-
         }
     }
 

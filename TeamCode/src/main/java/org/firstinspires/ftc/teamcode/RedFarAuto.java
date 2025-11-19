@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
@@ -23,7 +24,7 @@ public class RedFarAuto extends LinearOpMode {
     private static final double FORWARD_DISTANCE_INCHES = 70; // change at practice, this is just a random placeholder for now
     private static final double DRIVE_POWER = 0.8; // how fast we want the robot for now
     private static final double TURN_POWER = 0.4; // how fast it will turn
-    private DcMotor shoot = null;
+    private DcMotorEx shooter = null;
     private CRServo indexer1 = null;
     private CRServo indexer2 = null;
     private Limelight3A limelight;
@@ -36,7 +37,7 @@ public class RedFarAuto extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "rightFront");
         backLeft = hardwareMap.get(DcMotor.class, "leftRear");
         backRight = hardwareMap.get(DcMotor.class, "rightRear");
-        shoot = hardwareMap.get(DcMotor.class, "shooter");
+        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         indexer1 = hardwareMap.get(CRServo.class, "indexer1");
         indexer2 = hardwareMap.get(CRServo.class, "indexer2");
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -144,7 +145,7 @@ public class RedFarAuto extends LinearOpMode {
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.FORWARD);
-        shoot.setDirection(DcMotor.Direction.REVERSE);
+        shooter.setDirection(DcMotorEx.Direction.REVERSE);
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -190,7 +191,7 @@ public class RedFarAuto extends LinearOpMode {
                 backRight.isBusy()) {
             // Optional: telemetry here
 
-            telemetry.addData("Shoot Speed", shoot.getPower());
+            telemetry.addData("Shoot Speed", shooter.getPower());
             telemetry.update();
 
         }
@@ -227,8 +228,9 @@ public class RedFarAuto extends LinearOpMode {
 
     private void shoot() {
 
-        shoot.setPower(0.53);
-        if (shoot.getPower() == 0.53){
+        shooter.setMotorEnable();
+        shooter.setVelocity(0.53);
+        if (shooter.getVelocity() == 0.53){
             sleep(3000);
             telemetry.addData("spinning Up", 100);
             telemetry.update();
