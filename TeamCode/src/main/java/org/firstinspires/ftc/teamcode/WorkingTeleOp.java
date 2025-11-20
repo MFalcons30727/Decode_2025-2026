@@ -101,7 +101,7 @@ public class WorkingTeleOp extends LinearOpMode {
 
             if(gamepad2.right_trigger > 0) {
                 shooter.setMotorEnable();
-                shooter.setVelocity(shooterPower);
+                shooter.setVelocity(1500);
             }
             else {
                 shooter.setVelocity(0);
