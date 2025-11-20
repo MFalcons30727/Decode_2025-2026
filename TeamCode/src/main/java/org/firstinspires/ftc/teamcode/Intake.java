@@ -9,24 +9,29 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "Intake Test", group = "linearOpMode" )
+@TeleOp(name = "Motor Test", group = "linearOpMode" )
 @Disabled
 public class Intake extends LinearOpMode {
 
-    private DcMotor intake = null;
+    private DcMotor motor1 = null;
+    private DcMotor motor2 = null;
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
 
-        DcMotor intake = hardwareMap.get(DcMotor.class, "intake");
+        motor1 = hardwareMap.get(DcMotor.class, "motor1");
+        motor2 = hardwareMap.get(DcMotor.class, "motor2");
 
         waitForStart();
         runtime.reset();
 
         while (opModeIsActive()) {
             if (gamepad1.right_bumper) {
-                intake.setPower(1);
+                motor1.setPower(1);
+            }
+            if (gamepad1.left_bumper) {
+                motor2.setPower(1);
             }
         }
     }
