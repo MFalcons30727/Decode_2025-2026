@@ -18,21 +18,21 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 public class PedroPathingRedFarAuto extends OpMode {
     // A state machine keeps track of what state or step is currently running
     public enum PathState {
-        MOVE_FROM_START_POS_TO_SHOOTING_LINE,
-        SHOOT_PRELOAD,
-        MOVE_FROM_SHOOTING_LINE_TO_TOP_RED_ARTIFACTS,
-        EAT_TOP_RED_ARTIFACTS,
-        MOVE_FROM_TOP_RED_ARTIFACTS_TO_SHOOTING_LINE,
-        SHOOT_TOP_RED_ARTIFACTS,
-        MOVE_FROM_SHOOTING_LINE_TO_MIDDLE_RED_ARTIFACTS,
-        EAT_MIDDLE_RED_ARTIFACTS,
-        MOVE_FROM_MIDDLE_RED_ARTIFACTS_TO_SHOOTING_LINE,
-        SHOOT_MIDDLE_RED_ARTIFACTS,
-        MOVE_FROM_SHOOTING_LINE_TO_BOTTOM_RED_ARTIFACTS,
-        EAT_BOTTOM_RED_ARTIFACTS,
-        MOVE_FROM_BOTTOM_RED_ARTIFACTS_TO_SHOOTING_LINE,
-        SHOOT_BOTTOM_RED_ARTIFACTS,
-        MOVE_FROM_SHOOTING_LINE_TO_RED_GATE
+        MOVE_FROM_START_POS_TO_SHOOTING_LINE//,
+//        SHOOT_PRELOAD,
+//        MOVE_FROM_SHOOTING_LINE_TO_TOP_RED_ARTIFACTS,
+//        EAT_TOP_RED_ARTIFACTS,
+//        MOVE_FROM_TOP_RED_ARTIFACTS_TO_SHOOTING_LINE,
+//        SHOOT_TOP_RED_ARTIFACTS,
+//        MOVE_FROM_SHOOTING_LINE_TO_MIDDLE_RED_ARTIFACTS,
+//        EAT_MIDDLE_RED_ARTIFACTS,
+//        MOVE_FROM_MIDDLE_RED_ARTIFACTS_TO_SHOOTING_LINE,
+//        SHOOT_MIDDLE_RED_ARTIFACTS,
+//        MOVE_FROM_SHOOTING_LINE_TO_BOTTOM_RED_ARTIFACTS,
+//        EAT_BOTTOM_RED_ARTIFACTS,
+//        MOVE_FROM_BOTTOM_RED_ARTIFACTS_TO_SHOOTING_LINE,
+//        SHOOT_BOTTOM_RED_ARTIFACTS,
+//        MOVE_FROM_SHOOTING_LINE_TO_RED_GATE
     }
 
     // these are all the poses we are going to be in
@@ -119,81 +119,81 @@ public class PedroPathingRedFarAuto extends OpMode {
         switch (currentPathState){
             case MOVE_FROM_START_POS_TO_SHOOTING_LINE:
                     follower.followPath(redFarStartToRedShootingPath, true);
-                    setPathState(PathState.SHOOT_PRELOAD); // reset timer, new state
+//                    setPathState(PathState.SHOOT_PRELOAD); // reset timer, new state
                     break;
-            case SHOOT_PRELOAD:
-                if (!follower.isBusy()) {
-                    shoot(); // in our shoot() function, we should set currentlyShooting to true until all 3 shots are done
-                    setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_TOP_RED_ARTIFACTS);
-                }
-                break;
-            case MOVE_FROM_SHOOTING_LINE_TO_TOP_RED_ARTIFACTS:
-                if (!follower.isBusy() && !currentlyShooting){
-                    follower.followPath(redShootingToRedTopArtifactsPath, true);
-                }
-                break;
-            case EAT_TOP_RED_ARTIFACTS:
-                if (!follower.isBusy()){
-                    follower.followPath(eatTopRedArtifactsPath, true);
-                }
-                break;
-            case MOVE_FROM_TOP_RED_ARTIFACTS_TO_SHOOTING_LINE:
-                if (!follower.isBusy()){
-                    follower.followPath(returnToRedShootingLineFromRedTopArtifactsPath, true);
-                }
-                break;
-            case SHOOT_TOP_RED_ARTIFACTS:
-                if (!follower.isBusy()) {
-                    shoot(); // in our shoot() function, we should set currentlyShooting to true until all 3 shots are done
-                    setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_MIDDLE_RED_ARTIFACTS);
-                }
-                break;
-            case MOVE_FROM_SHOOTING_LINE_TO_MIDDLE_RED_ARTIFACTS:
-                if (!follower.isBusy() && !currentlyShooting){
-                    follower.followPath(redShootingToRedMiddleArtifactsPath, true);
-                }
-                break;
-            case EAT_MIDDLE_RED_ARTIFACTS:
-                if (!follower.isBusy()){
-                    follower.followPath(eatMiddleRedArtifactsPath, true);
-                }
-                break;
-            case MOVE_FROM_MIDDLE_RED_ARTIFACTS_TO_SHOOTING_LINE:
-                if (!follower.isBusy()){
-                    follower.followPath(returnToRedShootingLineFromRedMiddleArtifactsPath, true);
-                }
-            case SHOOT_MIDDLE_RED_ARTIFACTS:
-                if (!follower.isBusy()) {
-                    shoot(); // in our shoot() function, we should set currentlyShooting to true until all 3 shots are done
-                    setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_BOTTOM_RED_ARTIFACTS);
-                }
-                break;
-            case MOVE_FROM_SHOOTING_LINE_TO_BOTTOM_RED_ARTIFACTS:
-                if (!follower.isBusy() && !currentlyShooting){
-                    follower.followPath(redShootingToRedBottomArtifactsPath, true);
-                }
-                break;
-            case EAT_BOTTOM_RED_ARTIFACTS:
-                if (!follower.isBusy()){
-                    follower.followPath(eatBottomRedArtifactsPath, true);
-                }
-                break;
-            case MOVE_FROM_BOTTOM_RED_ARTIFACTS_TO_SHOOTING_LINE:
-                if (!follower.isBusy()){
-                    follower.followPath(returnToRedShootingLineFromRedBottomArtifactsPath, true);
-                }
-                break;
-            case SHOOT_BOTTOM_RED_ARTIFACTS:
-                if (!follower.isBusy()) {
-                    shoot(); // in our shoot() function, we should set currentlyShooting to true until all 3 shots are done
-                    setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_RED_GATE);
-                }
-                break;
-            case MOVE_FROM_SHOOTING_LINE_TO_RED_GATE:
-                if (!follower.isBusy() && !currentlyShooting){
-                    follower.followPath(parkAtRedGatePath, true);
-                }
-                break;
+//            case SHOOT_PRELOAD:
+//                if (!follower.isBusy()) {
+//                    shoot(); // in our shoot() function, we should set currentlyShooting to true until all 3 shots are done
+//                    setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_TOP_RED_ARTIFACTS);
+//                }
+//                break;
+//            case MOVE_FROM_SHOOTING_LINE_TO_TOP_RED_ARTIFACTS:
+//                if (!follower.isBusy() && !currentlyShooting){
+//                    follower.followPath(redShootingToRedTopArtifactsPath, true);
+//                }
+//                break;
+//            case EAT_TOP_RED_ARTIFACTS:
+//                if (!follower.isBusy()){
+//                    follower.followPath(eatTopRedArtifactsPath, true);
+//                }
+//                break;
+//            case MOVE_FROM_TOP_RED_ARTIFACTS_TO_SHOOTING_LINE:
+//                if (!follower.isBusy()){
+//                    follower.followPath(returnToRedShootingLineFromRedTopArtifactsPath, true);
+//                }
+//                break;
+//            case SHOOT_TOP_RED_ARTIFACTS:
+//                if (!follower.isBusy()) {
+//                    shoot(); // in our shoot() function, we should set currentlyShooting to true until all 3 shots are done
+//                    setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_MIDDLE_RED_ARTIFACTS);
+//                }
+//                break;
+//            case MOVE_FROM_SHOOTING_LINE_TO_MIDDLE_RED_ARTIFACTS:
+//                if (!follower.isBusy() && !currentlyShooting){
+//                    follower.followPath(redShootingToRedMiddleArtifactsPath, true);
+//                }
+//                break;
+//            case EAT_MIDDLE_RED_ARTIFACTS:
+//                if (!follower.isBusy()){
+//                    follower.followPath(eatMiddleRedArtifactsPath, true);
+//                }
+//                break;
+//            case MOVE_FROM_MIDDLE_RED_ARTIFACTS_TO_SHOOTING_LINE:
+//                if (!follower.isBusy()){
+//                    follower.followPath(returnToRedShootingLineFromRedMiddleArtifactsPath, true);
+//                }
+//            case SHOOT_MIDDLE_RED_ARTIFACTS:
+//                if (!follower.isBusy()) {
+//                    shoot(); // in our shoot() function, we should set currentlyShooting to true until all 3 shots are done
+//                    setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_BOTTOM_RED_ARTIFACTS);
+//                }
+//                break;
+//            case MOVE_FROM_SHOOTING_LINE_TO_BOTTOM_RED_ARTIFACTS:
+//                if (!follower.isBusy() && !currentlyShooting){
+//                    follower.followPath(redShootingToRedBottomArtifactsPath, true);
+//                }
+//                break;
+//            case EAT_BOTTOM_RED_ARTIFACTS:
+//                if (!follower.isBusy()){
+//                    follower.followPath(eatBottomRedArtifactsPath, true);
+//                }
+//                break;
+//            case MOVE_FROM_BOTTOM_RED_ARTIFACTS_TO_SHOOTING_LINE:
+//                if (!follower.isBusy()){
+//                    follower.followPath(returnToRedShootingLineFromRedBottomArtifactsPath, true);
+//                }
+//                break;
+//            case SHOOT_BOTTOM_RED_ARTIFACTS:
+//                if (!follower.isBusy()) {
+//                    shoot(); // in our shoot() function, we should set currentlyShooting to true until all 3 shots are done
+//                    setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_RED_GATE);
+//                }
+//                break;
+//            case MOVE_FROM_SHOOTING_LINE_TO_RED_GATE:
+//                if (!follower.isBusy() && !currentlyShooting){
+//                    follower.followPath(parkAtRedGatePath, true);
+//                }
+//                break;
             default:
                 telemetry.addLine("no state right now");
                 break;

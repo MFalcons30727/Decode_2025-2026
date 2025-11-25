@@ -22,16 +22,16 @@ public class Constants {
             .forwardZeroPowerAcceleration(-32.62296532427744)
             .lateralZeroPowerAcceleration(-55.017228794291604)
             // the PIDF needs to be tuned accordingly, these are also placeholders
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.08, 0, 0.001, 0.02))
-            .headingPIDFCoefficients(new PIDFCoefficients(0.71, 0, 0.002, 0.025))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.6, 0.0, 0.0001, 0.6, 0.025))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.06, 0, 0.0001, 0.025))
+            .headingPIDFCoefficients(new PIDFCoefficients(0.7, 0, 0.0001, 0.03))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.06, 0, 0.0001, 1, 0.0025))
             //centripetal scaling is for curves, doesn't matter as much.
             .centripetalScaling(0.0005);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
             .rightFrontMotorName("rightFront")
-            .rightRearMotorName("rightRear")
+            .rightRearMotorName("right Rear")
             .leftRearMotorName("leftRear")
             .leftFrontMotorName("leftFront")
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
@@ -50,7 +50,10 @@ public class Constants {
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.99,
+            100,
+            4,
+            1);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
