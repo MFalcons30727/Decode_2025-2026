@@ -32,7 +32,8 @@ public class PedroPathingRedFarAuto extends OpMode {
         EAT_BOTTOM_RED_ARTIFACTS,
         MOVE_FROM_BOTTOM_RED_ARTIFACTS_TO_SHOOTING_LINE,
         SHOOT_BOTTOM_RED_ARTIFACTS,
-        MOVE_FROM_SHOOTING_LINE_TO_RED_GATE
+        MOVE_FROM_SHOOTING_LINE_TO_RED_GATE,
+        DONE
     }
 
     // these are all the poses we are going to be in
@@ -68,7 +69,6 @@ public class PedroPathingRedFarAuto extends OpMode {
 
 
     public void buildPaths(){
-
         redFarStartToRedShootingPath = follower.pathBuilder()
                 .addPath(new BezierLine(redFarStartPose, redShootingPose))
                 .setLinearHeadingInterpolation(redFarStartPose.getHeading(), redShootingPose.getHeading())
@@ -118,9 +118,9 @@ public class PedroPathingRedFarAuto extends OpMode {
     public void statePathUpdate(){
         switch (currentPathState){
             case MOVE_FROM_START_POS_TO_SHOOTING_LINE:
-                    follower.followPath(redFarStartToRedShootingPath, true);
-                    setPathState(PathState.SHOOT_PRELOAD); // reset timer, new state
-                    break;
+                follower.followPath(redFarStartToRedShootingPath, true);
+                setPathState(PathState.SHOOT_PRELOAD); // reset timer, new state
+                break;
             case SHOOT_PRELOAD:
                 if (!follower.isBusy()) {
                     shoot(); // in our shoot() function, we should set currentlyShooting to true until all 3 shots are done
@@ -130,16 +130,19 @@ public class PedroPathingRedFarAuto extends OpMode {
             case MOVE_FROM_SHOOTING_LINE_TO_TOP_RED_ARTIFACTS:
                 if (!follower.isBusy() && !currentlyShooting){
                     follower.followPath(redShootingToRedTopArtifactsPath, true);
+                    setPathState(PathState.EAT_TOP_RED_ARTIFACTS);
                 }
                 break;
             case EAT_TOP_RED_ARTIFACTS:
                 if (!follower.isBusy()){
                     follower.followPath(eatTopRedArtifactsPath, true);
+                    setPathState(PathState.MOVE_FROM_TOP_RED_ARTIFACTS_TO_SHOOTING_LINE);
                 }
                 break;
             case MOVE_FROM_TOP_RED_ARTIFACTS_TO_SHOOTING_LINE:
                 if (!follower.isBusy()){
                     follower.followPath(returnToRedShootingLineFromRedTopArtifactsPath, true);
+                    setPathState(PathState.SHOOT_TOP_RED_ARTIFACTS);
                 }
                 break;
             case SHOOT_TOP_RED_ARTIFACTS:
@@ -151,16 +154,19 @@ public class PedroPathingRedFarAuto extends OpMode {
             case MOVE_FROM_SHOOTING_LINE_TO_MIDDLE_RED_ARTIFACTS:
                 if (!follower.isBusy() && !currentlyShooting){
                     follower.followPath(redShootingToRedMiddleArtifactsPath, true);
+                    setPathState(PathState.EAT_MIDDLE_RED_ARTIFACTS);
                 }
                 break;
             case EAT_MIDDLE_RED_ARTIFACTS:
                 if (!follower.isBusy()){
                     follower.followPath(eatMiddleRedArtifactsPath, true);
+                    setPathState(PathState.MOVE_FROM_MIDDLE_RED_ARTIFACTS_TO_SHOOTING_LINE);
                 }
                 break;
             case MOVE_FROM_MIDDLE_RED_ARTIFACTS_TO_SHOOTING_LINE:
                 if (!follower.isBusy()){
                     follower.followPath(returnToRedShootingLineFromRedMiddleArtifactsPath, true);
+                    setPathState(PathState.SHOOT_MIDDLE_RED_ARTIFACTS);
                 }
             case SHOOT_MIDDLE_RED_ARTIFACTS:
                 if (!follower.isBusy()) {
@@ -171,16 +177,19 @@ public class PedroPathingRedFarAuto extends OpMode {
             case MOVE_FROM_SHOOTING_LINE_TO_BOTTOM_RED_ARTIFACTS:
                 if (!follower.isBusy() && !currentlyShooting){
                     follower.followPath(redShootingToRedBottomArtifactsPath, true);
+                    setPathState(PathState.EAT_BOTTOM_RED_ARTIFACTS);
                 }
                 break;
             case EAT_BOTTOM_RED_ARTIFACTS:
                 if (!follower.isBusy()){
                     follower.followPath(eatBottomRedArtifactsPath, true);
+                    setPathState(PathState.MOVE_FROM_BOTTOM_RED_ARTIFACTS_TO_SHOOTING_LINE);
                 }
                 break;
             case MOVE_FROM_BOTTOM_RED_ARTIFACTS_TO_SHOOTING_LINE:
                 if (!follower.isBusy()){
                     follower.followPath(returnToRedShootingLineFromRedBottomArtifactsPath, true);
+                    setPathState(PathState.SHOOT_BOTTOM_RED_ARTIFACTS);
                 }
                 break;
             case SHOOT_BOTTOM_RED_ARTIFACTS:
@@ -192,6 +201,7 @@ public class PedroPathingRedFarAuto extends OpMode {
             case MOVE_FROM_SHOOTING_LINE_TO_RED_GATE:
                 if (!follower.isBusy() && !currentlyShooting){
                     follower.followPath(parkAtRedGatePath, true);
+                    setPathState(PathState.DONE);
                 }
                 break;
             default:
@@ -219,9 +229,10 @@ public class PedroPathingRedFarAuto extends OpMode {
         // TODO add any other init stuff like flywheels or limelight
 
         buildPaths();
-        follower.setPose(redFarStartPose);
+        follower.setStartingPose(redFarStartPose);
     }
 
+    @Override
     public void start() {
         opModeTimer.resetTimer();
         setPathState(currentPathState);
@@ -240,10 +251,10 @@ public class PedroPathingRedFarAuto extends OpMode {
     }
 
     public void shoot() {
-        currentlyShooting = true;
-
         // when done shooting, set currentlyShooting back to false so that the next state can happen
-        currentlyShooting = false;
+        // for now, just wait 10 seconds before continuing to next step
+        if (pathTimer.getElapsedTimeSeconds() < 3) { currentlyShooting = true; }
+        else { currentlyShooting = false; }
     }
 
 }
