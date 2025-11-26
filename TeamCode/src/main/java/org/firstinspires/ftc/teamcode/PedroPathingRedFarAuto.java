@@ -40,7 +40,7 @@ public class PedroPathingRedFarAuto extends OpMode {
     private final Pose redFarStartPose = new Pose(48, 8, Math.toRadians(90));
     private final Pose redShootingPose = new Pose (48, 96, Math.toRadians(135));
     private final Pose redTopArtifactsPose = new Pose (41, 84,  Math.toRadians(180));
-    private final Pose eatTopRedArtifactsPose = new Pose (19, 84,  Math.toRadians(180));
+    private final Pose eatTopRedArtifactsPose = new Pose (20, 84,  Math.toRadians(180));
     private final Pose redMiddleArtifactsPose = new Pose (42, 60,  Math.toRadians(180));
     private final Pose eatMiddleRedArtifactsPose = new Pose (19, 60,  Math.toRadians(180));
     private final Pose redBottomArtifactsPose = new Pose (42, 36, Math.toRadians(180));
