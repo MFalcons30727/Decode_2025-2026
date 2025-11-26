@@ -52,7 +52,7 @@ public class Pinpoint extends OpMode {
     public void configurePinpoint(){
 
         // forward of center is positive, backwards is negative. I'm not too sure how to measure offsets
-        pinpoint.setOffsets(-84.0, -168.0, DistanceUnit.MM); //these are tuned for 3110-0002-0001 Product Insight #1
+        pinpoint.setOffsets(8.8, 25.5, DistanceUnit.CM); //these are tuned for 3110-0002-0001 Product Insight #1
 
         // the type we are using, not too sure
         pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
