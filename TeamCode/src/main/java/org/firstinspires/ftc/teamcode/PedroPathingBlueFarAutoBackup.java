@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 // https://pedropathing.com/docs/pathing/dashboard
 
 @Autonomous
-public class PedroPathingRedFarAuto extends OpMode {
+public class PedroPathingBlueFarAutoBackup extends OpMode {
     // A state machine keeps track of what state or step is currently running
     public enum PathState {
         MOVE_FROM_START_POS_TO_SHOOTING_LINE,
