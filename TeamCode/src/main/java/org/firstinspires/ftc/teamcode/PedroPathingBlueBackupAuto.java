@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 // https://pedropathing.com/docs/pathing/dashboard
 
 @Autonomous
-public class PedroPathingBlueFarAuto extends OpMode {
+public class PedroPathingBlueBackupAuto extends OpMode {
     // A state machine keeps track of what state or step is currently running
     public enum PathState {
         MOVE_FROM_START_POS_TO_SHOOTING_LINE,
@@ -37,7 +37,7 @@ public class PedroPathingBlueFarAuto extends OpMode {
     }
 
     // these are all the poses we are going to be in
-    private final Pose blueFarStartPose = new Pose(48, 8, Math.toRadians(90));
+    private final Pose blueBackupStartPose = new Pose(22, 125, Math.toRadians(135));
     private final Pose blueShootingPose = new Pose (48, 96, Math.toRadians(135));
     private final Pose blueTopArtifactsPose = new Pose (41, 84,  Math.toRadians(180));
     private final Pose eatTopBlueArtifactsPose = new Pose (20, 84,  Math.toRadians(180));
@@ -54,7 +54,7 @@ public class PedroPathingBlueFarAuto extends OpMode {
     private PathState currentPathState;
     private ShooterMcGavin shooter;
 
-    private PathChain blueFarStartToBlueShootingPath;
+    private PathChain blueBackupStartToBlueShootingPath;
     private PathChain blueShootingToBlueTopArtifactsPath;
     private PathChain eatTopBlueArtifactsPath;
     private PathChain returnToBlueShootingLineFromBlueTopArtifactsPath;
@@ -69,9 +69,9 @@ public class PedroPathingBlueFarAuto extends OpMode {
 
 
     public void buildPaths(){
-        blueFarStartToBlueShootingPath = follower.pathBuilder()
-                .addPath(new BezierLine(blueFarStartPose, blueShootingPose))
-                .setLinearHeadingInterpolation(blueFarStartPose.getHeading(), blueShootingPose.getHeading())
+        blueBackupStartToBlueShootingPath = follower.pathBuilder()
+                .addPath(new BezierLine(blueBackupStartPose, blueShootingPose))
+                .setLinearHeadingInterpolation(blueBackupStartPose.getHeading(), blueShootingPose.getHeading())
                 .build();
         blueShootingToBlueTopArtifactsPath = follower.pathBuilder()
                 .addPath(new BezierLine(blueShootingPose, blueTopArtifactsPose))
@@ -118,12 +118,12 @@ public class PedroPathingBlueFarAuto extends OpMode {
     public void statePathUpdate(){
         switch (currentPathState){
             case MOVE_FROM_START_POS_TO_SHOOTING_LINE:
-                follower.followPath(blueFarStartToBlueShootingPath, true);
+                follower.followPath(blueBackupStartToBlueShootingPath, true);
                 setPathState(PathState.SHOOT_PRELOAD); // reset timer, new state
                 break;
             case SHOOT_PRELOAD:
                 if (!follower.isBusy()) {
-                    shooter.startShooting();
+                    shooter.startShooting(); // in our shoot() function, we should set currentlyShooting to true until all 3 shots are done
                     setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_TOP_BLUE_ARTIFACTS);
                 }
                 break;
@@ -147,7 +147,7 @@ public class PedroPathingBlueFarAuto extends OpMode {
                 break;
             case SHOOT_TOP_BLUE_ARTIFACTS:
                 if (!follower.isBusy()) {
-                    shooter.startShooting();
+                    shooter.startShooting(); // in our shoot() function, we should set currentlyShooting to true until all 3 shots are done
                     setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_MIDDLE_BLUE_ARTIFACTS);
                 }
                 break;
@@ -230,7 +230,7 @@ public class PedroPathingBlueFarAuto extends OpMode {
         // TODO add any other init stuff like flywheels or limelight
 
         buildPaths();
-        follower.setStartingPose(blueFarStartPose);
+        follower.setStartingPose(blueBackupStartPose);
     }
 
     @Override
