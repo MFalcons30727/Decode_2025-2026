@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -18,11 +20,11 @@ public class ShooterMcGavin {
         STOP_FEEDING // stop indexers so the shooter has time to get back to the SHOOTER_TARGET_VELOCITY
     }
 
-    private static final double SHOOTER_TARGET_VELOCITY = 1000; // the velocity we want our shooter to be set to
-    private static final double SHOOTER_ACCEPTABLE_VELOCITY_ERROR = 100; // in case the shooter motor isn't able to reach that exact velocity, allow it to still shoot when being this close to the target velocity
+    private static final double SHOOTER_TARGET_VELOCITY = 1200; // the velocity we want our shooter to be set to
+    private static final double SHOOTER_ACCEPTABLE_VELOCITY_ERROR = 50; // in case the shooter motor isn't able to reach that exact velocity, allow it to still shoot when being this close to the target velocity
     private static final double TIME_TO_FEED_IN_MILLISECONDS = 500; // this is how long it takes our indexers to feed one artifact through (the time between starting and stopping the indexers)
     private static final double FEEDER_POWER = 0.6; // the power we send to the indexer servos to feed
-    private static final double STEP_TIMEOUT_IN_MILLISECONDS = 5000;
+    private static final double STEP_TIMEOUT_IN_MILLISECONDS = 2000;
     private final DcMotorEx shootMotor;
     private final CRServo indexer1, indexer2;
     private ElapsedTime shootStateTimer; // tried to use the Pedro Pathing timer first but it didn't allow for milliseconds, only seconds
@@ -39,6 +41,7 @@ public class ShooterMcGavin {
         shotsFired = 0;
 
         shootMotor.setDirection(DcMotorEx.Direction.REVERSE);
+        indexer2.setDirection(CRServo.Direction.REVERSE);
     }
 
     private void setShootingState(ShootingState newState) {
@@ -64,7 +67,7 @@ public class ShooterMcGavin {
                 break;
             case WAIT_FOR_TARGET_VELOCITY: // wait until we're close to the target velocity for the shooter
                 if (Math.abs(shootMotor.getVelocity() - SHOOTER_TARGET_VELOCITY) < SHOOTER_ACCEPTABLE_VELOCITY_ERROR
-                        || shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) { // this makes sure the auto doesn't fail completely if it's not able to ever reach target velocity
+                        && shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) { // this makes sure the auto doesn't fail completely if it's not able to ever reach target velocity
                     setShootingState(ShootingState.START_FEEDING);
                 }
                 break;

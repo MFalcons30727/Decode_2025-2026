@@ -37,14 +37,15 @@ public class PedroPathingRedBackupAuto extends OpMode {
     }
 
     // these are all the poses we are going to be in
+    // x starting pose in 122, 123
     private final Pose redBackupStartPose = new Pose(122, 123, Math.toRadians(45));
     private final Pose redShootingPose = new Pose (96, 96, Math.toRadians(45));
-    private final Pose redTopArtifactsPose = new Pose (102, 84,  Math.toRadians(0));
-    private final Pose eatTopRedArtifactsPose = new Pose (124, 84,  Math.toRadians(0));
-    private final Pose redMiddleArtifactsPose = new Pose (102, 60,  Math.toRadians(0));
-    private final Pose eatMiddleRedArtifactsPose = new Pose (122, 60,  Math.toRadians(0));
-    private final Pose redBottomArtifactsPose = new Pose (102, 36, Math.toRadians(0));
-    private final Pose eatBottomRedArtifactsPose = new Pose (122,36, Math.toRadians(0));
+    private final Pose redTopArtifactsPose = new Pose (90, 80,  Math.toRadians(0));
+    private final Pose eatTopRedArtifactsPose = new Pose (100, 80,  Math.toRadians(0));
+    private final Pose redMiddleArtifactsPose = new Pose (90, 56,  Math.toRadians(0));
+    private final Pose eatMiddleRedArtifactsPose = new Pose (100, 56,  Math.toRadians(0));
+    private final Pose redBottomArtifactsPose = new Pose (90, 32, Math.toRadians(0));
+    private final Pose eatBottomRedArtifactsPose = new Pose (100,32, Math.toRadians(0));
     private final Pose parkRedGatePose = new Pose (120,70, Math.toRadians(180));
 
 
