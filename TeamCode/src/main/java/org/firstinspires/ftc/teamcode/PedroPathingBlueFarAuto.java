@@ -128,78 +128,78 @@ public class PedroPathingBlueFarAuto extends OpMode {
                 }
                 break;
             case MOVE_FROM_SHOOTING_LINE_TO_TOP_BLUE_ARTIFACTS:
-                if (!follower.isBusy() && !shooter.isShooting()){
+                if (!follower.isBusy() && !shooter.isShooting() && pathTimer.getElapsedTimeSeconds() > 1){
                     follower.followPath(blueShootingToBlueTopArtifactsPath, true);
                     setPathState(PathState.EAT_TOP_BLUE_ARTIFACTS);
                 }
                 break;
             case EAT_TOP_BLUE_ARTIFACTS:
-                if (!follower.isBusy()){
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1){
                     follower.followPath(eatTopBlueArtifactsPath, true);
                     setPathState(PathState.MOVE_FROM_TOP_BLUE_ARTIFACTS_TO_SHOOTING_LINE);
                 }
                 break;
             case MOVE_FROM_TOP_BLUE_ARTIFACTS_TO_SHOOTING_LINE:
-                if (!follower.isBusy()){
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1){
                     follower.followPath(returnToBlueShootingLineFromBlueTopArtifactsPath, true);
                     setPathState(PathState.SHOOT_TOP_BLUE_ARTIFACTS);
                 }
                 break;
             case SHOOT_TOP_BLUE_ARTIFACTS:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1) {
                     shooter.startShooting();
                     setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_MIDDLE_BLUE_ARTIFACTS);
                 }
                 break;
             case MOVE_FROM_SHOOTING_LINE_TO_MIDDLE_BLUE_ARTIFACTS:
-                if (!follower.isBusy() && !shooter.isShooting()){
+                if (!follower.isBusy() && !shooter.isShooting() && pathTimer.getElapsedTimeSeconds() > 1){
                     follower.followPath(blueShootingToBlueMiddleArtifactsPath, true);
                     setPathState(PathState.EAT_MIDDLE_BLUE_ARTIFACTS);
                 }
                 break;
             case EAT_MIDDLE_BLUE_ARTIFACTS:
-                if (!follower.isBusy()){
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1){
                     follower.followPath(eatMiddleBlueArtifactsPath, true);
                     setPathState(PathState.MOVE_FROM_MIDDLE_BLUE_ARTIFACTS_TO_SHOOTING_LINE);
                 }
                 break;
             case MOVE_FROM_MIDDLE_BLUE_ARTIFACTS_TO_SHOOTING_LINE:
-                if (!follower.isBusy()){
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1){
                     follower.followPath(returnToBlueShootingLineFromBlueMiddleArtifactsPath, true);
                     setPathState(PathState.SHOOT_MIDDLE_BLUE_ARTIFACTS);
                 }
             case SHOOT_MIDDLE_BLUE_ARTIFACTS:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1) {
                     shooter.startShooting(); // in our shoot() function, we should set currentlyShooting to true until all 3 shots are done
                     setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_BOTTOM_BLUE_ARTIFACTS);
                 }
                 break;
             case MOVE_FROM_SHOOTING_LINE_TO_BOTTOM_BLUE_ARTIFACTS:
-                if (!follower.isBusy() && !shooter.isShooting()){
+                if (!follower.isBusy() && !shooter.isShooting() && pathTimer.getElapsedTimeSeconds() > 1){
                     follower.followPath(blueShootingToBlueBottomArtifactsPath, true);
                     setPathState(PathState.EAT_BOTTOM_BLUE_ARTIFACTS);
                 }
                 break;
             case EAT_BOTTOM_BLUE_ARTIFACTS:
-                if (!follower.isBusy()){
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1){
                     follower.followPath(eatBottomBlueArtifactsPath, true);
                     setPathState(PathState.MOVE_FROM_BOTTOM_BLUE_ARTIFACTS_TO_SHOOTING_LINE);
                 }
                 break;
             case MOVE_FROM_BOTTOM_BLUE_ARTIFACTS_TO_SHOOTING_LINE:
-                if (!follower.isBusy()){
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1){
                     follower.followPath(returnToBlueShootingLineFromBlueBottomArtifactsPath, true);
                     setPathState(PathState.SHOOT_BOTTOM_BLUE_ARTIFACTS);
                 }
                 break;
             case SHOOT_BOTTOM_BLUE_ARTIFACTS:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1) {
                     shooter.startShooting(); // in our shoot() function, we should set currentlyShooting to true until all 3 shots are done
                     setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_GATE);
                 }
                 break;
             case MOVE_FROM_SHOOTING_LINE_TO_BLUE_GATE:
-                if (!follower.isBusy() && !shooter.isShooting()){
+                if (!follower.isBusy() && !shooter.isShooting() && pathTimer.getElapsedTimeSeconds() > 1){
                     follower.followPath(parkAtBlueGatePath, true);
                     setPathState(PathState.DONE);
                 }

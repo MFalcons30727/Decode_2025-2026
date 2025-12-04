@@ -128,7 +128,7 @@ public class PedroPathingBlueFarAutoBackup extends OpMode {
                 }
                 break;
             case MOVE_FROM_SHOOTING_LINE_TO_TOP_RED_ARTIFACTS:
-                if (!follower.isBusy() && !currentlyShooting){
+                if (!follower.isBusy() && !currentlyShooting ){
                     follower.followPath(redShootingToRedTopArtifactsPath, true);
                     setPathState(PathState.EAT_TOP_RED_ARTIFACTS);
                 }
