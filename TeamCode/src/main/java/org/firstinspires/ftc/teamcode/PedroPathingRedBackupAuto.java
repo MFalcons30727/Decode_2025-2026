@@ -227,7 +227,7 @@ public class PedroPathingRedBackupAuto extends OpMode {
         pathTimer = new Timer();
         opModeTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
-        shooter = new ShooterMcGavin(hardwareMap);
+        shooter = new ShooterMcGavin(hardwareMap, telemetry);
         // TODO add any other init stuff like flywheels or limelight
 
         buildPaths();

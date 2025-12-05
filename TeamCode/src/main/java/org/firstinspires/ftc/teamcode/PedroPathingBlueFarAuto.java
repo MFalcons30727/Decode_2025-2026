@@ -122,7 +122,7 @@ public class PedroPathingBlueFarAuto extends OpMode {
                 setPathState(PathState.SHOOT_PRELOAD); // reset timer, new state
                 break;
             case SHOOT_PRELOAD:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1) {
                     shooter.startShooting();
                     setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_TOP_BLUE_ARTIFACTS);
                 }
