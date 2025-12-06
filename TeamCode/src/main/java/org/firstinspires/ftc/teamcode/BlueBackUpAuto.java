@@ -15,19 +15,19 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 // https://pedropathing.com/docs/pathing/dashboard
 
 @Autonomous
-public class RedFarAuto extends OpMode {
+public class BlueBackUpAuto extends OpMode {
     // A state machine keeps track of what state or step is currently running
     public enum PathState {
         MOVE_FROM_START_POS_TO_SHOOTING_LINE,
         SHOOT_PRELOAD,
-        MOVE_FROM_SHOOTING_LINE_TO_RED_GATE,
+        MOVE_FROM_SHOOTING_LINE_TO_BLUE_GATE,
         DONE
     }
 
     // these are all the poses we are going to be in
-    private final Pose redFarStartPose = new Pose(96, 8, Math.toRadians(90));
-    private final Pose redShootingPose = new Pose (96, 96, Math.toRadians(45));
-    private final Pose parkRedGatePose = new Pose (120,70, Math.toRadians(180));
+    private final Pose blueBackupStartPose = new Pose(22, 125, Math.toRadians(135));
+    private final Pose blueShootingPose = new Pose (49, 96, Math.toRadians(135));
+    private final Pose parkBlueGatePose = new Pose (49,62, Math.toRadians(180));
 
 
 
@@ -36,37 +36,37 @@ public class RedFarAuto extends OpMode {
     private PathState currentPathState;
     private ShooterMcGavin shooter;
 
-    private PathChain redFarStartToRedShootingPath;
-    private PathChain parkAtRedGatePath;
+    private PathChain blueBackupStartToBlueShootingPath;
+    private PathChain parkAtBlueGatePath;
 
 
 
     public void buildPaths(){
-        redFarStartToRedShootingPath = follower.pathBuilder()
-                .addPath(new BezierLine(redFarStartPose, redShootingPose))
-                .setLinearHeadingInterpolation(redFarStartPose.getHeading(), redShootingPose.getHeading())
+        blueBackupStartToBlueShootingPath = follower.pathBuilder()
+                .addPath(new BezierLine(blueBackupStartPose, blueShootingPose))
+                .setLinearHeadingInterpolation(blueBackupStartPose.getHeading(), blueShootingPose.getHeading())
                 .build();
-        parkAtRedGatePath = follower.pathBuilder()
-                .addPath(new BezierLine(redShootingPose, parkRedGatePose))
-                .setLinearHeadingInterpolation(redShootingPose.getHeading(), parkRedGatePose.getHeading())
+        parkAtBlueGatePath = follower.pathBuilder()
+                .addPath(new BezierLine(blueShootingPose, parkBlueGatePose))
+                .setLinearHeadingInterpolation(blueShootingPose.getHeading(), parkBlueGatePose.getHeading())
                 .build();
     }
 
     public void statePathUpdate(){
         switch (currentPathState){
             case MOVE_FROM_START_POS_TO_SHOOTING_LINE:
-                follower.followPath(redFarStartToRedShootingPath, true);
+                follower.followPath(blueBackupStartToBlueShootingPath, true);
                 setPathState(PathState.SHOOT_PRELOAD); // reset timer, new state
                 break;
             case SHOOT_PRELOAD:
                 if (!follower.isBusy()) {
                     shooter.startShooting();
-                    setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_RED_GATE);
+                    setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_GATE);
                 }
                 break;
-            case MOVE_FROM_SHOOTING_LINE_TO_RED_GATE:
+            case MOVE_FROM_SHOOTING_LINE_TO_BLUE_GATE:
                 if (!follower.isBusy() && !shooter.isShooting()){
-                    follower.followPath(parkAtRedGatePath, true);
+                    follower.followPath(parkAtBlueGatePath, true);
                     setPathState(PathState.DONE);
                 }
                 break;
@@ -96,7 +96,7 @@ public class RedFarAuto extends OpMode {
         // TODO add any other init stuff like flywheels or limelight
 
         buildPaths();
-        follower.setStartingPose(redFarStartPose);
+        follower.setStartingPose(blueBackupStartPose);
     }
 
     @Override

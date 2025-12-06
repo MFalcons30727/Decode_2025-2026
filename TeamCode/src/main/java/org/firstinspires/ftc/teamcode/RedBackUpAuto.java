@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 // https://pedropathing.com/docs/pathing/dashboard
 
 @Autonomous
-public class RedFarAuto extends OpMode {
+public class RedBackUpAuto extends OpMode {
     // A state machine keeps track of what state or step is currently running
     public enum PathState {
         MOVE_FROM_START_POS_TO_SHOOTING_LINE,
@@ -25,7 +25,7 @@ public class RedFarAuto extends OpMode {
     }
 
     // these are all the poses we are going to be in
-    private final Pose redFarStartPose = new Pose(96, 8, Math.toRadians(90));
+    private final Pose redBackupStartPose = new Pose(122, 125, Math.toRadians(45));
     private final Pose redShootingPose = new Pose (96, 96, Math.toRadians(45));
     private final Pose parkRedGatePose = new Pose (120,70, Math.toRadians(180));
 
@@ -36,15 +36,15 @@ public class RedFarAuto extends OpMode {
     private PathState currentPathState;
     private ShooterMcGavin shooter;
 
-    private PathChain redFarStartToRedShootingPath;
+    private PathChain redBackupStartToRedShootingPath;
     private PathChain parkAtRedGatePath;
 
 
 
     public void buildPaths(){
-        redFarStartToRedShootingPath = follower.pathBuilder()
-                .addPath(new BezierLine(redFarStartPose, redShootingPose))
-                .setLinearHeadingInterpolation(redFarStartPose.getHeading(), redShootingPose.getHeading())
+        redBackupStartToRedShootingPath = follower.pathBuilder()
+                .addPath(new BezierLine(redBackupStartPose, redShootingPose))
+                .setLinearHeadingInterpolation(redBackupStartPose.getHeading(), redShootingPose.getHeading())
                 .build();
         parkAtRedGatePath = follower.pathBuilder()
                 .addPath(new BezierLine(redShootingPose, parkRedGatePose))
@@ -55,7 +55,7 @@ public class RedFarAuto extends OpMode {
     public void statePathUpdate(){
         switch (currentPathState){
             case MOVE_FROM_START_POS_TO_SHOOTING_LINE:
-                follower.followPath(redFarStartToRedShootingPath, true);
+                follower.followPath(redBackupStartToRedShootingPath, true);
                 setPathState(PathState.SHOOT_PRELOAD); // reset timer, new state
                 break;
             case SHOOT_PRELOAD:
@@ -96,7 +96,7 @@ public class RedFarAuto extends OpMode {
         // TODO add any other init stuff like flywheels or limelight
 
         buildPaths();
-        follower.setStartingPose(redFarStartPose);
+        follower.setStartingPose(redBackupStartPose);
     }
 
     @Override

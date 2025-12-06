@@ -1,252 +1,122 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.hardware.limelightvision.LLStatus;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.pedropathing.util.Timer;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-import java.util.List;
+// to access the panels dashboard it should be our robot's ip address and port 8001
+// just need to open it in the browser like this: 192.168.43.1:8001
+// https://pedropathing.com/docs/pathing/dashboard
 
-@Autonomous(name="Blue far auto", group="Autonomous")
-public class BlueFarAuto extends LinearOpMode {
+@Autonomous
+public class BlueFarAuto extends OpMode {
+    // A state machine keeps track of what state or step is currently running
+    public enum PathState {
+        MOVE_FROM_START_POS_TO_SHOOTING_LINE,
+        SHOOT_PRELOAD,
+        MOVE_FROM_SHOOTING_LINE_TO_BLUE_GATE,
+        DONE
+    }
 
-    private DcMotor frontLeft, frontRight, backLeft, backRight;
+    // these are all the poses we are going to be in
+    private final Pose blueFarStartPose = new Pose(49, 8, Math.toRadians(90));
+    private final Pose blueShootingPose = new Pose (49, 96, Math.toRadians(135));
+    private final Pose parkBlueGatePose = new Pose (49,62, Math.toRadians(180));
 
-    // Constants
-    private static final double TICKS_PER_INCH = 50; // I am not sure the ticks per inch, go over calculations, this is placeholder
-    private static final double FORWARD_DISTANCE_INCHES = 70; // change at practice, this is just a random placeholder for now
-    private static final double DRIVE_POWER = 0.8; // how fast we want the robot for now
-    private static final double TURN_POWER = 0.4; // how fast it will turn
-    private DcMotor shoot = null;
-    private CRServo indexer1 = null;
-    private CRServo indexer2 = null;
-    private Limelight3A limelight;
-    int tagID = 0;
+
+
+    private Follower follower; // part of the Pedro Pathing package, follows the path
+    private Timer pathTimer, opModeTimer; // this line makes sure you don't use sleeps, this lets the auto do multiple things at once and move smoothly.
+    private PathState currentPathState;
+    private ShooterMcGavin shooter;
+
+    private PathChain blueFarStartToBlueShootingPath;
+    private PathChain parkAtBlueGatePath;
+
+
+
+    public void buildPaths(){
+        blueFarStartToBlueShootingPath = follower.pathBuilder()
+                .addPath(new BezierLine(blueFarStartPose, blueShootingPose))
+                .setLinearHeadingInterpolation(blueFarStartPose.getHeading(), blueShootingPose.getHeading())
+                .build();
+        parkAtBlueGatePath = follower.pathBuilder()
+                .addPath(new BezierLine(blueShootingPose, parkBlueGatePose))
+                .setLinearHeadingInterpolation(blueShootingPose.getHeading(), parkBlueGatePose.getHeading())
+                .build();
+    }
+
+    public void statePathUpdate(){
+        switch (currentPathState){
+            case MOVE_FROM_START_POS_TO_SHOOTING_LINE:
+                follower.followPath(blueFarStartToBlueShootingPath, true);
+                setPathState(PathState.SHOOT_PRELOAD); // reset timer, new state
+                break;
+            case SHOOT_PRELOAD:
+                if (!follower.isBusy()) {
+                    shooter.startShooting();
+                    setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_GATE);
+                }
+                break;
+            case MOVE_FROM_SHOOTING_LINE_TO_BLUE_GATE:
+                if (!follower.isBusy() && !shooter.isShooting()){
+                    follower.followPath(parkAtBlueGatePath, true);
+                    setPathState(PathState.DONE);
+                }
+                break;
+            default:
+                telemetry.addLine("no state right now");
+                break;
+        }
+    }
+
+    // this is to help transition states
+    public void setPathState(PathState newState) {
+        currentPathState = newState;
+        pathTimer.resetTimer();
+    }
 
     @Override
-    public void runOpMode() {
+    public void init() {
 
-        // Initialize motors
-        frontLeft = hardwareMap.get(DcMotor.class, "leftFront");
-        frontRight = hardwareMap.get(DcMotor.class, "rightFront");
-        backLeft = hardwareMap.get(DcMotor.class, "leftRear");
-        backRight = hardwareMap.get(DcMotor.class, "rightRear");
-        shoot = hardwareMap.get(DcMotor.class, "shooter");
-        indexer1 = hardwareMap.get(CRServo.class, "indexer1");
-        indexer2 = hardwareMap.get(CRServo.class, "indexer2");
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        // this is the state we are always starting out with.
+        // also I think the timers keep track of how long the Opmode has been running for
 
-        setMotorDirections();
+        currentPathState = PathState.MOVE_FROM_START_POS_TO_SHOOTING_LINE;
+        pathTimer = new Timer();
+        opModeTimer = new Timer();
+        follower = Constants.createFollower(hardwareMap);
+        shooter = new ShooterMcGavin(hardwareMap, telemetry);
+        // TODO add any other init stuff like flywheels or limelight
 
-        // Reset encoders
-        resetEncoders();
-
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-
-        telemetry.setMsTransmissionInterval(11);
-
-        limelight.pipelineSwitch(0);
-
-        /*
-         * Starts polling for data.  If you neglect to call start(), getLatestResult() will return null.
-         */
-        limelight.start();
-
-        telemetry.addData(">", "Robot Ready.  Press Play.");
-        telemetry.update();
-
-        waitForStart();
-
-        if (opModeIsActive()) {
-
-            telemetry.update();
-            limelight.stop();
-
-
-            // steps being called
-
-            moveForward(FORWARD_DISTANCE_INCHES, DRIVE_POWER);
-            turnLeft45();
-            shoot();
-            turnRight45();
-            moveForward(-20, DRIVE_POWER);
-        }
+        buildPaths();
+        follower.setStartingPose(blueFarStartPose);
     }
 
-    // --- Helper Functions ---
-
-    private void setMotorDirections() {
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
-        shoot.setDirection(DcMotor.Direction.REVERSE);
-
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+    @Override
+    public void start() {
+        opModeTimer.resetTimer();
+        setPathState(currentPathState);
     }
 
-    private void resetEncoders() {
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    @Override
+    public void loop(){
+        follower.update(); // YOU NEED THIS UPDATE LINE
+        shooter.update();
+        statePathUpdate();
 
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.addData("path state", currentPathState.toString());
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("x", follower.getPose().getY());
+        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("Path time", pathTimer.getElapsedTimeSeconds());
     }
 
-    private void moveForward(double inches, double power) { // these parameters are saying we need to move forward a certain amount of inches, and also how much power we give the motors which is defined at the top.
-        int ticks = (int)(inches * TICKS_PER_INCH); // this is saying basically how many inches we want to move multiplied by the ticks per inch. this calculates how many ticks in total we would have to move.
-
-        frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + ticks); // lines 66-69 is saying "start from current pos and add the amount of ticks you want to move".
-        backLeft.setTargetPosition(backLeft.getCurrentPosition() + ticks);
-        frontRight.setTargetPosition(frontRight.getCurrentPosition() + ticks);
-        backRight.setTargetPosition(backRight.getCurrentPosition() + ticks);
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION); // just go to the amount of ticks you want
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        frontLeft.setPower(power); // setting power of 0.5 to the motors.
-        backLeft.setPower(power);
-        frontRight.setPower(power);
-        backRight.setPower(power);
-
-        while (opModeIsActive() && // this chunk is basically telling the robot to keep going until it reaches its target.
-                frontLeft.isBusy() &&
-                backLeft.isBusy() &&
-                frontRight.isBusy() &&
-                backRight.isBusy()) {
-            // Optional: telemetry here
-
-            telemetry.addData("Shoot Speed", shoot.getPower());
-            telemetry.update();
-
-        }
-
-        stopMotors();
-    }
-    // this turning function is very basic right now, but you get the idea. :)
-    // also remember that turn_power is defined at the top as 0.5 so it can be easily reused, and it is constant
-    private void turnLeft45() {
-        // Simple time-based turn
-        frontLeft.setPower(-TURN_POWER);
-        backLeft.setPower(-TURN_POWER);
-        frontRight.setPower(TURN_POWER);
-        backRight.setPower(TURN_POWER);
-        //this is currently time based which is not ideal, but it works for now
-        sleep(750); // adjust for ~45° turn
-
-        stopMotors();
-    }
-
-    private void turnRight45() {
-        // Simple time-based turn
-        frontLeft.setPower(TURN_POWER);
-        backLeft.setPower(TURN_POWER);
-        frontRight.setPower(-TURN_POWER);
-        backRight.setPower(-TURN_POWER);
-        //this is currently time based which is not ideal, but it works for now
-        sleep(750); // adjust for ~45° turn
-
-        stopMotors();
-    }
-
-
-
-    private void shoot() {
-
-        shoot.setPower(0.53);
-        if (shoot.getPower() == 0.53){
-            sleep(3000);
-            telemetry.addData("spinning Up", 100);
-            telemetry.update();
-
-
-            indexer1.setPower(0.6);
-            indexer2.setPower(-0.6);
-            sleep(1000);
-            telemetry.addData("turning off power after shot", 100);
-            telemetry.update();
-            indexer1.setPower(0);
-            indexer2.setPower(0);
-            telemetry.addData("Waiting", 100);
-            telemetry.update();
-            sleep(2500);
-
-            indexer1.setPower(0.6);
-            indexer2.setPower(-0.6);
-            sleep(100);
-            telemetry.addData("turning off power after shot", 100);
-            telemetry.update();
-            indexer1.setPower(0);
-            indexer2.setPower(0);
-            telemetry.addData("Waiting", 100);
-            telemetry.update();
-            sleep(2500);
-
-            indexer1.setPower(0.6);
-            indexer2.setPower(-0.6);
-            sleep(100);
-            telemetry.addData("turning off power after shot", 100);
-            telemetry.update();
-            indexer1.setPower(0);
-            indexer2.setPower(0);
-            telemetry.addData("Waiting", 100);
-            telemetry.update();
-
-            sleep(500);
-
-
-
-
-
-//
-//            indexer1.setPower(0.6);
-//            indexer2.setPower(-0.6);
-//            sleep(500);
-//            indexer1.setPower(0);
-//            indexer2.setPower(0);
-//            sleep(10000);
-//
-//
-//            indexer1.setPower(0.6);
-//            indexer2.setPower(-0.6);
-//            sleep(500);
-//            indexer1.setPower(0);
-//            indexer2.setPower(0);
-
-
-
-
-        }
-
-    }
-    // this function is self explanatory, just stops it
-    private void stopMotors() {
-        frontLeft.setPower(0);
-        backLeft.setPower(0);
-        frontRight.setPower(0);
-        backRight.setPower(0);
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    }
 
 }
