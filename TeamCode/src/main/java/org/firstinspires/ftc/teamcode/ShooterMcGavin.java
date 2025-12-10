@@ -26,8 +26,8 @@ public class ShooterMcGavin {
 
     private static double SHOOTER_TARGET_VELOCITY = 1200; // the velocity we want our shooter to be set to.
     private static final double SHOOTER_ACCEPTABLE_VELOCITY_ERROR = 30; // in case the shooter motor isn't able to reach that exact velocity, allow it to still shoot when being this close to the target velocity
-    private static final double TIME_TO_FEED_IN_MILLISECONDS = 300; // this is how long it takes our indexers to feed one artifact through (the time between starting and stopping the indexers)
-    private static final double FLYWHEEL_RECOVERY_TIME_IN_MILLISECONDS = 300; // if using USE_RAPID_FIRE, this delay will be skipped
+    private static final double TIME_TO_FEED_IN_MILLISECONDS = 600; // this is how long it takes our indexers to feed one artifact through (the time between starting and stopping the indexers)
+    private static final double FLYWHEEL_RECOVERY_TIME_IN_MILLISECONDS = 400; // if using USE_RAPID_FIRE, this delay will be skipped
     private static final double FEEDER_POWER = 1.0; // the power we send to the indexer motor to feed
     private static final double STEP_TIMEOUT_IN_MILLISECONDS = 5000;
     private static final boolean USE_RAPID_FIRE = true;
@@ -36,6 +36,7 @@ public class ShooterMcGavin {
     private ElapsedTime shootStateTimer; // tried to use the Pedro Pathing timer first but it didn't allow for milliseconds, only seconds
     private ShootingState currentShootingState; // keeping track of the current step we're on in our shooting state machine
     private int shotsFired; // keeps track of how many artifacts we've attempted to shoot (between 0 and 3)
+    private Telemetry telemetry = null;
 
     public ShooterMcGavin(HardwareMap hardwareMap, Telemetry telemetry) { // this is our constructor that gets called like this from our autos:  shooter = new Shooter(hardwareMap);
         // think of this like our "init" but for the Shooter specifically
@@ -44,6 +45,7 @@ public class ShooterMcGavin {
         shootStateTimer = new ElapsedTime();
         currentShootingState = ShootingState.OFF;
         shotsFired = 0;
+        this.telemetry = telemetry;
 
         shootMotor.setDirection(DcMotorEx.Direction.REVERSE);
 
