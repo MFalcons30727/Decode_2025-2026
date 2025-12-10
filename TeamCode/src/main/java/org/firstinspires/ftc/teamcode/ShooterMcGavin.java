@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -23,13 +24,13 @@ public class ShooterMcGavin {
         FLYWHEEL_RECOVERY
     }
 
-    private static final double SHOOTER_TARGET_VELOCITY = 1350; // the velocity we want our shooter to be set to
-    private static final double SHOOTER_ACCEPTABLE_VELOCITY_ERROR = 50; // in case the shooter motor isn't able to reach that exact velocity, allow it to still shoot when being this close to the target velocity
+    private static double SHOOTER_TARGET_VELOCITY = 1200; // the velocity we want our shooter to be set to.
+    private static final double SHOOTER_ACCEPTABLE_VELOCITY_ERROR = 30; // in case the shooter motor isn't able to reach that exact velocity, allow it to still shoot when being this close to the target velocity
     private static final double TIME_TO_FEED_IN_MILLISECONDS = 300; // this is how long it takes our indexers to feed one artifact through (the time between starting and stopping the indexers)
     private static final double FLYWHEEL_RECOVERY_TIME_IN_MILLISECONDS = 300; // if using USE_RAPID_FIRE, this delay will be skipped
     private static final double FEEDER_POWER = 1.0; // the power we send to the indexer motor to feed
     private static final double STEP_TIMEOUT_IN_MILLISECONDS = 5000;
-    private static final boolean USE_RAPID_FIRE = false;
+    private static final boolean USE_RAPID_FIRE = true;
     private final DcMotorEx shootMotor;
     private final DcMotor indexer;
     private ElapsedTime shootStateTimer; // tried to use the Pedro Pathing timer first but it didn't allow for milliseconds, only seconds
@@ -47,6 +48,9 @@ public class ShooterMcGavin {
         shootMotor.setDirection(DcMotorEx.Direction.REVERSE);
 
         indexer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(190, 0, 0, 12); // If not reaching target velocity, increase F.  If not recovering fast enough, increase P
+        shootMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
     }
 
     private void setShootingState(ShootingState newState) {
@@ -113,11 +117,17 @@ public class ShooterMcGavin {
             case OFF:
                 shootMotor.setVelocity(0);
                 indexer.setPower(0);
+                SHOOTER_TARGET_VELOCITY = 1200;
                 break;
         }
     }
 
     public void startShooting() { // this is what will be called by our main auto code to shoot 3 artifacts automatically
+        setShootingState(ShootingState.START_SPIN_UP);
+    }
+
+    public void startShooting(double targetVelocity) { // this is what will be called by our main auto code to shoot 3 artifacts automatically
+        SHOOTER_TARGET_VELOCITY = targetVelocity;
         setShootingState(ShootingState.START_SPIN_UP);
     }
 }
