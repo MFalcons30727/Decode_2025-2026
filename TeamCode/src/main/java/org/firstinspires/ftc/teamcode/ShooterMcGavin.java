@@ -24,13 +24,13 @@ public class ShooterMcGavin {
         FLYWHEEL_RECOVERY
     }
 
-    private static double SHOOTER_TARGET_VELOCITY = 1200; // the velocity we want our shooter to be set to.
-    private static final double SHOOTER_ACCEPTABLE_VELOCITY_ERROR = 30; // in case the shooter motor isn't able to reach that exact velocity, allow it to still shoot when being this close to the target velocity
-    private static final double TIME_TO_FEED_IN_MILLISECONDS = 600; // this is how long it takes our indexers to feed one artifact through (the time between starting and stopping the indexers)
-    private static final double FLYWHEEL_RECOVERY_TIME_IN_MILLISECONDS = 400; // if using USE_RAPID_FIRE, this delay will be skipped
-    private static final double FEEDER_POWER = 1.0; // the power we send to the indexer motor to feed
-    private static final double STEP_TIMEOUT_IN_MILLISECONDS = 5000;
-    private static final boolean USE_RAPID_FIRE = true;
+    private static final double SHOOTER_TARGET_VELOCITY = 1100; // the velocity we want our shooter to be set to
+    private static final double SHOOTER_ACCEPTABLE_VELOCITY_ERROR = 50; // in case the shooter motor isn't able to reach that exact velocity, allow it to still shoot when being this close to the target velocity
+    private static final double TIME_TO_FEED_IN_MILLISECONDS = 5000; // this is how long it takes our indexers to feed one artifact through (the time between starting and stopping the indexers)
+    //    private static final double FLYWHEEL_RECOVERY_TIME_IN_MILLISECONDS = 300;
+    private static final double FEEDER_POWER = 1; // the power we send to the indexer servos to feed
+    private static final double STEP_TIMEOUT_IN_MILLISECONDS = 2000;
+    private static final double REVERSE_TIME_IN_MILLISECONDS = 150;
     private final DcMotorEx shootMotor;
     private final DcMotor indexer;
     private ElapsedTime shootStateTimer; // tried to use the Pedro Pathing timer first but it didn't allow for milliseconds, only seconds
@@ -51,7 +51,7 @@ public class ShooterMcGavin {
 
         indexer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(190, 0, 0, 12); // If not reaching target velocity, increase F.  If not recovering fast enough, increase P
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(181,0,0,12);
         shootMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
     }
 
@@ -70,11 +70,6 @@ public class ShooterMcGavin {
     }
 
     public void update() { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL
-        telemetry.addData("ShooterState", currentShootingState.toString());
-        telemetry.addData("ShotsFired", shotsFired);
-        telemetry.addData("ShooterVelocity", shootMotor.getVelocity());
-        telemetry.addData("ShooterStepTimerMS", shootStateTimer.milliseconds());
-
         switch (currentShootingState) {
             case START_SPIN_UP: // start the shooter
                 shotsFired = 0;
@@ -83,53 +78,46 @@ public class ShooterMcGavin {
                 break;
             case WAIT_FOR_TARGET_VELOCITY: // wait until we're close to the target velocity for the shooter
                 if (Math.abs(shootMotor.getVelocity() - SHOOTER_TARGET_VELOCITY) < SHOOTER_ACCEPTABLE_VELOCITY_ERROR
-                        || shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) { // this makes sure the auto doesn't fail completely if it's not able to ever reach target velocity
+                        && shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) { // this makes sure the auto doesn't fail completely if it's not able to ever reach target velocity
                     setShootingState(ShootingState.START_FEEDING);
                 }
                 break;
-            case START_FEEDING: // turn on the indexer to feed the next artifact
+            case START_FEEDING: // turn on the indexers to feed the next artifact
                 indexer.setPower(FEEDER_POWER);
 
-                // for future, might be cool to check the velocity change on the flywheel to detect if a shot occurred instead of timing
-
-                // if using USE_RAPID_FIRE = true, the total time the indexer will run is 3 x TIME_TO_FEED_IN_MILLISECONDS
-                if (shootStateTimer.milliseconds() > TIME_TO_FEED_IN_MILLISECONDS) { // wait for the indexer to finish feeding the artifact.
+                if (shootStateTimer.milliseconds() > TIME_TO_FEED_IN_MILLISECONDS) { // wait for the indexer to finish feeding the artifact
                     shotsFired++;
                     setShootingState(ShootingState.STOP_FEEDING);
                 }
                 break;
             case STOP_FEEDING:
-                if (!USE_RAPID_FIRE) {
-                    indexer.setPower(0);
-                }
+                indexer.setPower(0);
 
-                if (shotsFired >= 3) { // after 3 shot attempts, power off shooter
+                if (shotsFired == 1) { // after 3 shot attempts, power off shooter
                     shotsFired = 0;
                     setShootingState(ShootingState.OFF);
                 }
                 else {
-                    setShootingState(ShootingState.FLYWHEEL_RECOVERY); // if more shots to fire, wait for the shooter to reach target velocity again
+                    setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY); // if more shots to fire, wait for the shooter to reach target velocity again
                 }
                 break;
-            case FLYWHEEL_RECOVERY:
-                if (shootStateTimer.milliseconds() > FLYWHEEL_RECOVERY_TIME_IN_MILLISECONDS || USE_RAPID_FIRE) {
-                    setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY);
-                }
-                break;
+//            case FLYWHEEL_RECOVERY:
+//
+//                if (shootStateTimer.milliseconds() > FLYWHEEL_RECOVERY_TIME_IN_MILLISECONDS){
+//                    setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY);
+//                }
+//                break;
             case OFF:
                 shootMotor.setVelocity(0);
                 indexer.setPower(0);
-                SHOOTER_TARGET_VELOCITY = 1200;
                 break;
+
         }
+
+        telemetry.addData("shooter velocity", shootMotor.getVelocity());
     }
 
     public void startShooting() { // this is what will be called by our main auto code to shoot 3 artifacts automatically
-        setShootingState(ShootingState.START_SPIN_UP);
-    }
-
-    public void startShooting(double targetVelocity) { // this is what will be called by our main auto code to shoot 3 artifacts automatically
-        SHOOTER_TARGET_VELOCITY = targetVelocity;
         setShootingState(ShootingState.START_SPIN_UP);
     }
 }

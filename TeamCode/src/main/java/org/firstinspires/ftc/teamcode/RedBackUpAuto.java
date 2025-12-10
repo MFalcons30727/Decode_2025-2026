@@ -25,8 +25,8 @@ public class RedBackUpAuto extends OpMode {
     }
 
     // these are all the poses we are going to be in
-    private final Pose redBackupStartPose = new Pose(122, 125, Math.toRadians(45));
-    private final Pose redShootingPose = new Pose (96, 96, Math.toRadians(45));
+    private final Pose redBackupStartPose = new Pose(122, 125, Math.toRadians(40));
+    private final Pose redShootingPose = new Pose (96, 96, Math.toRadians(40));
     private final Pose parkRedGatePose = new Pose (120,70, Math.toRadians(180));
 
 

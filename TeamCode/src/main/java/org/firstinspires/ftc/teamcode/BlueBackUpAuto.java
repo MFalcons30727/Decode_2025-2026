@@ -25,9 +25,9 @@ public class BlueBackUpAuto extends OpMode {
     }
 
     // these are all the poses we are going to be in
-    private final Pose blueBackupStartPose = new Pose(22, 125, Math.toRadians(135));
-    private final Pose blueShootingPose = new Pose (49, 96, Math.toRadians(135));
-    private final Pose parkBlueGatePose = new Pose (49,62, Math.toRadians(180));
+    private final Pose blueBackupStartPose = new Pose(22, 125, Math.toRadians(130));
+    private final Pose blueShootingPose = new Pose (49, 96, Math.toRadians(130));
+    private final Pose parkBlueGatePose = new Pose (20,70, Math.toRadians(180));
 
 
 

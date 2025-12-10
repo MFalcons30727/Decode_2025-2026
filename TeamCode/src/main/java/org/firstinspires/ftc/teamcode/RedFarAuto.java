@@ -26,7 +26,7 @@ public class RedFarAuto extends OpMode {
 
     // these are all the poses we are going to be in
     private final Pose redFarStartPose = new Pose(96, 8, Math.toRadians(90));
-    private final Pose redShootingPose = new Pose (96, 96, Math.toRadians(45));
+    private final Pose redShootingPose = new Pose (96, 96, Math.toRadians(40));
     private final Pose parkRedGatePose = new Pose (120,70, Math.toRadians(180));
 
 

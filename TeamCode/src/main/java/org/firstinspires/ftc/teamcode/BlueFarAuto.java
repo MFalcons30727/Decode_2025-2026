@@ -26,8 +26,8 @@ public class BlueFarAuto extends OpMode {
 
     // these are all the poses we are going to be in
     private final Pose blueFarStartPose = new Pose(49, 8, Math.toRadians(90));
-    private final Pose blueShootingPose = new Pose (49, 96, Math.toRadians(125));
-    private final Pose parkBlueGatePose = new Pose (49,62, Math.toRadians(180));
+    private final Pose blueShootingPose = new Pose (49, 96, Math.toRadians(130));
+    private final Pose parkBlueGatePose = new Pose (28,70, Math.toRadians(0));
 
 
 
@@ -64,12 +64,12 @@ public class BlueFarAuto extends OpMode {
                     setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_GATE);
                 }
                 break;
-//            case MOVE_FROM_SHOOTING_LINE_TO_BLUE_GATE:
-//                if (!follower.isBusy() && !shooter.isShooting()){
-//                    follower.followPath(parkAtBlueGatePath, true);
-//                    setPathState(PathState.DONE);
-//                }
-//                break;
+            case MOVE_FROM_SHOOTING_LINE_TO_BLUE_GATE:
+                if (!follower.isBusy() && !shooter.isShooting()){
+                    follower.followPath(parkAtBlueGatePath, true);
+                    setPathState(PathState.DONE);
+                }
+                break;
             default:
                 telemetry.addLine("no state right now");
                 break;

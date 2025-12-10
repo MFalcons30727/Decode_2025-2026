@@ -94,7 +94,9 @@ public class AutoAimTeleOpTest extends OpMode {
             boolean isLeft = degreesError > 0;
 
             // use pedro pathing to turn towards target
-            follower.turnDegrees(targetHeading, isLeft);
+            if (!follower.isBusy()) {
+                follower.turnDegrees(targetHeading, isLeft);
+            }
         }
 
         if(gamepad2.right_trigger > 0) {
