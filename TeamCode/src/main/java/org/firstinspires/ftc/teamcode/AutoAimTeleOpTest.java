@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @TeleOp (name="AutoAimTeleOpTest", group = "TeleOp")
 public class AutoAimTeleOpTest extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
+
     private Timer pathTimer;
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
     private final Pose blueFarStartPose = new Pose(49, 8, Math.toRadians(90)); // put bot on blue far start pose. not sure if this is needed?
