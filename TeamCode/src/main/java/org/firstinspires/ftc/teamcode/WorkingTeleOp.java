@@ -1,121 +1,83 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@TeleOp (name="TeleOp", group = "TeleOp")
-public class WorkingTeleOp extends LinearOpMode {
+// made for blue goal auto aim.  will need to think about red goal
+@TeleOp (name="WorkingTeleOp", group = "TeleOp")
+public class WorkingTeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor frontLeftDrive = null;
-    private DcMotor frontRightDrive = null;
-    private DcMotor backLeftDrive = null;
-    private DcMotor backRightDrive = null;
-   // private DcMotor intake = null;
-    private CRServo indexer1 = null;
-    private CRServo indexer2 = null;
-    private DcMotor shoot = null;
+    private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
+    private ShooterMcGavin shooter;
 
     @Override
-    public void runOpMode() {
-
+    public void init() {
         frontLeftDrive = hardwareMap.get(DcMotor.class, "leftFront");
         frontRightDrive = hardwareMap.get(DcMotor.class, "rightFront");
         backLeftDrive = hardwareMap.get(DcMotor.class, "leftRear");
         backRightDrive = hardwareMap.get(DcMotor.class, "rightRear");
-        //intake = hardwareMap.get(DcMotor.class, "intake");
-//        indexer1 = hardwareMap.servo.get("indexer1");
-        indexer1 = hardwareMap.get(CRServo.class, "indexer1");
-//        indexer2 = hardwareMap.servo.get("indexer2");
-        indexer2 = hardwareMap.get(CRServo.class, "indexer2");
-        shoot = hardwareMap.get(DcMotor.class, "shooter");
 
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        shoot.setDirection(DcMotor.Direction.REVERSE);
-        indexer1.setDirection(CRServo.Direction.FORWARD);
-        indexer2.setDirection(CRServo.Direction.REVERSE);
 
-        shoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooter = new ShooterMcGavin(hardwareMap, telemetry);
 
-
-        //wait for start (then player presses START)
+        // wait for start (then player presses START)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
-        waitForStart();
-        runtime.reset();
-
-        while (opModeIsActive()) {
-
-            double y = -gamepad1.left_stick_y; //remember that Y stick value is reversed!!
-            double x = gamepad1.right_stick_x * 1.1; //counteract thingy
-            double rx = gamepad1.left_stick_x;
-
-            double shooterPower = gamepad2.right_trigger;
-
-            //denominator is max power, for right now we changed it from 1 to 0.5, or absolute value
-
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
-
-            frontLeftDrive.setPower(frontLeftPower);
-            frontRightDrive.setPower(frontRightPower);
-            backLeftDrive.setPower(backRightPower);
-            backRightDrive.setPower(backLeftPower);
-
-//            if(gamepad1.right_bumper){
-//                intake.setPower(1);
-//            }
-//
-//            else {
-//                intake.setPower(0);
-//
-//            }
-//
-//            if(gamepad1.left_bumper){
-//                intake.setPower(-1);
-//            }
-//
-//            else {
-//                intake.setPower(0);
-//            }
-//
-            if(gamepad2.left_bumper) {
-                indexer1.setPower(1);
-                indexer2.setPower(1);
-            }
-            else {
-                indexer1.setPower(0);
-                indexer2.setPower(0);
-            }
-
-            if(gamepad2.right_trigger > 0) {
-                shoot.setPower(shooterPower);
-            }
-            else {
-                shoot.setPower(0);
-            }
-
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
-            telemetry.addData("Shoot Speed", shoot.getPower());
-            telemetry.update();
-
-
-
-        }
     }
 
-}
+    @Override
+    public void start() {
+        runtime.reset();
+    }
 
+    @Override
+    public void loop() {
+        double y = -gamepad1.left_stick_y; //remember that Y stick value is reversed!!
+        double x = gamepad1.right_stick_x * 1.1; //counteract thingy
+        double rx = gamepad1.left_stick_x;
+
+        //denominator is max power, for right now we changed it from 1 to 0.5, or absolute value
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        double frontLeftPower = (y + x + rx) / denominator;
+        double backLeftPower = (y - x + rx) / denominator;
+        double frontRightPower = (y - x - rx) / denominator;
+        double backRightPower = (y + x - rx) / denominator;
+
+        frontLeftDrive.setPower(frontLeftPower);
+        frontRightDrive.setPower(frontRightPower);
+        backLeftDrive.setPower(backRightPower);
+        backRightDrive.setPower(backLeftPower);
+
+        if(gamepad2.right_trigger > 0 && !shooter.IsShooting) { // Shooting from zone closest to goal.  uses default 1200 velocity
+            shooter.startShooting();
+        }
+
+        if (gamepad2.left_trigger > 0 && !shooter.IsShooting) { // experiment - shooting from far zone if left trigger pressed???
+            shooter.startShooting(1400);
+        }
+
+        if (gamepad2.bWasPressed && !shooter.IsShooting) { // if artifact fed in incorrect chute, reverse feed to pull the jammed artifact in the opposite direction
+            shooter.reverseFeed();
+        }
+
+        shooter.update();
+
+        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
+        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
+        telemetry.update();
+    }
+}
