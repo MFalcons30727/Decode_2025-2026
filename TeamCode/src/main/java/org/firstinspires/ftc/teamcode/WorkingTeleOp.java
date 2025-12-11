@@ -61,7 +61,7 @@ public class WorkingTeleOp extends OpMode {
         backLeftDrive.setPower(backRightPower);
         backRightDrive.setPower(backLeftPower);
 
-        if(gamepad2.right_trigger > 0 && !shooter.IsShooting) { // Shooting from zone closest to goal.  uses default 1200 velocity
+        if(gamepad2.right_trigger > 0) { // Shooting from zone closest to goal.  uses default 1200 velocity
             shooter.startShooting();
         }
 
