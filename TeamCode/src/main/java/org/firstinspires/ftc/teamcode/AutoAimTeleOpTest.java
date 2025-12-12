@@ -113,7 +113,11 @@ public class AutoAimTeleOpTest extends OpMode {
 //                shooter.startShooting(1300);
 //            }
 
-            shooter.startShooting();
+            shooter.startShooting(1100);
+        }
+
+        if (gamepad2.right_trigger > 0) {
+            shooter.startShooting(1400);
         }
 
         follower.update();

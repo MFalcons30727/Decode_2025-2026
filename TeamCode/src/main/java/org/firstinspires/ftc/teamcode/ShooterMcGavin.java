@@ -24,7 +24,7 @@ public class ShooterMcGavin {
         FLYWHEEL_RECOVERY
     }
 
-    private static final double SHOOTER_TARGET_VELOCITY = 1100; // the velocity we want our shooter to be set to
+    private double SHOOTER_TARGET_VELOCITY = 1100; // the velocity we want our shooter to be set to
     private static final double SHOOTER_ACCEPTABLE_VELOCITY_ERROR = 50; // in case the shooter motor isn't able to reach that exact velocity, allow it to still shoot when being this close to the target velocity
     private static final double TIME_TO_FEED_IN_MILLISECONDS = 5000; // this is how long it takes our indexers to feed one artifact through (the time between starting and stopping the indexers)
     //    private static final double FLYWHEEL_RECOVERY_TIME_IN_MILLISECONDS = 300;
@@ -117,7 +117,9 @@ public class ShooterMcGavin {
         telemetry.addData("shooter velocity", shootMotor.getVelocity());
     }
 
-    public void startShooting() { // this is what will be called by our main auto code to shoot 3 artifacts automatically
+    public void startShooting(double targetVelocity) {
+        // this is what will be called by our main auto code to shoot 3 artifacts automatically
+        SHOOTER_TARGET_VELOCITY = targetVelocity;
         setShootingState(ShootingState.START_SPIN_UP);
     }
 }

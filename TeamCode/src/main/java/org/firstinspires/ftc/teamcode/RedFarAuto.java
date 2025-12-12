@@ -60,7 +60,7 @@ public class RedFarAuto extends OpMode {
                 break;
             case SHOOT_PRELOAD:
                 if (!follower.isBusy()) {
-                    shooter.startShooting();
+                    shooter.startShooting(1100);
                     setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_RED_GATE);
                 }
                 break;
