@@ -73,7 +73,7 @@ public class WorkingTeleOp extends OpMode {
         //    shooter.startShooting(1400);
         //}
 
-        //if (gamepad2.bWasPressed && !shooter.IsShooting) { // if artifact fed in incorrect chute, reverse feed to pull the jammed artifact in the opposite direction
+        //if (gamepad2.bWasPressed() && !shooter.isShooting()) { // if artifact fed in incorrect chute, reverse feed to pull the jammed artifact in the opposite direction
         //    shooter.reverseFeed();
         //}
 
