@@ -21,7 +21,8 @@ public class ShooterMcGavin {
         WAIT_FOR_TARGET_VELOCITY, // wait until we're at the SHOOTER_TARGET_VELOCITY before feeding
         START_FEEDING, // start indexers to feed one artifact
         STOP_FEEDING, // stop indexers so the shooter has time to get back to the SHOOTER_TARGET_VELOCITY
-        FLYWHEEL_RECOVERY
+        FLYWHEEL_RECOVERY,
+        REVERSE_FEED
     }
 
     private double SHOOTER_TARGET_VELOCITY = 1100; // the velocity we want our shooter to be set to
