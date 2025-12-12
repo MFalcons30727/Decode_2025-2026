@@ -60,7 +60,7 @@ public class BlueVeryFarZoneShootAuto extends OpMode {
                 break;
             case SHOOT_PRELOAD:
                 if (!follower.isBusy()) {
-                    shooter.startShooting(1100);
+                    shooter.startShooting(1400);
                     setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_GATE);
                 }
                 break;
