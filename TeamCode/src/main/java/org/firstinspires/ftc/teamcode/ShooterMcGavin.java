@@ -30,7 +30,7 @@ public class ShooterMcGavin {
     //    private static final double FLYWHEEL_RECOVERY_TIME_IN_MILLISECONDS = 300;
     private static final double FEEDER_POWER = 1; // the power we send to the indexer servos to feed
     private static final double STEP_TIMEOUT_IN_MILLISECONDS = 2000;
-    private static final double REVERSE_TIME_IN_MILLISECONDS = 150;
+    private static final double REVERSE_TIME_IN_MILLISECONDS = 300;
     private final DcMotorEx shootMotor;
     private final DcMotor indexer;
     private ElapsedTime shootStateTimer; // tried to use the Pedro Pathing timer first but it didn't allow for milliseconds, only seconds
@@ -101,6 +101,13 @@ public class ShooterMcGavin {
                     setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY); // if more shots to fire, wait for the shooter to reach target velocity again
                 }
                 break;
+//            case REVERSE_FEED:
+//                shootMotor.setVelocity(-100);
+//                indexer.setPower(-FEEDER_POWER);
+//                if (shootStateTimer.milliseconds() > REVERSE_TIME_IN_MILLISECONDS) {
+//                    setShootingState(ShootingState.OFF);
+//                }
+//                break;
 //            case FLYWHEEL_RECOVERY:
 //
 //                if (shootStateTimer.milliseconds() > FLYWHEEL_RECOVERY_TIME_IN_MILLISECONDS){
@@ -122,4 +129,8 @@ public class ShooterMcGavin {
         SHOOTER_TARGET_VELOCITY = targetVelocity;
         setShootingState(ShootingState.START_SPIN_UP);
     }
+
+//    public void reverseFeed() {
+//        setShootingState(ShootingState.REVERSE_FEED);
+//    }
 }
