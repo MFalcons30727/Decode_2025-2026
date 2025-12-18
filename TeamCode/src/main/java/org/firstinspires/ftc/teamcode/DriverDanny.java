@@ -4,9 +4,11 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 public class DriverDanny {
@@ -34,6 +36,9 @@ public class DriverDanny {
     private Telemetry telemetry;
     private PathChain currentPath; // the current or most recent path we've built for the robot
     private Team currentTeam;
+    private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
+
+
 
     public DriverDanny(HardwareMap hardwareMap, Telemetry telemetryFromOpMode, Pose startingPose, Team team) {
         // this is our constructor that gets called like this from our autos:  driver = new DriverDanny(hardwareMap, telemetry, DriverDanny.Poses.RED_FAR_START_POSE);
@@ -42,6 +47,59 @@ public class DriverDanny {
         telemetry = telemetryFromOpMode;
         follower.setStartingPose(startingPose);
         currentTeam = team;
+
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "leftFront");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "rightFront");
+        backLeftDrive = hardwareMap.get(DcMotor.class, "leftRear");
+        backRightDrive = hardwareMap.get(DcMotor.class, "rightRear");
+
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+
+
+    public void robotCentricDrive(double forward, double strafe, double rotate) {
+
+        double frontLeftPower = forward + strafe + rotate;
+        double backLeftPower = forward - strafe + rotate;
+        double frontRightPower = forward - strafe - rotate;
+        double backRightPower = forward + strafe - rotate;
+
+        double maxPower = 1.0;
+        double maxSpeed = 1.0; //this is speed, can be changed to lower if you want to let other drive during outreach events
+
+        maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
+        maxPower = Math.max(maxPower, Math.abs(backLeftPower));
+        maxPower = Math.max(maxPower, Math.abs(frontRightPower));
+        maxPower = Math.max(maxPower, Math.abs(backRightPower));
+
+        frontLeftDrive.setPower(maxSpeed * (frontLeftPower / maxPower));
+        backLeftDrive.setPower(maxSpeed * (backLeftPower / maxPower));
+        frontRightDrive.setPower(maxSpeed * (frontRightPower / maxPower));
+        backRightDrive.setPower(maxSpeed * (backRightPower / maxPower));
+
+
+    }
+
+    public void fieldCentricDrive(double forward, double strafe, double rotate) {
+        double theta = Math.atan2(forward, strafe);
+        double r = Math.hypot(strafe, forward);
+
+        theta = AngleUnit.normalizeRadians(theta - follower.getHeading());
+
+        double newFoward = r * Math.sin(theta);
+        double newStrafe = Math.cos(theta);
+
+        this.robotCentricDrive(newFoward, newStrafe, rotate);
+
     }
 
     public void update() { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL
