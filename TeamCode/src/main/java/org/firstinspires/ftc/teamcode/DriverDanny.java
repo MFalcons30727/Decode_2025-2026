@@ -32,13 +32,12 @@ public class DriverDanny {
         RED,
         BLUE
     }
+
     private Follower follower; // part of the Pedro Pathing package, follows the path
     private Telemetry telemetry;
     private PathChain currentPath; // the current or most recent path we've built for the robot
     private Team currentTeam;
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
-
-
 
     public DriverDanny(HardwareMap hardwareMap, Telemetry telemetryFromOpMode, Pose startingPose, Team team) {
         // this is our constructor that gets called like this from our autos:  driver = new DriverDanny(hardwareMap, telemetry, DriverDanny.Poses.RED_FAR_START_POSE);
@@ -64,10 +63,7 @@ public class DriverDanny {
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-
-
     public void robotCentricDrive(double forward, double strafe, double rotate) {
-
         double frontLeftPower = forward + strafe + rotate;
         double backLeftPower = forward - strafe + rotate;
         double frontRightPower = forward - strafe - rotate;
@@ -85,8 +81,6 @@ public class DriverDanny {
         backLeftDrive.setPower(maxSpeed * (backLeftPower / maxPower));
         frontRightDrive.setPower(maxSpeed * (frontRightPower / maxPower));
         backRightDrive.setPower(maxSpeed * (backRightPower / maxPower));
-
-
     }
 
     public void fieldCentricDrive(double forward, double strafe, double rotate) {
@@ -95,11 +89,10 @@ public class DriverDanny {
 
         theta = AngleUnit.normalizeRadians(theta - follower.getHeading());
 
-        double newFoward = r * Math.sin(theta);
+        double newForward = r * Math.sin(theta);
         double newStrafe = Math.cos(theta);
 
-        this.robotCentricDrive(newFoward, newStrafe, rotate);
-
+        this.robotCentricDrive(newForward, newStrafe, rotate);
     }
 
     public void update() { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL
@@ -134,10 +127,14 @@ public class DriverDanny {
     public void moveToPose(Pose newPose, boolean holdEnd) {
         currentPath = follower.pathBuilder()
                 .addPath(new BezierLine(getPose(), newPose))
-                .setLinearHeadingInterpolation(getPose().getHeading(), newPose.getHeading())
+                .setLinearHeadingInterpolation(getPose().getHeading(), newPose.getHeading(), 0.8)
                 .build();
 
         follower.followPath(currentPath, holdEnd); // start the robot moving towards the new pose immediately
+    }
+
+    public void turn(double radians, boolean isLeft) {
+        follower.turn(radians, isLeft);
     }
 
     public double getCurrentDistanceFromGoal() {
