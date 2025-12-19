@@ -23,7 +23,7 @@ public class NewRedFarAuto extends OpMode {
     public void autoStateUpdate(){
         switch (currentAutoState){
             case MOVE_FROM_START_POS_TO_SHOOTING_LINE:
-                driver.moveToPose(DriverDanny.Poses.BLUE_NEAR_SHOOTING_POSE, true);
+                driver.moveToPose(DriverDanny.Poses.RED_NEAR_SHOOTING_POSE, true);
                 setAutoState(AutoState.SHOOT_PRELOAD);
                 break;
             case SHOOT_PRELOAD:
