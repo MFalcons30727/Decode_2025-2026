@@ -15,7 +15,7 @@ public class NewRedFarAuto extends OpMode {
         DONE
     }
 
-    private Timer stateTimer, opModeTimer;
+    private Timer autoStateTimer, opModeTimer;
     private AutoState currentAutoState;
     private DriverDanny driver;
     private ShooterMcGavin shooter;
@@ -43,20 +43,20 @@ public class NewRedFarAuto extends OpMode {
                 // do nothing here from right now.  maybe stop motors or something in the future?
                 break;
             default:
-                telemetry.addData("AutoState", "Unknown");
+                telemetry.addLine("AutoState unknown");
                 break;
         }
     }
 
     public void setAutoState(AutoState newState) {
         currentAutoState = newState;
-        stateTimer.resetTimer();
+        autoStateTimer.resetTimer();
     }
 
     @Override
     public void init() { // this runs once when you hit "init" on the driver hub
         currentAutoState = AutoState.MOVE_FROM_START_POS_TO_SHOOTING_LINE;
-        stateTimer = new Timer();
+        autoStateTimer = new Timer();
         opModeTimer = new Timer();
         driver = new DriverDanny(hardwareMap,
                                     telemetry,
@@ -78,9 +78,7 @@ public class NewRedFarAuto extends OpMode {
         autoStateUpdate();
 
         telemetry.addData("AutoState", currentAutoState.toString());
-        telemetry.addData("StateTime", stateTimer.getElapsedTimeSeconds());
+        telemetry.addData("StateTime", autoStateTimer.getElapsedTimeSeconds());
         telemetry.update();
     }
-
-
 }

@@ -94,7 +94,7 @@ public class DriverDanny {
 
         double newForward = r * Math.sin(theta);
         double newStrafe = r * Math.cos(theta);
-        
+
         // saw another example doing it this way...not sure which is correct until testing
         // double heading = follower.getHeading();
         // double newForward = forward * Math.cos(heading) + strafe * Math.sin(heading);
