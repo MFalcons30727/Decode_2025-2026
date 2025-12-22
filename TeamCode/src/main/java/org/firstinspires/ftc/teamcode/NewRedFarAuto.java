@@ -60,8 +60,8 @@ public class NewRedFarAuto extends OpMode {
         opModeTimer = new Timer();
         driver = new DriverDanny(hardwareMap,
                                     telemetry,
-                                    DriverDanny.Poses.RED_FAR_START_POSE,
-                                    DriverDanny.Team.RED);
+                                    DriverDanny.Team.RED,
+                                    DriverDanny.Poses.RED_FAR_START_POSE);
         shooter = new ShooterMcGavin(hardwareMap, telemetry);
     }
 

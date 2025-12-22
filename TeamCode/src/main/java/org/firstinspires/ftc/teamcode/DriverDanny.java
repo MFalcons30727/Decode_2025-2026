@@ -39,7 +39,8 @@ public class DriverDanny {
     private Team currentTeam;
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
 
-    public DriverDanny(HardwareMap hardwareMap, Telemetry telemetryFromOpMode, Pose startingPose, Team team) {
+    public DriverDanny(HardwareMap hardwareMap, Telemetry telemetryFromOpMode,
+                       Team team, Pose startingPose) {
         // this is our constructor that gets called like this from our autos:  driver = new DriverDanny(hardwareMap, telemetry, DriverDanny.Poses.RED_FAR_START_POSE);
         // think of this like our "init" but for the DriverDanny specifically
         follower = Constants.createFollower(hardwareMap);  // TODO: need to retune Pedro Pathing constants with the new bot
@@ -64,13 +65,14 @@ public class DriverDanny {
     }
 
     public void robotCentricDrive(double forward, double strafe, double rotate) {
+        // followed brogan's tutorial on this
         double frontLeftPower = forward + strafe + rotate;
         double backLeftPower = forward - strafe + rotate;
         double frontRightPower = forward - strafe - rotate;
         double backRightPower = forward + strafe - rotate;
 
         double maxPower = 1.0;
-        double maxSpeed = 1.0; //this is speed, can be changed to lower if you want to let other drive during outreach events
+        double maxSpeed = 1.0; // this is speed, can be changed to lower if you want to let other drive during outreach events
 
         maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
         maxPower = Math.max(maxPower, Math.abs(backLeftPower));
@@ -84,6 +86,7 @@ public class DriverDanny {
     }
 
     public void fieldCentricDrive(double forward, double strafe, double rotate) {
+        // followed brogan's tutorial on this
         double theta = Math.atan2(forward, strafe);
         double r = Math.hypot(strafe, forward);
 
@@ -93,6 +96,44 @@ public class DriverDanny {
         double newStrafe = Math.cos(theta);
 
         this.robotCentricDrive(newForward, newStrafe, rotate);
+    }
+
+    public double getHeadingErrorForAutoAim() {
+        Pose currentPose = this.getPose();
+        Pose goalPose;
+
+        if (currentTeam == Team.RED) {
+            goalPose = Poses.RED_GOAL_POSE;
+        } else {
+            goalPose = Poses.BLUE_GOAL_POSE;
+        }
+
+        // get the "vector" from current robot position to goal position
+        double dx = goalPose.getX() - currentPose.getX();
+        double dy = goalPose.getY() - currentPose.getY();
+
+        // use atan2 to get heading from x-axis to goal in radians
+        double targetHeading = Math.atan2(dy, dx);
+
+        // get how much we need to change our heading
+        double headingError = AngleUnit.normalizeRadians(targetHeading - currentPose.getHeading());
+
+        // kP is the "P" coefficient of PIDF tuning
+        // it tells how strongly to correct or "snap" to the new heading
+        // if taking too long to correct the heading, increase
+        // if snapping too quickly or overshooting, decrease
+        double kP = 1.0;
+
+        // update our rotate value this loop to this value
+        return kP * headingError;
+    }
+
+    public double getCurrentDistanceFromGoal() {
+        if (currentTeam == Team.RED) {
+            return this.getPose().distanceFrom(Poses.RED_GOAL_POSE);
+        } else {
+            return this.getPose().distanceFrom(Poses.BLUE_GOAL_POSE);
+        }
     }
 
     public void update() { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL
@@ -109,21 +150,10 @@ public class DriverDanny {
         return follower.getPose(); // this will just return the current pose from Pedro Pathing but can add additional steps if we need to later
     }
 
-    /**
-     * See if the robot is still in the process of moving to a new pose
-     *
-     * @return whether or not the robot is still moving to the new pose
-     */
     public boolean isBusy() {
         return follower.isBusy(); // checks to see if PedroPathing is still busy and returns that result
     }
 
-    /**
-     * Moves the robot from our current position to the new pose we pass as a parameter here
-     *
-     * @param newPose the new pose to move to
-     * @param holdEnd whether or not to have PedroPathing hold the robot at the newPose when done
-     */
     public void moveToPose(Pose newPose, boolean holdEnd) {
         currentPath = follower.pathBuilder()
                 .addPath(new BezierLine(getPose(), newPose))
@@ -131,17 +161,5 @@ public class DriverDanny {
                 .build();
 
         follower.followPath(currentPath, holdEnd); // start the robot moving towards the new pose immediately
-    }
-
-    public void turn(double radians, boolean isLeft) {
-        follower.turn(radians, isLeft);
-    }
-
-    public double getCurrentDistanceFromGoal() {
-        if (currentTeam == Team.RED) {
-            return getPose().distanceFrom(Poses.RED_GOAL_POSE);
-        } else {
-            return getPose().distanceFrom(Poses.BLUE_GOAL_POSE);
-        }
     }
 }

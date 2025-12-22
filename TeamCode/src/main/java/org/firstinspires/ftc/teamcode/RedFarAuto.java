@@ -29,8 +29,6 @@ public class RedFarAuto extends OpMode {
     private final Pose redShootingPose = new Pose (96, 96, Math.toRadians(45));
     private final Pose parkRedGatePose = new Pose (120,70, Math.toRadians(180));
 
-
-
     private Follower follower; // part of the Pedro Pathing package, follows the path
     private Timer pathTimer, opModeTimer; // this line makes sure you don't use sleeps, this lets the auto do multiple things at once and move smoothly.
     private PathState currentPathState;
@@ -60,7 +58,7 @@ public class RedFarAuto extends OpMode {
                 break;
             case SHOOT_PRELOAD:
                 if (!follower.isBusy()) {
-                    shooter.startShooting();
+                    shooter.startShootingAtVelocity(1100);
                     setPathState(PathState.MOVE_FROM_SHOOTING_LINE_TO_RED_GATE);
                 }
                 break;
