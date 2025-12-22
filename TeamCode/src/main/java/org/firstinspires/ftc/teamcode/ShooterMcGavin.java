@@ -22,9 +22,10 @@ public class ShooterMcGavin {
     }
 
     private static final double SHOOTER_ACCEPTABLE_VELOCITY_ERROR = 30; // in case the shooter motor isn't able to reach that exact velocity, allow it to still shoot when being this close to the target velocity
-    private static final double SHOOTER_VELOCITY_DROP_AFTER_SHOT = 200; // if velocity drops this amount in the START_FEEDING step, we know an artifact has been shot
-    private static final double FEEDER_POWER = 1; // the power we send to the indexer servos to feed
-    private static final double STEP_TIMEOUT_IN_MILLISECONDS = 2000;
+    private static final double SHOOTER_VELOCITY_DROP_AFTER_SHOT = 80; // if velocity drops this amount in the START_FEEDING step, we know an artifact has been shot
+    private static final double HOOD_SERVO_ACCEPTABLE_ERROR = 0.1; // if servo doesn't make it to exact position, this is to say "good enough"
+    private static final double FEEDER_POWER = 1; // the power we send to the indexer motor to feed
+    private static final double STEP_TIMEOUT_IN_MILLISECONDS = 5000; // this helps to make sure our "waiting for" steps never run longer than a certain time
     private double shooterTargetVelocity = 1100; // the velocity we want our shooter to be set to
     private double hoodServoPosition = 0; // the servo position of the adjustable hood
     private DcMotorEx shootMotor;
@@ -49,6 +50,7 @@ public class ShooterMcGavin {
         hoodServoPositionLUT = new InterpLUT();
         buildLUTS();
 
+        shootMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shootMotor.setDirection(DcMotorEx.Direction.REVERSE);
 
         indexer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -94,7 +96,8 @@ public class ShooterMcGavin {
                 setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY);
                 break;
             case WAIT_FOR_TARGET_VELOCITY: // wait until we're close to the target velocity for the shooter
-                if ((Math.abs(shootMotor.getVelocity() - shooterTargetVelocity) < SHOOTER_ACCEPTABLE_VELOCITY_ERROR && hoodServo.getPosition() == hoodServoPosition)
+                if ((Math.abs(shootMotor.getVelocity() - shooterTargetVelocity) < SHOOTER_ACCEPTABLE_VELOCITY_ERROR
+                        && Math.abs(hoodServo.getPosition() - hoodServoPosition) < HOOD_SERVO_ACCEPTABLE_ERROR)
                         || shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) { // this makes sure the auto doesn't fail completely if it's not able to ever reach target velocity
                     setShootingState(ShootingState.START_FEEDING);
                 }
@@ -103,7 +106,8 @@ public class ShooterMcGavin {
                 indexer.setPower(FEEDER_POWER);
 
                 // instead of waiting a certain delay, check for velocity drop to tell if an artifact was shot
-                if (shootMotor.getVelocity() < (shooterTargetVelocity - SHOOTER_VELOCITY_DROP_AFTER_SHOT)) {
+                if (shootMotor.getVelocity() < (shooterTargetVelocity - SHOOTER_VELOCITY_DROP_AFTER_SHOT)
+                        || shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) {
                     shotsFired++;
 
                     if (shotsFired >= 3) { // after 3 shot attempts, power off shooter
@@ -118,7 +122,10 @@ public class ShooterMcGavin {
                 break;
             case OFF:
                 shootMotor.setVelocity(0);
+                hoodServo.setPosition(0);
                 indexer.setPower(0);
+                shooterTargetVelocity = 1100;
+                hoodServoPosition = 0;
                 break;
         }
 
@@ -135,6 +142,7 @@ public class ShooterMcGavin {
         setShootingState(ShootingState.START_SPIN_UP);
     }
     public void startShootingAtVelocity(double targetVelocity) {
+        // this lets us continue to shoot the old way if we need to for testing
         shooterTargetVelocity = targetVelocity;
         hoodServoPosition = 0; // retract hood all the way
         setShootingState(ShootingState.START_SPIN_UP);
