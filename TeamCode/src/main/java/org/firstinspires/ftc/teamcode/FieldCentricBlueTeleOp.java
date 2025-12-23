@@ -19,6 +19,7 @@ public class FieldCentricBlueTeleOp extends OpMode {
                 telemetry,
                 DriverDanny.Team.BLUE,
                 DriverDanny.Poses.BLUE_FAR_START_POSE);
+        shooter = new ShooterMcGavin(hardwareMap, telemetry);
         //intake = hardwareMap.get(DcMotor.class, "intake");
 
         telemetry.addData("Status", "Initialized");
