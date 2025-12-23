@@ -118,7 +118,7 @@ public class DriverDanny {
         double dy = goalPose.getY() - currentPose.getY();
 
         // use atan2 to get heading from x-axis to goal in radians
-        double targetHeading = Math.atan2(dy, dx);
+        double targetHeading = Math.atan2(dy, dx) - Math.PI / 2; // pedropathing discord recommended subtracting Math.PI / 2 here because of Pedro's coordinate system difference
 
         // get how much we need to change our heading
         double headingError = AngleUnit.normalizeRadians(targetHeading - currentPose.getHeading());
@@ -127,7 +127,7 @@ public class DriverDanny {
         // it tells how strongly to correct or "snap" to the new heading
         // if taking too long to correct the heading, increase
         // if snapping too quickly or overshooting, decrease
-        double kP = 1.0;
+        double kP = 0.2;
 
         // update our rotate value this loop to this value
         return kP * headingError;
