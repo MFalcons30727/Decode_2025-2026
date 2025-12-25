@@ -86,7 +86,7 @@ public class DriverDanny {
     }
 
     public void fieldCentricDrive(double forward, double strafe, double rotate) {
-        // if on blue alliance, swap the input directions (based on video testing)
+        // if on blue alliance, swap the input directions? (based on video testing)
 //        if (currentAlliance == Alliance.BLUE) {
 //            forward = -1 * forward;
 //            strafe = -1 * strafe;
@@ -149,11 +149,11 @@ public class DriverDanny {
     public void update() { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL
         follower.update(); // this will just update the Pedro Pathing following but can add additional steps if we need to later
 
-        Pose currentPose = getPose();
+        Pose currentPose = this.getPose();
         telemetry.addData("CurrentXPos", currentPose.getX());
         telemetry.addData("CurrentYPos", currentPose.getY());
         telemetry.addData("CurrentHeading", Math.toDegrees(currentPose.getHeading()));
-        telemetry.addData("CurrentDistanceFromGoal", getCurrentDistanceFromGoal());
+        telemetry.addData("CurrentDistanceFromGoal", this.getCurrentDistanceFromGoal());
     }
 
     public Pose getPose() {

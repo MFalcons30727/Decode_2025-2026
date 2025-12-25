@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.configurables.annotations.IgnoreConfigurable;
-import com.bylazar.telemetry.JoinedTelemetry;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -15,20 +14,18 @@ public class PanelsTelemetryTesting extends OpMode {
     public static double testVarB = 200;
     @IgnoreConfigurable
     public static double testVarC = 300;
+    @IgnoreConfigurable
+    TelemetryManager.TelemetryWrapper pTelemetry;
 
     @Override
     public void init() {
-        TelemetryManager.TelemetryWrapper pTelemetry = PanelsTelemetry.INSTANCE.getFtcTelemetry();
+        pTelemetry = PanelsTelemetry.INSTANCE.getFtcTelemetry();
     }
 
     @Override
     public void loop() {
-        while (testVarB <= testVarA) {
-            testVarB++;
-        }
-
-        while (testVarB > testVarA) {
-            testVarB--;
-        }
+        pTelemetry.addData("testVarA", testVarA);
+        pTelemetry.addData("testVarB", testVarB);
+        pTelemetry.addData("testVarC", testVarC);
     }
 }
