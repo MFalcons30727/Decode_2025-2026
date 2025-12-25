@@ -52,7 +52,7 @@ public class FieldCentricBlueTeleOp extends OpMode {
         driver.fieldCentricDrive(forward, strafe, rotate);
 
         // can try this other version too if this still doesn't work
-        driver.fieldCentricDriveVersion2(forward, strafe, rotate);
+        //driver.fieldCentricDriveVersion2(forward, strafe, rotate);
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.update();
