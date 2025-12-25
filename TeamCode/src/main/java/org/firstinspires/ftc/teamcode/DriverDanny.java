@@ -24,11 +24,11 @@ public class DriverDanny {
         public static final Pose BLUE_FAR_SHOOTING_POSE = new Pose (62, 14, Math.toRadians(110));
         public static final Pose PARK_RED_GATE_POSE = new Pose (120,70, Math.toRadians(180));
         public static final Pose PARK_BLUE_GATE_POSE = new Pose (28,70, Math.toRadians(0));
-        public static final Pose RED_GOAL_POSE = new Pose(144, 144, Math.toRadians(225));
-        public static final Pose BLUE_GOAL_POSE = new Pose(0, 144, Math.toRadians(315));
+        public static final Pose RED_GOAL_POSE = new Pose(144, 144, 0);
+        public static final Pose BLUE_GOAL_POSE = new Pose(0, 144, 0);
     }
 
-    public enum Team {
+    public enum Alliance {
         RED,
         BLUE
     }
@@ -36,17 +36,17 @@ public class DriverDanny {
     private Follower follower; // part of the Pedro Pathing package, follows the path
     private Telemetry telemetry;
     private PathChain currentPath; // the current or most recent path we've built for the robot
-    private Team currentTeam;
+    private Alliance currentAlliance;
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
 
     public DriverDanny(HardwareMap hardwareMap, Telemetry telemetryFromOpMode,
-                       Team team, Pose startingPose) {
+                       Alliance alliance, Pose startingPose) {
         // this is our constructor that gets called like this from our autos:  driver = new DriverDanny(hardwareMap, telemetry, DriverDanny.Poses.RED_FAR_START_POSE);
         // think of this like our "init" but for the DriverDanny specifically
         follower = Constants.createFollower(hardwareMap);  // TODO: need to retune Pedro Pathing constants with the new bot
         telemetry = telemetryFromOpMode;
         follower.setStartingPose(startingPose);
-        currentTeam = team;
+        currentAlliance = alliance;
 
         frontLeftDrive = hardwareMap.get(DcMotor.class, "leftFront");
         frontRightDrive = hardwareMap.get(DcMotor.class, "rightFront");
@@ -86,6 +86,12 @@ public class DriverDanny {
     }
 
     public void fieldCentricDrive(double forward, double strafe, double rotate) {
+        // if on blue alliance, swap the input directions (based on video testing)
+        if (currentAlliance == Alliance.BLUE) {
+            forward = -1 * forward;
+            strafe = -1 * strafe;
+        }
+
         // followed brogan's tutorial on this
         double theta = Math.atan2(forward, strafe);
         double r = Math.hypot(strafe, forward);
@@ -95,10 +101,20 @@ public class DriverDanny {
         double newForward = r * Math.sin(theta);
         double newStrafe = r * Math.cos(theta);
 
-        // saw another example doing it this way...not sure which is correct until testing
-        // double heading = follower.getHeading();
-        // double newForward = forward * Math.cos(heading) + strafe * Math.sin(heading);
-        // double newStrafe  = -forward * Math.sin(heading) + strafe * Math.cos(heading);
+        this.robotCentricDrive(newForward, newStrafe, rotate);
+    }
+
+    public void fieldCentricDriveVersion2(double forward, double strafe, double rotate) {
+        // robot heading from pedro follower (radians)
+        double heading = follower.getHeading();
+
+        // rotate the entire field by 180 degrees (Math.PI for radians) if on blue alliance
+        if (currentAlliance == Alliance.BLUE) {
+            heading += Math.PI;  // add 180 degrees
+        }
+
+        double newForward = forward * Math.cos(heading) - strafe * Math.sin(heading);
+        double newStrafe  = forward * Math.sin(heading) + strafe * Math.cos(heading);
 
         this.robotCentricDrive(newForward, newStrafe, rotate);
     }
@@ -107,7 +123,7 @@ public class DriverDanny {
         Pose currentPose = this.getPose();
         Pose goalPose;
 
-        if (currentTeam == Team.RED) {
+        if (currentAlliance == Alliance.RED) {
             goalPose = Poses.RED_GOAL_POSE;
         } else {
             goalPose = Poses.BLUE_GOAL_POSE;
@@ -118,7 +134,7 @@ public class DriverDanny {
         double dy = goalPose.getY() - currentPose.getY();
 
         // use atan2 to get heading from x-axis to goal in radians
-        double targetHeading = Math.atan2(dy, dx) - Math.PI / 2; // pedropathing discord recommended subtracting Math.PI / 2 here because of Pedro's coordinate system difference
+        double targetHeading = Math.atan2(dy, dx);  // - Math.PI / 2; // pedropathing discord recommended subtracting Math.PI / 2 here because of Pedro's coordinate system difference
 
         // get how much we need to change our heading
         double headingError = AngleUnit.normalizeRadians(targetHeading - currentPose.getHeading());
@@ -134,11 +150,15 @@ public class DriverDanny {
     }
 
     public double getCurrentDistanceFromGoal() {
-        if (currentTeam == Team.RED) {
+        if (currentAlliance == Alliance.RED) {
             return this.getPose().distanceFrom(Poses.RED_GOAL_POSE);
         } else {
             return this.getPose().distanceFrom(Poses.BLUE_GOAL_POSE);
         }
+    }
+
+    public Alliance getCurrentAlliance() {
+        return currentAlliance;
     }
 
     public void update() { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL
@@ -147,7 +167,7 @@ public class DriverDanny {
         Pose currentPose = getPose();
         telemetry.addData("CurrentXPos", currentPose.getX());
         telemetry.addData("CurrentYPos", currentPose.getY());
-        telemetry.addData("CurrentHeading", currentPose.getHeading());
+        telemetry.addData("CurrentHeading", Math.toDegrees(currentPose.getHeading()));
         telemetry.addData("CurrentDistanceFromGoal", getCurrentDistanceFromGoal());
     }
 
