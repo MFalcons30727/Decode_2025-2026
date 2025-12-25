@@ -44,8 +44,8 @@ public class DriverDanny {
         // this is our constructor that gets called like this from our autos:  driver = new DriverDanny(hardwareMap, telemetry, DriverDanny.Poses.RED_FAR_START_POSE);
         // think of this like our "init" but for the DriverDanny specifically
         follower = Constants.createFollower(hardwareMap);  // TODO: need to retune Pedro Pathing constants with the new bot
-        telemetry = telemetryFromOpMode;
         follower.setStartingPose(startingPose);
+        telemetry = telemetryFromOpMode;
         currentAlliance = alliance;
 
         frontLeftDrive = hardwareMap.get(DcMotor.class, "leftFront");
@@ -87,10 +87,10 @@ public class DriverDanny {
 
     public void fieldCentricDrive(double forward, double strafe, double rotate) {
         // if on blue alliance, swap the input directions (based on video testing)
-        if (currentAlliance == Alliance.BLUE) {
-            forward = -1 * forward;
-            strafe = -1 * strafe;
-        }
+//        if (currentAlliance == Alliance.BLUE) {
+//            forward = -1 * forward;
+//            strafe = -1 * strafe;
+//        }
 
         // followed brogan's tutorial on this
         double theta = Math.atan2(forward, strafe);
@@ -100,21 +100,6 @@ public class DriverDanny {
 
         double newForward = r * Math.sin(theta);
         double newStrafe = r * Math.cos(theta);
-
-        this.robotCentricDrive(newForward, newStrafe, rotate);
-    }
-
-    public void fieldCentricDriveVersion2(double forward, double strafe, double rotate) {
-        // robot heading from pedro follower (radians)
-        double heading = follower.getHeading();
-
-        // rotate the entire field by 180 degrees (Math.PI for radians) if on blue alliance
-        if (currentAlliance == Alliance.BLUE) {
-            heading += Math.PI;  // add 180 degrees
-        }
-
-        double newForward = forward * Math.cos(heading) - strafe * Math.sin(heading);
-        double newStrafe  = forward * Math.sin(heading) + strafe * Math.cos(heading);
 
         this.robotCentricDrive(newForward, newStrafe, rotate);
     }
@@ -134,7 +119,7 @@ public class DriverDanny {
         double dy = goalPose.getY() - currentPose.getY();
 
         // use atan2 to get heading from x-axis to goal in radians
-        double targetHeading = Math.atan2(dy, dx);  // - Math.PI / 2; // pedropathing discord recommended subtracting Math.PI / 2 here because of Pedro's coordinate system difference
+        double targetHeading = Math.atan2(dy, dx);
 
         // get how much we need to change our heading
         double headingError = AngleUnit.normalizeRadians(targetHeading - currentPose.getHeading());

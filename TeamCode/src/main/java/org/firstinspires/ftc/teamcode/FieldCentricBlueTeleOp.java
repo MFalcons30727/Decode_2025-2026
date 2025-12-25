@@ -37,7 +37,8 @@ public class FieldCentricBlueTeleOp extends OpMode {
         double strafe = gamepad1.left_stick_x;
         double rotate = gamepad1.right_stick_x;
 
-        if (gamepad1.right_trigger > 0 || gamepad2.right_trigger > 0) {
+        if ((gamepad1.right_trigger > 0 || gamepad2.right_trigger > 0)
+                && !shooter.isShooting()) {
             //shooter.startShootingAtVelocity(1100); // can go back to using this if needed until we have velocity scaling working
             shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
         }
@@ -50,9 +51,6 @@ public class FieldCentricBlueTeleOp extends OpMode {
         // if holding down right bumper, it will lock the heading with autoaim.
         // otherwise, it will use the rotation from the right stick x
         driver.fieldCentricDrive(forward, strafe, rotate);
-
-        // can try this other version too if this still doesn't work
-        //driver.fieldCentricDriveVersion2(forward, strafe, rotate);
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.update();
