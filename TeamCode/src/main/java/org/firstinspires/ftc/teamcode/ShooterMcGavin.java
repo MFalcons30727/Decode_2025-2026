@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.util.InterpLUT;
+import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.configurables.annotations.IgnoreConfigurable;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -10,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+@Configurable
 public class ShooterMcGavin {
     // when declaring enums and class-level variables, always use private if it's only used or
     // needed within this class.  otherwise you might get confused and try to use them in other
@@ -21,20 +24,30 @@ public class ShooterMcGavin {
         START_FEEDING // start indexers to feed one artifact
     }
 
-    private static final double SHOOTER_ACCEPTABLE_VELOCITY_ERROR = 30; // in case the shooter motor isn't able to reach that exact velocity, allow it to still shoot when being this close to the target velocity
-    private static final double SHOOTER_VELOCITY_DROP_AFTER_SHOT = 80; // if velocity drops this amount in the START_FEEDING step, we know an artifact has been shot
-    private static final double HOOD_SERVO_ACCEPTABLE_ERROR = 0.1; // if servo doesn't make it to exact position, this is to say "good enough"
-    private static final double FEEDER_POWER = 1; // the power we send to the indexer motor to feed
-    private static final double STEP_TIMEOUT_IN_MILLISECONDS = 5000; // this helps to make sure our "waiting for" steps never run longer than a certain time
+    private static double SHOOTER_ACCEPTABLE_VELOCITY_ERROR = 30; // in case the shooter motor isn't able to reach that exact velocity, allow it to still shoot when being this close to the target velocity
+    private static double SHOOTER_VELOCITY_DROP_AFTER_SHOT = 80; // if velocity drops this amount in the START_FEEDING step, we know an artifact has been shot
+    private static double HOOD_SERVO_ACCEPTABLE_ERROR = 0.05; // if servo doesn't make it to exact position, this is to say "good enough"
+    private static double FEEDER_POWER = 1; // the power we send to the indexer motor to feed
+    private static double STEP_TIMEOUT_IN_MILLISECONDS = 5000; // this helps to make sure our "waiting for" steps never run longer than a certain time
+    @IgnoreConfigurable
     private double shooterTargetVelocity = 1100; // the velocity we want our shooter to be set to
+    @IgnoreConfigurable
     private double hoodServoPosition = 0; // the servo position of the adjustable hood
+    @IgnoreConfigurable
     private DcMotorEx shootMotor;
+    @IgnoreConfigurable
     private DcMotor indexer;
+    @IgnoreConfigurable
     private Servo hoodServo;
+    @IgnoreConfigurable
     private Telemetry telemetry;
+    @IgnoreConfigurable
     private ElapsedTime shootStateTimer; // tried to use the Pedro Pathing timer first but it didn't allow for milliseconds, only seconds
+    @IgnoreConfigurable
     private ShootingState currentShootingState; // keeping track of the current step we're on in our shooting state machine
+    @IgnoreConfigurable
     private int shotsFired; // keeps track of how many artifacts we've attempted to shoot (between 0 and 3)
+    @IgnoreConfigurable
     private InterpLUT velocityLUT, hoodServoPositionLUT; // these are look-up-tables that will help us find the right velocity and hood angle at any distance
 
     public ShooterMcGavin(HardwareMap hardwareMap, Telemetry telemetryFromOpMode) { // this is our constructor that gets called like this from our autos:  shooter = new Shooter(hardwareMap);
@@ -145,6 +158,14 @@ public class ShooterMcGavin {
         // this lets us continue to shoot the old way if we need to for testing
         shooterTargetVelocity = targetVelocity;
         hoodServoPosition = 0; // retract hood all the way
+        setShootingState(ShootingState.START_SPIN_UP);
+    }
+
+    public void startShootingAtVelocityAndHoodPosition(double targetVelocity,
+                                                       double targetHoodServoPosition) {
+        // can use this one for testing of our LUT measurements
+        shooterTargetVelocity = targetVelocity;
+        hoodServoPosition = targetHoodServoPosition;
         setShootingState(ShootingState.START_SPIN_UP);
     }
 }
