@@ -132,6 +132,7 @@ public class ShooterMcGavin {
         telemetry.addData("ShooterState", currentShootingState.toString());
         telemetry.addData("FlywheelVelocity", shootMotor.getVelocity());
         telemetry.addData("HoodServoPosition", hoodServo.getPosition());
+        telemetry.addData("ShotsFired", shotsFired);
     }
 
     public void startShootingFromDistance(double distanceFromGoalInInches) { // if this version of startShooting is called with no arguments, use the LUTs to determine velocity and hood servo position
