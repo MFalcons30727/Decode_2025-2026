@@ -131,7 +131,9 @@ public class ShooterMcGavin {
 
         telemetry.addData("ShooterState", currentShootingState.toString());
         telemetry.addData("FlywheelVelocity", shootMotor.getVelocity());
+        telemetry.addData("TargetVelocity", shooterTargetVelocity);
         telemetry.addData("HoodServoPosition", hoodServo.getPosition());
+        telemetry.addData("HoodTargetPosition", hoodServoPosition);
         telemetry.addData("ShotsFired", shotsFired);
     }
 
