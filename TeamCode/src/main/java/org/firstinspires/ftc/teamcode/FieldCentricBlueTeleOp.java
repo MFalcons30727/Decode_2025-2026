@@ -48,6 +48,19 @@ public class FieldCentricBlueTeleOp extends OpMode {
             rotate = driver.getHeadingErrorForAutoAim();
         }
 
+        if (gamepad1.aWasPressed() || gamepad2.aWasPressed()) {
+            driver.swapCurrentAlliance(); // lets us swap our alliance (for auto-aim testing)
+        }
+
+        if (gamepad1.bWasPressed() || gamepad2.bWasPressed()) {
+            driver.finalPark();
+        }
+
+        if (gamepad1.xWasPressed() || gamepad2.xWasPressed()) {
+            driver.abortPath();
+        }
+
+
         // if holding down right bumper, it will lock the heading with autoaim.
         // otherwise, it will use the rotation from the right stick x
         driver.fieldCentricDrive(forward, strafe, rotate);

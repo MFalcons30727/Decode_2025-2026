@@ -6,6 +6,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -26,6 +27,9 @@ public class DriverDanny {
         public static final Pose PARK_BLUE_GATE_POSE = new Pose (28,70, Math.toRadians(0));
         public static final Pose RED_GOAL_POSE = new Pose(144, 144, 0);
         public static final Pose BLUE_GOAL_POSE = new Pose(0, 144, 0);
+        public static final Pose RED_FINAL_PARK_POSE = new Pose(38, 33, 0);
+        public static final Pose BLUE_FINAL_PARK_POSE = new Pose(105, 33, 0);
+
     }
 
     public enum Alliance {
@@ -98,6 +102,9 @@ public class DriverDanny {
 
         theta = AngleUnit.normalizeRadians(theta - follower.getHeading());
 
+        // according to the diagram on pg 149 of LearnJavaForFTC, it shows r * sin(theta)
+        // calculating the y direction (our strafe direction)
+        // maybe need to swap sin and cos on these two lines???
         double newForward = r * Math.sin(theta);
         double newStrafe = r * Math.cos(theta);
 
@@ -132,6 +139,9 @@ public class DriverDanny {
 
         // update our rotate value this loop to this value
         return kP * headingError;
+
+        // read that we might need to limit the values between 1 and -1 like this
+        //return Range.clip(kP * headingError, -1.0, 1.0);
     }
 
     public double getCurrentDistanceFromGoal() {
@@ -146,6 +156,14 @@ public class DriverDanny {
         return currentAlliance;
     }
 
+    public void swapCurrentAlliance() {
+        if (currentAlliance == Alliance.BLUE) {
+            currentAlliance = Alliance.RED;
+        } else {
+            currentAlliance = Alliance.BLUE;
+        }
+    }
+
     public void update() { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL
         follower.update(); // this will just update the Pedro Pathing following but can add additional steps if we need to later
 
@@ -153,6 +171,7 @@ public class DriverDanny {
         telemetry.addData("CurrentXPos", currentPose.getX());
         telemetry.addData("CurrentYPos", currentPose.getY());
         telemetry.addData("CurrentHeading", Math.toDegrees(currentPose.getHeading()));
+        telemetry.addData("CurrentAlliance", currentAlliance.toString());
         telemetry.addData("CurrentDistanceFromGoal", this.getCurrentDistanceFromGoal());
     }
 
@@ -171,5 +190,21 @@ public class DriverDanny {
                 .build();
 
         follower.followPath(currentPath, holdEnd); // start the robot moving towards the new pose immediately
+    }
+
+    public void finalPark() {
+        if (!this.isBusy()) {
+            if (currentAlliance == Alliance.RED) {
+                this.moveToPose(Poses.RED_FINAL_PARK_POSE, true);
+            } else {
+                this.moveToPose(Poses.BLUE_FINAL_PARK_POSE, true);
+            }
+        }
+    }
+
+    public void abortPath() {
+        if (this.isBusy()) {
+            follower.breakFollowing();
+        }
     }
 }
