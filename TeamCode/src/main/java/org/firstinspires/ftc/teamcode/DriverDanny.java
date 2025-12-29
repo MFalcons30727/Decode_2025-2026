@@ -97,7 +97,7 @@ public class DriverDanny {
 //        }
 
         // followed brogan's tutorial on this
-        double theta = Math.atan2(forward, strafe);
+        double theta = Math.atan2(forward, strafe) - Math.PI/2;
         double r = Math.hypot(strafe, forward);
 
         theta = AngleUnit.normalizeRadians(theta - follower.getHeading());
