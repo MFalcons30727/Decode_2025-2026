@@ -4,12 +4,15 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 public class DriverDanny {
@@ -43,8 +46,16 @@ public class DriverDanny {
     private Alliance currentAlliance;
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
 
+    private Limelight3A limelight;
+
     public DriverDanny(HardwareMap hardwareMap, Telemetry telemetryFromOpMode,
                        Alliance alliance, Pose startingPose) {
+
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.pipelineSwitch(0); // april tag pipeline
+        limelight.start();
+
+
         // this is our constructor that gets called like this from our autos:  driver = new DriverDanny(hardwareMap, telemetry, DriverDanny.Poses.RED_FAR_START_POSE);
         // think of this like our "init" but for the DriverDanny specifically
         follower = Constants.createFollower(hardwareMap);  // TODO: need to retune Pedro Pathing constants with the new bot
@@ -150,10 +161,10 @@ public class DriverDanny {
         double kP = 0.2;
 
         // update our rotate value this loop to this value
-        return kP * headingError;
+        //return kP * headingError;
 
         // read that we might need to limit the values between 1 and -1 like this
-        //return Range.clip(kP * headingError, -1.0, 1.0);
+        return Range.clip(kP * headingError, -1.0, 1.0);
     }
 
     public double getCurrentDistanceFromGoal() {
@@ -178,6 +189,19 @@ public class DriverDanny {
 
     public void update() { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL
         follower.update(); // this will just update the Pedro Pathing following but can add additional steps if we need to later
+
+        limelight.updateRobotOrientation(follower.getHeading());
+        LLResult llResult = limelight.getLatestResult();
+        if (llResult != null && llResult.isValid()) {
+            Pose3D botPose = llResult.getBotpose_MT2();
+            telemetry.addData("Tx", llResult.getTx()*39.37);
+            telemetry.addData("Ty", llResult.getTy()*39.37);
+            telemetry.addData("Ta", llResult.getTa()*39.37);
+            telemetry.addData("robo x", botPose.getPosition().x);
+            telemetry.addData("robo y", botPose.getPosition().y);
+            telemetry.addData("robo z", botPose.getPosition().z);
+        }
+
 
         Pose currentPose = this.getPose();
         telemetry.addData("CurrentXPos", currentPose.getX());

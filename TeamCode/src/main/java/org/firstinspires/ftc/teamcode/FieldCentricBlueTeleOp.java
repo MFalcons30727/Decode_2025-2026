@@ -1,18 +1,23 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp (name="FieldCentricBlueTeleOp", group = "TeleOp")
 public class FieldCentricBlueTeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DriverDanny driver;
     private ShooterMcGavin shooter;
+    private Limelight3A limelight;
     // private DcMotor intake = null;
 
     @Override
     public void init() {
+
         // not sure if this is going to work because the starting pose is going to be different
         // need to find a way to get what our starting pose is in TeleOp
         driver = new DriverDanny(hardwareMap,
@@ -71,6 +76,7 @@ public class FieldCentricBlueTeleOp extends OpMode {
         // if holding down right bumper, it will lock the heading with autoaim.
         // otherwise, it will use the rotation from the right stick x
         driver.fieldCentricDrive(forward, strafe, rotate);
+
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.update();
