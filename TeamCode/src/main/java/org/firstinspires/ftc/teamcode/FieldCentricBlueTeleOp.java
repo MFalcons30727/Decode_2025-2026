@@ -33,15 +33,22 @@ public class FieldCentricBlueTeleOp extends OpMode {
         driver.update();
         shooter.update();
 
-        double forward = -gamepad1.left_stick_y;
-        double strafe = gamepad1.left_stick_x;
+        double forward = gamepad1.left_stick_x;
+        double strafe = gamepad1.left_stick_y;
         double rotate = gamepad1.right_stick_x;
+
 
         if ((gamepad1.right_trigger > 0.25 || gamepad2.right_trigger > 0.25)
                 && !shooter.isShooting()) {
             //shooter.startShootingAtVelocity(1100); // can go back to using this if needed until we have velocity scaling working
-            shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
+            try {
+                shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
+            } catch (Exception e) {
+                telemetry.addData("shooter", "NOT IN RANGE");
+            }
+
         }
+
 
         // auto aim using headingError on field-centric driving.  no pedropathing needed.
         if (gamepad1.right_bumper || gamepad2.right_bumper) {

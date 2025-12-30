@@ -91,10 +91,10 @@ public class DriverDanny {
 
     public void fieldCentricDrive(double forward, double strafe, double rotate) {
         // if on blue alliance, swap the input directions? (based on video testing)
-//        if (currentAlliance == Alliance.BLUE) {
-//            forward = -1 * forward;
-//            strafe = -1 * strafe;
-//        }
+        if (currentAlliance == Alliance.BLUE) {
+            forward = -1 * forward;
+            strafe = -1 * strafe;
+        }
 
         // followed brogan's tutorial on this
         double theta = Math.atan2(forward, strafe) - Math.PI/2;
@@ -125,11 +125,23 @@ public class DriverDanny {
         double dx = goalPose.getX() - currentPose.getX();
         double dy = goalPose.getY() - currentPose.getY();
 
+        telemetry.addData("dx", dx);
+        telemetry.addData("dy", dy);
+
+
         // use atan2 to get heading from x-axis to goal in radians
-        double targetHeading = Math.atan2(dy, dx);
+        double targetHeading = Math.atan2(dy, dx);// - Math.PI/2;
+
+        telemetry.addData("Target Heading", Math.toDegrees(targetHeading));
 
         // get how much we need to change our heading
-        double headingError = AngleUnit.normalizeRadians(targetHeading - currentPose.getHeading());
+        double headingError = targetHeading - currentPose.getHeading();
+
+        telemetry.addData("Heading Error Before", Math.toDegrees(headingError));
+
+//        headingError = AngleUnit.normalizeRadians(headingError);
+
+        telemetry.addData("Heading Error After", Math.toDegrees(headingError));
 
         // kP is the "P" coefficient of PIDF tuning
         // it tells how strongly to correct or "snap" to the new heading
