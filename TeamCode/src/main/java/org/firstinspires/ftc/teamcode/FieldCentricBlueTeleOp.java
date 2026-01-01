@@ -3,21 +3,50 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
+/*
+TODO:
+- If we get roadblocked on something, try to pivot to another item if possible
+- and we can come back and work on the stuff that doesn't work later.
+
+- We should focus on making an OpMode to handle each of these items so we can work on them
+- one at a time.
+
+- New Bot Setup (get us back to where the old bot was)
+    - Test all hardware to see what may need to be reversed
+        - Flywheel
+        - Intake
+        - Indexer
+        - Hood
+        - Pinpoint
+        - Limelight
+    - Remeasure deadwheel offsets
+    - Retune PedroPathing constants
+    - Test PedroPathing poses (make an opmode for testing this)
+    - Retune flywheel
+- New functionality
+    - Test field-centric driving
+    - Test odometry-based auto-aim
+    - Test auto-park
+    - Add Limelight odometry correction
+    - Add Limelight-based auto-aim (if needed)
+    - Add ability to start the shooter from anywhere but don't feed artifact until odometry tells
+      us we're inside of one of the allowed shooting areas.
+    - Figure out a way to pass the final pose of Auto as the start pose of TeleOp
+*/
 
 @TeleOp (name="FieldCentricBlueTeleOp", group = "TeleOp")
 public class FieldCentricBlueTeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DriverDanny driver;
     private ShooterMcGavin shooter;
-    private Limelight3A limelight;
-    // private DcMotor intake = null;
 
     @Override
     public void init() {
-
         // not sure if this is going to work because the starting pose is going to be different
         // need to find a way to get what our starting pose is in TeleOp
         driver = new DriverDanny(hardwareMap,
@@ -25,7 +54,6 @@ public class FieldCentricBlueTeleOp extends OpMode {
                 DriverDanny.Alliance.BLUE,
                 DriverDanny.Poses.BLUE_FAR_START_POSE);
         shooter = new ShooterMcGavin(hardwareMap, telemetry);
-        //intake = hardwareMap.get(DcMotor.class, "intake");
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -38,10 +66,9 @@ public class FieldCentricBlueTeleOp extends OpMode {
         driver.update();
         shooter.update();
 
-        double forward = gamepad1.left_stick_x;
-        double strafe = gamepad1.left_stick_y;
+        double joyY = -gamepad1.left_stick_y; // leaving this inverted so it works for robotCentricDrive (and we adjust for it on fieldCentricDrive)
+        double joyX = gamepad1.left_stick_x;
         double rotate = gamepad1.right_stick_x;
-
 
         if ((gamepad1.right_trigger > 0.25 || gamepad2.right_trigger > 0.25)
                 && !shooter.isShooting()) {
@@ -51,9 +78,7 @@ public class FieldCentricBlueTeleOp extends OpMode {
             } catch (Exception e) {
                 telemetry.addData("shooter", "NOT IN RANGE");
             }
-
         }
-
 
         // auto aim using headingError on field-centric driving.  no pedropathing needed.
         if (gamepad1.right_bumper || gamepad2.right_bumper) {
@@ -61,7 +86,7 @@ public class FieldCentricBlueTeleOp extends OpMode {
         }
 
         if (gamepad1.aWasPressed() || gamepad2.aWasPressed()) {
-            driver.swapCurrentAlliance(); // lets us swap our alliance (for auto-aim testing)
+            driver.swapCurrentAlliance(); // lets us swap our alliance (for auto-aim / driver testing)
         }
 
         if (gamepad1.bWasPressed() || gamepad2.bWasPressed()) {
@@ -72,11 +97,9 @@ public class FieldCentricBlueTeleOp extends OpMode {
             driver.abortPath();
         }
 
-
         // if holding down right bumper, it will lock the heading with autoaim.
         // otherwise, it will use the rotation from the right stick x
-        driver.fieldCentricDrive(forward, strafe, rotate);
-
+        driver.fieldCentricDrive(joyY, joyX, rotate);
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.update();

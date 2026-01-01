@@ -34,6 +34,7 @@ public class ShooterMcGavin {
     private Telemetry telemetry;
     private ElapsedTime shootStateTimer; // tried to use the Pedro Pathing timer first but it didn't allow for milliseconds, only seconds
     private ShootingState currentShootingState; // keeping track of the current step we're on in our shooting state machine
+    private boolean intakeRunning = false;
     private int shotsFired; // keeps track of how many artifacts we've attempted to shoot (between 0 and 3)
     private InterpLUT velocityLUT, hoodServoPositionLUT; // these are look-up-tables that will help us find the right velocity and hood angle at any distance
 

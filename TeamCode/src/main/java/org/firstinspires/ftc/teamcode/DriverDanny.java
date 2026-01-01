@@ -45,16 +45,13 @@ public class DriverDanny {
     private PathChain currentPath; // the current or most recent path we've built for the robot
     private Alliance currentAlliance;
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
-
     private Limelight3A limelight;
 
     public DriverDanny(HardwareMap hardwareMap, Telemetry telemetryFromOpMode,
                        Alliance alliance, Pose startingPose) {
-
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0); // april tag pipeline
         limelight.start();
-
 
         // this is our constructor that gets called like this from our autos:  driver = new DriverDanny(hardwareMap, telemetry, DriverDanny.Poses.RED_FAR_START_POSE);
         // think of this like our "init" but for the DriverDanny specifically
@@ -100,26 +97,29 @@ public class DriverDanny {
         backRightDrive.setPower(maxSpeed * (backRightPower / maxPower));
     }
 
-    public void fieldCentricDrive(double forward, double strafe, double rotate) {
-        // if on blue alliance, swap the input directions? (based on video testing)
+    public void fieldCentricDrive(double joyY, double joyX, double rotate) {
+        double fieldX;
+        double fieldY;
+        double currentRobotHeading = this.getPose().getHeading();
+
+        // change joystick "driver intent" to field X and Y intent
         if (currentAlliance == Alliance.BLUE) {
-            forward = -1 * forward;
-            strafe = -1 * strafe;
+            fieldX = -joyY; // if pressing down on joyY on blue alliance, intent is to increase field X
+            fieldY = joyX; // if pressing right on joyX on blue alliance, intent is to increase field Y
+        } else {
+            fieldX = joyY; // if pressing up on joyY on red alliance, intent is to increase field X
+            fieldY = -joyX; // if pressing left on joyX on red alliance, intent is to increase field Y
         }
 
-        // followed brogan's tutorial on this
-        double theta = Math.atan2(forward, strafe) - Math.PI/2;
-        double r = Math.hypot(strafe, forward);
+        // now translate field intent to robot actual direction
+        double robotX = fieldX * Math.cos(currentRobotHeading)
+                        + fieldY * Math.sin(currentRobotHeading);
 
-        theta = AngleUnit.normalizeRadians(theta - follower.getHeading());
+        double robotY = -fieldY * Math.sin(currentRobotHeading)
+                        + fieldY * Math.cos(currentRobotHeading);
 
-        // according to the diagram on pg 149 of LearnJavaForFTC, it shows r * sin(theta)
-        // calculating the y direction (our strafe direction)
-        // maybe need to swap sin and cos on these two lines???
-        double newForward = r * Math.sin(theta);
-        double newStrafe = r * Math.cos(theta);
-
-        this.robotCentricDrive(newForward, newStrafe, rotate);
+        // might need to swap robotX and robotY here - not sure??
+        this.robotCentricDrive(robotX, robotY, rotate);
     }
 
     public double getHeadingErrorForAutoAim() {
@@ -139,9 +139,8 @@ public class DriverDanny {
         telemetry.addData("dx", dx);
         telemetry.addData("dy", dy);
 
-
         // use atan2 to get heading from x-axis to goal in radians
-        double targetHeading = Math.atan2(dy, dx);// - Math.PI/2;
+        double targetHeading = Math.atan2(dy, dx);
 
         telemetry.addData("Target Heading", Math.toDegrees(targetHeading));
 
@@ -150,7 +149,15 @@ public class DriverDanny {
 
         telemetry.addData("Heading Error Before", Math.toDegrees(headingError));
 
-//        headingError = AngleUnit.normalizeRadians(headingError);
+        headingError = AngleUnit.normalizeRadians(headingError);
+
+        // if the above doesn't work, here is how RoadRunner does heading normalization:
+        // headingError = Math.atan2(Math.sin(headingError), Math.cos(headingError));
+
+        // PedroPathing discord recommended adding a "deadband" like this (1.5 degrees) to protect against sign flipping near PI
+        if (Math.abs(headingError) < Math.toRadians(1.5)) {
+            headingError = 0;
+        }
 
         telemetry.addData("Heading Error After", Math.toDegrees(headingError));
 
@@ -190,6 +197,8 @@ public class DriverDanny {
     public void update() { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL
         follower.update(); // this will just update the Pedro Pathing following but can add additional steps if we need to later
 
+        // TODO: Move this limelight code to its own function.
+        // TODO: Also, learned that Tx, Ty, and Ta are degrees of error from tag, not meters.
         limelight.updateRobotOrientation(follower.getHeading());
         LLResult llResult = limelight.getLatestResult();
         if (llResult != null && llResult.isValid()) {
@@ -201,7 +210,6 @@ public class DriverDanny {
             telemetry.addData("robo y", botPose.getPosition().y);
             telemetry.addData("robo z", botPose.getPosition().z);
         }
-
 
         Pose currentPose = this.getPose();
         telemetry.addData("CurrentXPos", currentPose.getX());
