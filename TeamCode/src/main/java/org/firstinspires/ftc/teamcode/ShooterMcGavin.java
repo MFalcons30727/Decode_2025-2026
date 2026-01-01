@@ -29,12 +29,11 @@ public class ShooterMcGavin {
     private double shooterTargetVelocity = 1100; // the velocity we want our shooter to be set to
     private double hoodServoPosition = 0; // the servo position of the adjustable hood
     private DcMotorEx shootMotor;
-    private DcMotor indexer;
+    private DcMotor indexer, intake;
     private Servo hoodServo;
     private Telemetry telemetry;
     private ElapsedTime shootStateTimer; // tried to use the Pedro Pathing timer first but it didn't allow for milliseconds, only seconds
     private ShootingState currentShootingState; // keeping track of the current step we're on in our shooting state machine
-    private boolean intakeRunning = false;
     private int shotsFired; // keeps track of how many artifacts we've attempted to shoot (between 0 and 3)
     private InterpLUT velocityLUT, hoodServoPositionLUT; // these are look-up-tables that will help us find the right velocity and hood angle at any distance
 
@@ -42,6 +41,7 @@ public class ShooterMcGavin {
         // think of this like our "init" but for the Shooter specifically
         shootMotor = hardwareMap.get(DcMotorEx.class, "shooter");
         indexer = hardwareMap.get(DcMotor.class, "indexer");
+        intake = hardwareMap.get(DcMotor.class, "intake");
         hoodServo = hardwareMap.get(Servo.class, "hood");
         telemetry = telemetryFromOpMode;
         shootStateTimer = new ElapsedTime();
@@ -55,6 +55,7 @@ public class ShooterMcGavin {
         shootMotor.setDirection(DcMotorEx.Direction.REVERSE);
 
         indexer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(181,0,0,12); // TODO: need to retune these with the new bot
         shootMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
@@ -137,6 +138,23 @@ public class ShooterMcGavin {
         telemetry.addData("HoodTargetPosition", hoodServoPosition);
         telemetry.addData("ShotsFired", shotsFired);
     }
+
+    public void turnOnIntake() {
+        intake.setPower(1);
+    }
+
+    public void turnOffIntake() {
+        intake.setPower(0);
+    }
+
+    public void setHoodUp() {
+        hoodServo.setPosition(1);
+    }
+
+    public void setHoodDown() {
+        hoodServo.setPosition(0);
+    }
+
 
     public void startShootingFromDistance(double distanceFromGoalInInches) { // if this version of startShooting is called with no arguments, use the LUTs to determine velocity and hood servo position
         // maybe with LEDs, if it's a distance we can shoot from, turn LED green.  otherwise turn it red.

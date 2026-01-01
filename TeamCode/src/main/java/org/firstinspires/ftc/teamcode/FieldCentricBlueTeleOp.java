@@ -17,7 +17,7 @@ TODO:
 - one at a time.
 
 - New Bot Setup (get us back to where the old bot was)
-    - Test all hardware to see what may need to be reversed
+    - Test all hardware to see what may need to be reversed (test using this teleOp)
         - Flywheel
         - Intake
         - Indexer
@@ -25,18 +25,20 @@ TODO:
         - Pinpoint
         - Limelight
     - Remeasure deadwheel offsets
-    - Retune PedroPathing constants
+    - Retune PedroPathing constants (use Tuning class under PedroPathing folder)
     - Test PedroPathing poses (make an opmode for testing this)
-    - Retune flywheel
+    - Retune flywheel (use FlywheelTuningWithPanels)
 - New functionality
     - Test field-centric driving
     - Test odometry-based auto-aim
     - Test auto-park
+    - Fix abort path
     - Add Limelight odometry correction
     - Add Limelight-based auto-aim (if needed)
     - Add ability to start the shooter from anywhere but don't feed artifact until odometry tells
       us we're inside of one of the allowed shooting areas.
     - Figure out a way to pass the final pose of Auto as the start pose of TeleOp
+    - LEDs?
 */
 
 @TeleOp (name="FieldCentricBlueTeleOp", group = "TeleOp")
@@ -70,8 +72,7 @@ public class FieldCentricBlueTeleOp extends OpMode {
         double joyX = gamepad1.left_stick_x;
         double rotate = gamepad1.right_stick_x;
 
-        if ((gamepad1.right_trigger > 0.25 || gamepad2.right_trigger > 0.25)
-                && !shooter.isShooting()) {
+        if (gamepad2.right_trigger > 0.25 && !shooter.isShooting()) {
             //shooter.startShootingAtVelocity(1100); // can go back to using this if needed until we have velocity scaling working
             try {
                 shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
@@ -81,21 +82,36 @@ public class FieldCentricBlueTeleOp extends OpMode {
         }
 
         // auto aim using headingError on field-centric driving.  no pedropathing needed.
-        if (gamepad1.right_bumper || gamepad2.right_bumper) {
+        if (gamepad2.right_bumper) {
             rotate = driver.getHeadingErrorForAutoAim();
         }
 
-        if (gamepad1.aWasPressed() || gamepad2.aWasPressed()) {
+        if (gamepad2.left_trigger > 0.25) {
+            shooter.turnOnIntake();
+        } else {
+            shooter.turnOffIntake();
+        }
+
+        if (gamepad2.dpad_up) {
+            shooter.setHoodUp();
+        }
+
+        if (gamepad2.dpad_down) {
+            shooter.setHoodDown();
+        }
+
+        if (gamepad1.aWasPressed()) {
             driver.swapCurrentAlliance(); // lets us swap our alliance (for auto-aim / driver testing)
         }
 
-        if (gamepad1.bWasPressed() || gamepad2.bWasPressed()) {
+        if (gamepad1.bWasPressed()) {
             driver.finalPark();
         }
 
-        if (gamepad1.xWasPressed() || gamepad2.xWasPressed()) {
+        if (gamepad1.xWasPressed()) {
             driver.abortPath();
         }
+
 
         // if holding down right bumper, it will lock the heading with autoaim.
         // otherwise, it will use the rotation from the right stick x
