@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @TeleOp (name="WorkingTeleOp", group = "TeleOp")
 public class WorkingTeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
+    private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive, intake;
     private ShooterMcGavin shooter;
 
     @Override
@@ -25,6 +25,8 @@ public class WorkingTeleOp extends OpMode {
         frontRightDrive = hardwareMap.get(DcMotor.class, "rightFront");
         backLeftDrive = hardwareMap.get(DcMotor.class, "leftRear");
         backRightDrive = hardwareMap.get(DcMotor.class, "rightRear");
+
+        intake = hardwareMap.get(DcMotor.class, "intake");
 
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -67,6 +69,13 @@ public class WorkingTeleOp extends OpMode {
 
         if(gamepad2.left_trigger > 0){
             shooter.startShooting(1400);
+        }
+
+        if(gamepad2.aWasPressed()){
+            intake.setPower(1);
+        }
+        else{
+            intake.setPower(0);
         }
 
         //if (gamepad2.left_trigger > 0 && !shooter.IsShooting) { // experiment - shooting from far zone if left trigger pressed???
