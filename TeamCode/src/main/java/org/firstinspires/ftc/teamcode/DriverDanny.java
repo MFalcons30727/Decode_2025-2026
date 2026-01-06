@@ -115,7 +115,7 @@ public class DriverDanny {
         double robotX = fieldX * Math.cos(currentRobotHeading)
                         + fieldY * Math.sin(currentRobotHeading);
 
-        double robotY = -fieldY * Math.sin(currentRobotHeading)
+        double robotY = -fieldX * Math.sin(currentRobotHeading)
                         + fieldY * Math.cos(currentRobotHeading);
 
         // might need to swap robotX and robotY here - not sure??
