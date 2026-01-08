@@ -4,11 +4,13 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.List;
 
+@TeleOp (name="LimelightTest", group = "TeleOp")
 public class LimelightTest extends OpMode {
     private Limelight3A limelight;
     @Override
@@ -28,6 +30,8 @@ public class LimelightTest extends OpMode {
             double targetingLatency = result.getTargetingLatency();
             double parseLatency = result.getParseLatency();
             int tagID = -1;
+            double Tx = result.getTx();
+            double Ty = result.getTy();
 
             List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
             for (LLResultTypes.FiducialResult fr : fiducialResults) {
@@ -35,6 +39,8 @@ public class LimelightTest extends OpMode {
                 tagID = fr.getFiducialId();
                 telemetry.addData("ID", fr.getFiducialId()) ;
                 telemetry.addData("target is", tagID);
+                telemetry.addData("Tx", Tx);
+                telemetry.addData("Ty", Ty);
 
             }
 

@@ -4,7 +4,7 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name="FieldCentricBlueTeleOp", group = "TeleOp")
+@TeleOp(name="TestPoses", group = "TeleOp")
 public class TestPoses extends OpMode {
 
     private DriverDanny driver;

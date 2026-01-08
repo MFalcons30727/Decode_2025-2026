@@ -251,4 +251,9 @@ public class DriverDanny {
             follower.breakFollowing();
         }
     }
+
+    public void limelightAutoAim() {
+        //need to roatte to 0 aka where the april tag is
+    }
+
 }
