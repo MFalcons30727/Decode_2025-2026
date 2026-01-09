@@ -139,23 +139,6 @@ public class ShooterMcGavin {
         telemetry.addData("ShotsFired", shotsFired);
     }
 
-    public void turnOnIntake() {
-        intake.setPower(1);
-    }
-
-    public void turnOffIntake() {
-        intake.setPower(0);
-    }
-
-    public void setHoodUp() {
-        hoodServo.setPosition(1);
-    }
-
-    public void setHoodDown() {
-        hoodServo.setPosition(0);
-    }
-
-
     public void startShootingFromDistance(double distanceFromGoalInInches) { // if this version of startShooting is called with no arguments, use the LUTs to determine velocity and hood servo position
         // maybe with LEDs, if it's a distance we can shoot from, turn LED green.  otherwise turn it red.
         // may need to add some error handling here since InterpLUT will throw exceptions if we ask for a distance that is outside of the min/max values we measured
@@ -177,4 +160,14 @@ public class ShooterMcGavin {
         hoodServoPosition = targetHoodServoPosition;
         setShootingState(ShootingState.START_SPIN_UP);
     }
+
+    /* THESE ARE TESTING FUNCTIONS FOR THE NEW BOT */
+    public void turnOnIntake() { intake.setPower(1); }
+    public void turnOffIntake() { intake.setPower(0); }
+    public void setHoodUp() { hoodServo.setPosition(1); }
+    public void setHoodDown() { hoodServo.setPosition(0); }
+    public void turnOnIndexer() { indexer.setPower(1); }
+    public void turnOffIndexer() { indexer.setPower(0); }
+    public void turnOnFlywheel() { shootMotor.setPower(1); }
+    public void turnOffFlywheel() { shootMotor.setPower(0); }
 }

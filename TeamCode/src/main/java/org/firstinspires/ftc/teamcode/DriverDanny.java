@@ -118,7 +118,6 @@ public class DriverDanny {
         double robotY = -fieldX * Math.sin(currentRobotHeading)
                         + fieldY * Math.cos(currentRobotHeading);
 
-        // might need to swap robotX and robotY here - not sure??
         this.robotCentricDrive(robotX, robotY, rotate);
     }
 
@@ -135,9 +134,6 @@ public class DriverDanny {
         // get the "vector" from current robot position to goal position
         double dx = goalPose.getX() - currentPose.getX();
         double dy = goalPose.getY() - currentPose.getY();
-
-        telemetry.addData("dx", dx);
-        telemetry.addData("dy", dy);
 
         // use atan2 to get heading from x-axis to goal in radians
         double targetHeading = Math.atan2(dy, dx);
@@ -196,20 +192,7 @@ public class DriverDanny {
 
     public void update() { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL
         follower.update(); // this will just update the Pedro Pathing following but can add additional steps if we need to later
-
-        // TODO: Move this limelight code to its own function.
-        // TODO: Also, learned that Tx, Ty, and Ta are degrees of error from tag, not meters.
-        limelight.updateRobotOrientation(follower.getHeading());
-        LLResult llResult = limelight.getLatestResult();
-        if (llResult != null && llResult.isValid()) {
-            Pose3D botPose = llResult.getBotpose_MT2();
-            telemetry.addData("Tx", llResult.getTx()*39.37);
-            telemetry.addData("Ty", llResult.getTy()*39.37);
-            telemetry.addData("Ta", llResult.getTa()*39.37);
-            telemetry.addData("robo x", botPose.getPosition().x);
-            telemetry.addData("robo y", botPose.getPosition().y);
-            telemetry.addData("robo z", botPose.getPosition().z);
-        }
+        this.updateLimeLight();
 
         Pose currentPose = this.getPose();
         telemetry.addData("CurrentXPos", currentPose.getX());
@@ -252,8 +235,18 @@ public class DriverDanny {
         }
     }
 
-    public void limelightAutoAim() {
-        //need to roatte to 0 aka where the april tag is
+    public void updateLimeLight() {
+        // Learned that Tx, Ty, and Ta are degrees of error from tag, not meters.
+        //limelight.updateRobotOrientation(follower.getHeading());
+        LLResult llResult = limelight.getLatestResult();
+        if (llResult != null && llResult.isValid()) {
+            //Pose3D botPose = llResult.getBotpose_MT2();
+            telemetry.addData("Tx", llResult.getTx());
+            //telemetry.addData("Ty", llResult.getTy());
+            //telemetry.addData("Ta", llResult.getTa());
+            //telemetry.addData("robo x", botPose.getPosition().x);
+            //telemetry.addData("robo y", botPose.getPosition().y);
+            //telemetry.addData("robo z", botPose.getPosition().z);
+        }
     }
-
 }

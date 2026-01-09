@@ -14,9 +14,6 @@ TODO:
 - If we get roadblocked on something, try to pivot to another item if possible
 - and we can come back and work on the stuff that doesn't work later.
 
-- We should focus on making an OpMode to handle each of these items so we can work on them
-- one at a time.
-
 - New Bot Setup (get us back to where the old bot was)
     - Test all hardware to see what may need to be reversed (test using this teleOp)
         - Flywheel
@@ -45,28 +42,18 @@ TODO:
 @TeleOp (name="FieldCentricBlueTeleOp", group = "TeleOp")
 public class FieldCentricBlueTeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
-//    private DriverDanny driver;
+    private DriverDanny driver;
     private ShooterMcGavin shooter;
-private DcMotorEx shootMotor;
-    private DcMotor indexer, intake;
 
     @Override
     public void init() {
-        shootMotor = hardwareMap.get(DcMotorEx.class, "shooter");
-
-        indexer = hardwareMap.get(DcMotor.class, "indexer");
-
-        shootMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shootMotor.setDirection(DcMotorEx.Direction.REVERSE);
-
-        indexer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         // not sure if this is going to work because the starting pose is going to be different
         // need to find a way to get what our starting pose is in TeleOp
-//        driver = new DriverDanny(hardwareMap,
-//                telemetry,
-//                DriverDanny.Alliance.BLUE,
-//                DriverDanny.Poses.BLUE_FAR_START_POSE);
+        driver = new DriverDanny(hardwareMap,
+                telemetry,
+                DriverDanny.Alliance.BLUE,
+                DriverDanny.Poses.BLUE_FAR_START_POSE);
+
         shooter = new ShooterMcGavin(hardwareMap, telemetry);
 
         telemetry.addData("Status", "Initialized");
@@ -77,8 +64,8 @@ private DcMotorEx shootMotor;
 
     @Override
     public void loop() {
-//        driver.update();
-        //shooter.update();
+        driver.update();
+        shooter.update();
 
         double joyY = -gamepad1.left_stick_y; // leaving this inverted so it works for robotCentricDrive (and we adjust for it on fieldCentricDrive)
         double joyX = gamepad1.left_stick_x;
@@ -86,25 +73,18 @@ private DcMotorEx shootMotor;
 
         //if (gamepad2.right_trigger > 0.25 && !shooter.isShooting()) {
         if (gamepad2.right_trigger > 0.25) {
-            indexer.setPower(1);
             //shooter.startShootingAtVelocity(1100); // can go back to using this if needed until we have velocity scaling working
-            shootMotor.setPower(1);
-//            try {
-//                shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
-//            } catch (Exception e) {
-//                telemetry.addData("shooter", "NOT IN RANGE");
-//            }
-        } else {
-            indexer.setPower(0);
-            shootMotor.setPower(0);
+            try {
+                shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
+            } catch (Exception e) {
+                telemetry.addData("shooter", "NOT IN RANGE");
+            }
         }
 
         // auto aim using headingError on field-centric driving.  no pedropathing needed.
-//        if (gamepad2.right_bumper) {
-//            rotate = driver.getHeadingErrorForAutoAim();
-//        }
-
-        // Feed should also run intake
+        if (gamepad2.right_bumper) {
+            rotate = driver.getHeadingErrorForAutoAim();
+        }
 
         if (gamepad2.left_trigger > 0.25) {
             shooter.turnOnIntake();
@@ -120,28 +100,25 @@ private DcMotorEx shootMotor;
             shooter.setHoodDown();
         }
 
-//        if (gamepad1.aWasPressed()) {
-//            driver.swapCurrentAlliance(); // lets us swap our alliance (for auto-aim / driver testing)
-//        }
-//
-//        if (gamepad1.bWasPressed()) {
-//            driver.finalPark();
-//        }
-//
-//        if (gamepad1.xWasPressed()) {
-//            driver.abortPath();
-//        }
-//
-//
-//        // if holding down right bumper, it will lock the heading with autoaim.
-//        // otherwise, it will use the rotation from the right stick x
-//        driver.fieldCentricDrive(joyY, joyX, rotate);
+        if (gamepad1.aWasPressed()) {
+            driver.swapCurrentAlliance(); // lets us swap our alliance (for auto-aim / driver testing)
+        }
+
+        if (gamepad1.bWasPressed()) {
+            driver.finalPark();
+        }
+
+        if (gamepad1.xWasPressed()) {
+            driver.abortPath();
+        }
+
+        // if holding down right bumper, it will lock the heading with autoaim.
+        // otherwise, it will use the rotation from the right stick x
+        driver.fieldCentricDrive(joyY, joyX, rotate);
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.update();
-
     }
-
 }
 
 
