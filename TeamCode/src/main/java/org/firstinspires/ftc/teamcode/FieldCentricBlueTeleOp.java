@@ -1,13 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 /*
 TODO:
@@ -25,6 +20,7 @@ TODO:
     - Remeasure deadwheel offsets
     - Retune PedroPathing constants (use Tuning class under PedroPathing folder)
     - Test PedroPathing poses (make an opmode for testing this)
+    - Add intake to the autonomous state machine
     - Retune flywheel (use FlywheelTuningWithPanels)
 - New functionality
     - Test field-centric driving
@@ -83,7 +79,8 @@ public class FieldCentricBlueTeleOp extends OpMode {
 
         // auto aim using headingError on field-centric driving.  no pedropathing needed.
         if (gamepad2.right_bumper) {
-            rotate = driver.getHeadingErrorForAutoAim();
+//            rotate = driver.getHeadingErrorForAutoAimTrig();
+            rotate = driver.getHeadingErrorForAutoAimLimelight();
         }
 
         if (gamepad2.left_trigger > 0.25) {

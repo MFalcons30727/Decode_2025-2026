@@ -5,6 +5,7 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,8 +13,9 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+import java.util.List;
 
 public class DriverDanny {
     public static class Poses {
@@ -22,10 +24,27 @@ public class DriverDanny {
         public static final Pose BLUE_FAR_START_POSE = new Pose(49, 8, Math.toRadians(90));
         public static final Pose RED_BACKUP_START_POSE = new Pose(122, 125, Math.toRadians(40));
         public static final Pose BLUE_BACKUP_START_POSE = new Pose(22, 125, Math.toRadians(130));
+        public static final Pose RED_TOP_ARTIFACTS_POSE = new Pose(45, 83, Math.toRadians(180));
+        public static final Pose RED_MIDDLE_ARTIFACTS_POSE = new Pose(45, 60, Math.toRadians(180));
+
+        public static final Pose RED_BOTTOM_ARTIFACTS_POSE = new Pose(45, 35, Math.toRadians(180));
+
+        public static final Pose BLUE_TOP_ARTIFACTS_POSE = new Pose(100, 83, Math.toRadians(0));
+        public static final Pose BLUE_MIDDLE_ARTIFACTS_POSE = new Pose(100, 60, Math.toRadians(0));
+        public static final Pose BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(100, 35, Math.toRadians(0));
+
+        public static final Pose EAT_RED_TOP_ARTIFACTS_POSE = new Pose(125, 83, Math.toRadians(0));
+        public static final Pose EAT_RED_MIDDLE_ARTIFACTS_POSE = new Pose(125, 60, Math.toRadians(0));
+        public static final Pose EAT_RED_BOTTOM_ARTIFACTS_POSE = new Pose(125, 35, Math.toRadians(0));
+        public static final Pose EAT_BLUE_TOP_ARTIFACTS_POSE = new Pose(18, 83, Math.toRadians(180));
+        public static final Pose EAT_BLUE_MIDDLE_ARTIFACTS_POSE = new Pose(18, 60, Math.toRadians(180));
+        public static final Pose EAT_BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(18, 35, Math.toRadians(180));
         public static final Pose RED_NEAR_SHOOTING_POSE = new Pose (96, 96, Math.toRadians(40));
         public static final Pose BLUE_NEAR_SHOOTING_POSE = new Pose (49, 96, Math.toRadians(130));
         public static final Pose RED_FAR_SHOOTING_POSE = new Pose (80, 16, Math.toRadians(65));
         public static final Pose BLUE_FAR_SHOOTING_POSE = new Pose (62, 14, Math.toRadians(110));
+        public static final Pose BLUE_FAR_END_POSE = new Pose (48, 132, Math.toRadians(90));
+        public static final Pose RED_FAR_END_POSE = new Pose (95, 132, Math.toRadians(90));
         public static final Pose PARK_RED_GATE_POSE = new Pose (120,70, Math.toRadians(180));
         public static final Pose PARK_BLUE_GATE_POSE = new Pose (28,70, Math.toRadians(0));
         public static final Pose RED_GOAL_POSE = new Pose(144, 144, 0);
@@ -42,10 +61,12 @@ public class DriverDanny {
 
     private Follower follower; // part of the Pedro Pathing package, follows the path
     private Telemetry telemetry;
-    private PathChain currentPath; // the current or most recent path we've built for the robot
+    private PathChain currentPath;// the current or most recent path we've built for the robot
+    private double currentGoalTx;
     private Alliance currentAlliance;
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
     private Limelight3A limelight;
+    private double kP = 0.2;
 
     public DriverDanny(HardwareMap hardwareMap, Telemetry telemetryFromOpMode,
                        Alliance alliance, Pose startingPose) {
@@ -121,7 +142,14 @@ public class DriverDanny {
         this.robotCentricDrive(robotX, robotY, rotate);
     }
 
-    public double getHeadingErrorForAutoAim() {
+    public double getHeadingErrorForAutoAimLimelight() {
+
+        return Range.clip(kP * currentGoalTx, -1.0, 1.0);
+
+    }
+
+
+    public double getHeadingErrorForAutoAimTrig() {
         Pose currentPose = this.getPose();
         Pose goalPose;
 
@@ -161,7 +189,6 @@ public class DriverDanny {
         // it tells how strongly to correct or "snap" to the new heading
         // if taking too long to correct the heading, increase
         // if snapping too quickly or overshooting, decrease
-        double kP = 0.2;
 
         // update our rotate value this loop to this value
         //return kP * headingError;
@@ -238,10 +265,30 @@ public class DriverDanny {
     public void updateLimeLight() {
         // Learned that Tx, Ty, and Ta are degrees of error from tag, not meters.
         //limelight.updateRobotOrientation(follower.getHeading());
-        LLResult llResult = limelight.getLatestResult();
-        if (llResult != null && llResult.isValid()) {
+        LLResult result = limelight.getLatestResult();
+        if (result != null && result.isValid()) {
+            List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
+            for (LLResultTypes.FiducialResult fr : fiducialResults) {
+                //telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
+                int tagID = fr.getFiducialId();
+//                telemetry.addData("ID", fr.getFiducialId()) ;
+//                telemetry.addData("target is", tagID);
+//                telemetry.addData("Tx", result.getTx());
+//                telemetry.addData("Ty", result.getTx());
+
+                if (currentAlliance == Alliance.BLUE && tagID == 20) {
+                    currentGoalTx = fr.getTargetXDegrees();
+                }
+                else if (currentAlliance == Alliance.RED && tagID == 24) {
+                    currentGoalTx = fr.getTargetXDegrees();
+                }
+                telemetry.addData("CurrentGoalTx", currentGoalTx);
+            }
+
+
             //Pose3D botPose = llResult.getBotpose_MT2();
-            telemetry.addData("Tx", llResult.getTx());
+//            telemetry.addData("Tx", result.getTx());
+
             //telemetry.addData("Ty", llResult.getTy());
             //telemetry.addData("Ta", llResult.getTa());
             //telemetry.addData("robo x", botPose.getPosition().x);

@@ -7,7 +7,7 @@ import com.pedropathing.util.Timer;
 // panels dashboard: 192.168.43.1:8001
 
 @Autonomous
-public class RedFarAuto extends OpMode {
+public class RedBackupAuto extends OpMode {
 
     public enum AutoState {
         MOVE_FROM_START_POS_TO_SHOOTING_LINE,
@@ -127,7 +127,7 @@ public class RedFarAuto extends OpMode {
         driver = new DriverDanny(hardwareMap,
                 telemetry,
                 DriverDanny.Alliance.RED,
-                DriverDanny.Poses.RED_FAR_START_POSE);
+                DriverDanny.Poses.RED_BACKUP_START_POSE);
         shooter = new ShooterMcGavin(hardwareMap, telemetry);
     }
 
