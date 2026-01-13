@@ -21,6 +21,8 @@ public class NewBotFunctionTester extends OpMode {
     private DriverDanny driver;
     private ShooterMcGavin shooter;
 
+    private boolean shooting = false;
+
     @Override
     public void init() {
         driver = new DriverDanny(hardwareMap,
@@ -42,9 +44,10 @@ public class NewBotFunctionTester extends OpMode {
 
         driver.robotCentricDrive(joyY, joyX, rotate);
 
-        if (gamepad2.right_trigger > 0.25) {
+        if (gamepad2.x){
             shooter.turnOnFlywheel();
-        } else {
+        }
+        if(gamepad2.y){
             shooter.turnOffFlywheel();
         }
 
@@ -55,6 +58,18 @@ public class NewBotFunctionTester extends OpMode {
             shooter.turnOffIntake();
             shooter.turnOffIndexer();
         }
+
+        if (gamepad2.right_trigger > 0.25) {
+            shooter.turnOnIntake();
+        } else {
+            shooter.turnOffIntake();
+        }
+
+//        if (gamepad2.right_trigger > 0.25) {
+//            shooter.turnOnIntake();
+//        } else {
+//            shooter.turnOffIntake();
+//        }
 
         if (gamepad2.dpad_up) {
             shooter.setHoodUp();

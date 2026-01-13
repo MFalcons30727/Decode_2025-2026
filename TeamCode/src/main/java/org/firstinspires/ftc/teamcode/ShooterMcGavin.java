@@ -123,11 +123,11 @@ public class ShooterMcGavin {
                 }
                 break;
             case OFF:
-                shootMotor.setVelocity(0);
-                hoodServo.setPosition(0);
-                indexer.setPower(0);
-                shooterTargetVelocity = 1100;
-                hoodServoPosition = 0;
+//                shootMotor.setVelocity(0);
+//                hoodServo.setPosition(0);
+//                indexer.setPower(0);
+//                shooterTargetVelocity = 1100;
+//                hoodServoPosition = 0;
                 break;
         }
 
@@ -168,6 +168,6 @@ public class ShooterMcGavin {
     public void setHoodDown() { hoodServo.setPosition(0); }
     public void turnOnIndexer() { indexer.setPower(1); }
     public void turnOffIndexer() { indexer.setPower(0); }
-    public void turnOnFlywheel() { shootMotor.setPower(1); }
-    public void turnOffFlywheel() { shootMotor.setPower(0); }
+    public void turnOnFlywheel() { shootMotor.setVelocity(1400); }
+    public void turnOffFlywheel() { shootMotor.setVelocity(0); }
 }
