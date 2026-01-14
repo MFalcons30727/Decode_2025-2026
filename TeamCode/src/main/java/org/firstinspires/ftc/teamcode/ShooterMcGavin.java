@@ -18,7 +18,8 @@ public class ShooterMcGavin {
         OFF, // shooter is powered down
         START_SPIN_UP, // start spinning up the shooter to the SHOOTER_TARGET_VELOCITY
         WAIT_FOR_TARGET_VELOCITY, // wait until we're at the SHOOTER_TARGET_VELOCITY before feeding
-        START_FEEDING // start indexers to feed one artifact
+        START_FEEDING, // start indexers to feed one artifact
+        TEST_MODE_ONLY
     }
 
     private static double SHOOTER_ACCEPTABLE_VELOCITY_ERROR = 30; // in case the shooter motor isn't able to reach that exact velocity, allow it to still shoot when being this close to the target velocity
@@ -36,6 +37,7 @@ public class ShooterMcGavin {
     private ShootingState currentShootingState; // keeping track of the current step we're on in our shooting state machine
     private int shotsFired; // keeps track of how many artifacts we've attempted to shoot (between 0 and 3)
     private InterpLUT velocityLUT, hoodServoPositionLUT; // these are look-up-tables that will help us find the right velocity and hood angle at any distance
+    public boolean testMode = false;
 
     public ShooterMcGavin(HardwareMap hardwareMap, Telemetry telemetryFromOpMode) { // this is our constructor that gets called like this from our autos:  shooter = new Shooter(hardwareMap);
         // think of this like our "init" but for the Shooter specifically
@@ -45,7 +47,7 @@ public class ShooterMcGavin {
         hoodServo = hardwareMap.get(Servo.class, "hood");
         telemetry = telemetryFromOpMode;
         shootStateTimer = new ElapsedTime();
-        currentShootingState = ShootingState.OFF;
+        currentShootingState = testMode ? ShootingState.TEST_MODE_ONLY : ShootingState.OFF;
         shotsFired = 0;
         velocityLUT = new InterpLUT();
         hoodServoPositionLUT = new InterpLUT();
@@ -123,11 +125,11 @@ public class ShooterMcGavin {
                 }
                 break;
             case OFF:
-//                shootMotor.setVelocity(0);
-//                hoodServo.setPosition(0);
-//                indexer.setPower(0);
-//                shooterTargetVelocity = 1100;
-//                hoodServoPosition = 0;
+                shootMotor.setVelocity(0);
+                hoodServo.setPosition(0);
+                indexer.setPower(0);
+                shooterTargetVelocity = 1100;
+                hoodServoPosition = 0;
                 break;
         }
 
