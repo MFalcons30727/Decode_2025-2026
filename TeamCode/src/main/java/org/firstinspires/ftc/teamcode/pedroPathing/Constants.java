@@ -35,9 +35,9 @@ public class Constants {
             .leftRearMotorName("leftRear")
             .leftFrontMotorName("leftFront")
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             // TODO this is the same as the top, 1 is just acting as a placeholder
             .xVelocity(65.27527047705462)
             .yVelocity(53.946332796352124);
