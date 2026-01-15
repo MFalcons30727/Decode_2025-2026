@@ -23,6 +23,7 @@ TODO:
     - Add intake to the autonomous state machine
     - Retune flywheel (use FlywheelTuningWithPanels)
 - New functionality
+    - plug in InterPLUT table values for hood adjustment and velocity scaling
     - Test field-centric driving
     - Test odometry-based auto-aim
     - Test auto-park
@@ -67,8 +68,7 @@ public class FieldCentricBlueTeleOp extends OpMode {
         double joyX = gamepad1.left_stick_x;
         double rotate = gamepad1.right_stick_x;
 
-        //if (gamepad2.right_trigger > 0.25 && !shooter.isShooting()) {
-        if (gamepad2.right_trigger > 0.25) {
+        if (gamepad2.right_trigger > 0.25 && !shooter.isShooting()) {
             //shooter.startShootingAtVelocity(1100); // can go back to using this if needed until we have velocity scaling working
             try {
                 shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
@@ -83,9 +83,9 @@ public class FieldCentricBlueTeleOp extends OpMode {
             rotate = driver.getHeadingErrorForAutoAimLimelight();
         }
 
-        if (gamepad2.left_trigger > 0.25) {
+        if (gamepad2.left_trigger > 0.25 && !shooter.isShooting()) {
             shooter.turnOnIntake();
-        } else {
+        } else if (!shooter.isShooting()) {
             shooter.turnOffIntake();
         }
 
