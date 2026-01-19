@@ -1,52 +1,65 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.arcrobotics.ftclib.util.InterpLUT;
-import com.bylazar.configurables.annotations.Configurable;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-@TeleOp
-@Configurable
-public class  DrivetrainTest extends LinearOpMode {
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+@TeleOp (name="TeleOp", group = "TeleOp")
+public class DrivetrainTest extends LinearOpMode {
+    private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor frontLeftDrive = null;
+    private DcMotor frontRightDrive = null;
+    private DcMotor backLeftDrive = null;
+    private DcMotor backRightDrive = null;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
-        DcMotor frontLeftMotor = hardwareMap.dcMotor.get("fLD");
-        DcMotor backLeftMotor = hardwareMap.dcMotor.get("bLD");
-        DcMotor frontRightMotor = hardwareMap.dcMotor.get("fRD");
-        DcMotor backRightMotor = hardwareMap.dcMotor.get("bRD");
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "leftFront");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "rightFront");
+        backLeftDrive = hardwareMap.get(DcMotor.class, "leftRear");
+        backRightDrive = hardwareMap.get(DcMotor.class, "rightRear");
 
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
         waitForStart();
-
-        if (isStopRequested()) return;
+        runtime.reset();
 
         while (opModeIsActive()) {
-            if(gamepad1.a){
-                backRightMotor.setPower(1);
-            } else{
-                backRightMotor.setPower(0);
-            }
-            if(gamepad1.b){
-                frontRightMotor.setPower(1);
-            } else{
-                frontRightMotor.setPower(0);
-            }
-            if(gamepad1.y){
-                frontLeftMotor.setPower(1);
-            } else{
-                frontLeftMotor.setPower(0);
-            }
-            if(gamepad1.x){
-                backLeftMotor.setPower(1);
-            } else{
-                backLeftMotor.setPower(0);
-            }
+
+            double y = -gamepad1.left_stick_y; //remember that Y stick value is reversed!!
+            double x = gamepad1.right_stick_x * 1.1; //counteract thingy
+            double rx = gamepad1.left_stick_x;
+
+            double shooterPower = gamepad2.right_trigger;
+
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            double frontLeftPower = (y + x + rx) / denominator;
+            double backLeftPower = (y - x + rx) / denominator;
+            double frontRightPower = (y - x - rx) / denominator;
+            double backRightPower = (y + x - rx) / denominator;
+
+            frontLeftDrive.setPower(frontLeftPower);
+            frontRightDrive.setPower(frontRightPower);
+            backLeftDrive.setPower(backRightPower);
+            backRightDrive.setPower(backLeftPower);
+
+
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
+            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
+            telemetry.update();
+
         }
     }
+
 }
+
