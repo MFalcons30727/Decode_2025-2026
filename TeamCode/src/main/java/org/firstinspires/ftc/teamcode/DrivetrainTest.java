@@ -58,6 +58,27 @@ public class DrivetrainTest extends LinearOpMode {
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
             telemetry.update();
 
+            if(gamepad1.a){
+                backRightDrive.setPower(1);
+            } else{
+                backRightDrive.setPower(0);
+            }
+            if(gamepad1.b){
+                frontRightDrive.setPower(1);
+            } else{
+                frontRightDrive.setPower(0);
+            }
+            if(gamepad1.y){
+                frontLeftDrive.setPower(1);
+            } else{
+                frontLeftDrive.setPower(0);
+            }
+            if(gamepad1.x){
+                backLeftDrive.setPower(1);
+            } else{
+                backLeftDrive.setPower(0);
+            }
+
         }
     }
 
