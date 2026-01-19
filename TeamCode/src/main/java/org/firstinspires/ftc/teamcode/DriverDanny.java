@@ -24,14 +24,14 @@ public class DriverDanny {
         public static final Pose BLUE_FAR_START_POSE = new Pose(49, 8, Math.toRadians(90));
         public static final Pose RED_BACKUP_START_POSE = new Pose(122, 125, Math.toRadians(40));
         public static final Pose BLUE_BACKUP_START_POSE = new Pose(22, 125, Math.toRadians(130));
-        public static final Pose RED_TOP_ARTIFACTS_POSE = new Pose(45, 83, Math.toRadians(180));
-        public static final Pose RED_MIDDLE_ARTIFACTS_POSE = new Pose(45, 60, Math.toRadians(180));
+        public static final Pose RED_TOP_ARTIFACTS_POSE = new Pose(100, 83, Math.toRadians(180));
+        public static final Pose RED_MIDDLE_ARTIFACTS_POSE = new Pose(100, 60, Math.toRadians(180));
 
-        public static final Pose RED_BOTTOM_ARTIFACTS_POSE = new Pose(45, 35, Math.toRadians(180));
+        public static final Pose RED_BOTTOM_ARTIFACTS_POSE = new Pose(100, 35, Math.toRadians(180));
 
-        public static final Pose BLUE_TOP_ARTIFACTS_POSE = new Pose(100, 83, Math.toRadians(0));
-        public static final Pose BLUE_MIDDLE_ARTIFACTS_POSE = new Pose(100, 60, Math.toRadians(0));
-        public static final Pose BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(100, 35, Math.toRadians(0));
+        public static final Pose BLUE_TOP_ARTIFACTS_POSE = new Pose(45, 83, Math.toRadians(0));
+        public static final Pose BLUE_MIDDLE_ARTIFACTS_POSE = new Pose(45, 60, Math.toRadians(0));
+        public static final Pose BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(45, 35, Math.toRadians(0));
 
         public static final Pose EAT_RED_TOP_ARTIFACTS_POSE = new Pose(125, 83, Math.toRadians(0));
         public static final Pose EAT_RED_MIDDLE_ARTIFACTS_POSE = new Pose(125, 60, Math.toRadians(0));
@@ -41,8 +41,8 @@ public class DriverDanny {
         public static final Pose EAT_BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(18, 35, Math.toRadians(180));
         public static final Pose RED_NEAR_SHOOTING_POSE = new Pose (96, 96, Math.toRadians(40));
         public static final Pose BLUE_NEAR_SHOOTING_POSE = new Pose (49, 96, Math.toRadians(130));
-        public static final Pose RED_FAR_SHOOTING_POSE = new Pose (80, 16, Math.toRadians(65));
-        public static final Pose BLUE_FAR_SHOOTING_POSE = new Pose (62, 14, Math.toRadians(110));
+        public static final Pose RED_FAR_SHOOTING_POSE = new Pose (85, 16, Math.toRadians(65));
+        public static final Pose BLUE_FAR_SHOOTING_POSE = new Pose (60, 14, Math.toRadians(110));
         public static final Pose BLUE_FAR_END_POSE = new Pose (48, 132, Math.toRadians(90));
         public static final Pose RED_FAR_END_POSE = new Pose (95, 132, Math.toRadians(90));
         public static final Pose PARK_RED_GATE_POSE = new Pose (120,70, Math.toRadians(180));
