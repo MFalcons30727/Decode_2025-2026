@@ -66,7 +66,8 @@ public class BlueBackupAuto extends OpMode {
                 break;
             case SHOOT_TOP_BLUE_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
+                    shooter.startShootingAtVelocity(1100);
+                    //shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_MIDDLE_ARTIFACTS);
                 }
                 break;
@@ -90,7 +91,8 @@ public class BlueBackupAuto extends OpMode {
                 break;
             case SHOOT_MIDDLE_BLUE_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
+                    shooter.startShootingAtVelocity(1100);
+                    //shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_BOTTOM_ARTIFACTS);
                 }
                 break;
@@ -114,7 +116,8 @@ public class BlueBackupAuto extends OpMode {
                 break;
             case SHOOT_BOTTOM_BLUE_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
+                    shooter.startShootingAtVelocity(1400);
+                    //shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_END_POSE);
                 }
                 break;
