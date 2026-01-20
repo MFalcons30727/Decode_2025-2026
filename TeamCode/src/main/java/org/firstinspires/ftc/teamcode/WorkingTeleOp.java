@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -15,9 +17,9 @@ public class WorkingTeleOp extends LinearOpMode {
     private DcMotor backLeftDrive = null;
     private DcMotor backRightDrive = null;
    // private DcMotor intake = null;
-    private CRServo indexer1 = null;
-    private CRServo indexer2 = null;
-    private DcMotor shoot = null;
+    private DcMotor intake = null;
+    private DcMotor indexer = null;
+    private DcMotorEx shoot = null;
 
     @Override
     public void runOpMode() {
@@ -28,18 +30,18 @@ public class WorkingTeleOp extends LinearOpMode {
         backRightDrive = hardwareMap.get(DcMotor.class, "rightRear");
         //intake = hardwareMap.get(DcMotor.class, "intake");
 //        indexer1 = hardwareMap.servo.get("indexer1");
-        indexer1 = hardwareMap.get(CRServo.class, "indexer1");
+        intake = hardwareMap.get(DcMotor.class, "intake");
 //        indexer2 = hardwareMap.servo.get("indexer2");
-        indexer2 = hardwareMap.get(CRServo.class, "indexer2");
-        shoot = hardwareMap.get(DcMotor.class, "shooter");
+        indexer = hardwareMap.get(DcMotor.class, "indexer");
+        shoot = hardwareMap.get(DcMotorEx.class, "shooter");
 
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        shoot.setDirection(DcMotor.Direction.REVERSE);
-        indexer1.setDirection(CRServo.Direction.FORWARD);
-        indexer2.setDirection(CRServo.Direction.REVERSE);
+        shoot.setDirection(DcMotorEx.Direction.REVERSE);
+        intake.setDirection(DcMotor.Direction.FORWARD);
+        indexer.setDirection(DcMotor.Direction.FORWARD);
 
         shoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -90,21 +92,30 @@ public class WorkingTeleOp extends LinearOpMode {
 //            else {
 //                intake.setPower(0);
 //            }
-//
-            if(gamepad2.left_bumper) {
-                indexer1.setPower(1);
-                indexer2.setPower(1);
-            }
-            else {
-                indexer1.setPower(0);
-                indexer2.setPower(0);
+
+            if(gamepad1.xWasPressed()){
+                if(shoot.getVelocity() == 0){
+                    shoot.setVelocity(1500);
+                }
+                else{
+                    shoot.setVelocity(0);
+                }
             }
 
-            if(gamepad2.right_trigger > 0) {
-                shoot.setPower(shooterPower);
+            if(gamepad1.right_trigger > 0) {
+                intake.setPower(1);
+                indexer.setPower(1);
             }
             else {
-                shoot.setPower(0);
+                intake.setPower(0);
+                indexer.setPower(0);
+            }
+
+            if(gamepad1.left_trigger > 0) {
+                intake.setPower(1);
+            }
+            else {
+                intake.setPower(0);
             }
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
