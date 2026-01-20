@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -17,9 +15,9 @@ public class WorkingTeleOp extends LinearOpMode {
     private DcMotor backLeftDrive = null;
     private DcMotor backRightDrive = null;
    // private DcMotor intake = null;
-    private DcMotor intake = null;
-    private DcMotor indexer = null;
-    private DcMotorEx shoot = null;
+//    private CRServo indexer1 = null;
+//    private CRServo indexer2 = null;
+//    private DcMotor shoot = null;
 
     @Override
     public void runOpMode() {
@@ -30,20 +28,20 @@ public class WorkingTeleOp extends LinearOpMode {
         backRightDrive = hardwareMap.get(DcMotor.class, "rightRear");
         //intake = hardwareMap.get(DcMotor.class, "intake");
 //        indexer1 = hardwareMap.servo.get("indexer1");
-        intake = hardwareMap.get(DcMotor.class, "intake");
-//        indexer2 = hardwareMap.servo.get("indexer2");
-        indexer = hardwareMap.get(DcMotor.class, "indexer");
-        shoot = hardwareMap.get(DcMotorEx.class, "shooter");
+//        indexer1 = hardwareMap.get(CRServo.class, "indexer1");
+////        indexer2 = hardwareMap.servo.get("indexer2");
+//        indexer2 = hardwareMap.get(CRServo.class, "indexer2");
+//        shoot = hardwareMap.get(DcMotor.class, "shooter");
 
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        shoot.setDirection(DcMotorEx.Direction.REVERSE);
-        intake.setDirection(DcMotor.Direction.FORWARD);
-        indexer.setDirection(DcMotor.Direction.FORWARD);
-
-        shoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+//        shoot.setDirection(DcMotor.Direction.REVERSE);
+//        indexer1.setDirection(CRServo.Direction.FORWARD);
+//        indexer2.setDirection(CRServo.Direction.REVERSE);
+//
+//        shoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         //wait for start (then player presses START)
@@ -76,6 +74,43 @@ public class WorkingTeleOp extends LinearOpMode {
             backLeftDrive.setPower(backRightPower);
             backRightDrive.setPower(backLeftPower);
 
+            if(gamepad1.aWasPressed()){
+                if(frontLeftDrive.getPower() == 0){
+                    frontLeftDrive.setPower(1);
+                }
+                else{
+                    frontLeftDrive.setPower(0);
+                }
+            }
+
+            if(gamepad1.xWasPressed()){
+                if(frontRightDrive.getPower() == 0){
+                    frontRightDrive.setPower(1);
+                }
+                else{
+                    frontRightDrive.setPower(0);
+                }
+            }
+
+            if(gamepad1.yWasPressed()){
+                if(backLeftDrive.getPower() == 0){
+                    backLeftDrive.setPower(1);
+                }
+                else{
+                    backLeftDrive.setPower(0);
+                }
+            }
+
+            if(gamepad1.bWasPressed()){
+                if(backRightDrive.getPower() == 0){
+                    backRightDrive.setPower(1);
+                }
+                else{
+                    backRightDrive.setPower(0);
+                }
+            }
+
+
 //            if(gamepad1.right_bumper){
 //                intake.setPower(1);
 //            }
@@ -92,36 +127,27 @@ public class WorkingTeleOp extends LinearOpMode {
 //            else {
 //                intake.setPower(0);
 //            }
-
-            if(gamepad1.xWasPressed()){
-                if(shoot.getVelocity() == 0){
-                    shoot.setVelocity(1500);
-                }
-                else{
-                    shoot.setVelocity(0);
-                }
-            }
-
-            if(gamepad1.right_trigger > 0) {
-                intake.setPower(1);
-                indexer.setPower(1);
-            }
-            else {
-                intake.setPower(0);
-                indexer.setPower(0);
-            }
-
-            if(gamepad1.left_trigger > 0) {
-                intake.setPower(1);
-            }
-            else {
-                intake.setPower(0);
-            }
+//
+//            if(gamepad2.left_bumper) {
+//                indexer1.setPower(1);
+//                indexer2.setPower(1);
+//            }
+//            else {
+//                indexer1.setPower(0);
+//                indexer2.setPower(0);
+//            }
+//
+//            if(gamepad2.right_trigger > 0) {
+//                shoot.setPower(shooterPower);
+//            }
+//            else {
+//                shoot.setPower(0);
+//            }
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
-            telemetry.addData("Shoot Speed", shoot.getPower());
+//            telemetry.addData("Shoot Speed", shoot.getPower());
             telemetry.update();
 
 

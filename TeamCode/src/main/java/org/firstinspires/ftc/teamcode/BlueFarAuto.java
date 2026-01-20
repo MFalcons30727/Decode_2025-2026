@@ -36,48 +36,13 @@ public class BlueFarAuto extends OpMode {
     public void autoStateUpdate(){
         switch (currentAutoState){
             case MOVE_FROM_START_POS_TO_SHOOTING_LINE:
-                driver.moveToPose(DriverDanny.Poses.BLUE_NEAR_SHOOTING_POSE, true);
+                driver.moveToPose(DriverDanny.Poses.BLUE_FAR_SHOOTING_POSE, true);
                 setAutoState(AutoState.SHOOT_PRELOAD);
                 break;
             case SHOOT_PRELOAD:
                 if (!driver.isBusy()) {
-                    //shooter.startShootingAtVelocity(1100);
-                    shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
-                    setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_TOP_ARTIFACTS);
-                }
-                break;
-            case MOVE_FROM_SHOOTING_LINE_TO_BLUE_TOP_ARTIFACTS:
-                if (!driver.isBusy() && !shooter.isShooting()){
-                    driver.moveToPose(DriverDanny.Poses.BLUE_TOP_ARTIFACTS_POSE, true);
-                    setAutoState(AutoState.EAT_TOP_BLUE_ARTIFACTS);
-                }
-            case EAT_TOP_BLUE_ARTIFACTS:
-                if (!driver.isBusy() && !shooter.isShooting()){
-                    driver.moveToPose(DriverDanny.Poses.EAT_BLUE_TOP_ARTIFACTS_POSE, true);
-                    setAutoState(AutoState.MOVE_FROM_TOP_BLUE_ARTIFACTS_TO_SHOOTING_LINE);
-                }
-                break;
-            case SHOOT_TOP_BLUE_ARTIFACTS:
-                if (!driver.isBusy()) {
-                    shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
-                    setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_MIDDLE_ARTIFACTS);
-                }
-                break;
-            case MOVE_FROM_SHOOTING_LINE_TO_BLUE_MIDDLE_ARTIFACTS:
-                if (!driver.isBusy() && !shooter.isShooting()){
-                    driver.moveToPose(DriverDanny.Poses.BLUE_MIDDLE_ARTIFACTS_POSE, true);
-                    setAutoState(AutoState.EAT_MIDDLE_BLUE_ARTIFACTS);
-                }
-                break;
-            case EAT_MIDDLE_BLUE_ARTIFACTS:
-                if (!driver.isBusy() && !shooter.isShooting()) {
-                    driver.moveToPose(DriverDanny.Poses.EAT_BLUE_MIDDLE_ARTIFACTS_POSE, true);
-                    setAutoState(AutoState.MOVE_FROM_MIDDLE_BLUE_ARTIFACTS_TO_SHOOTING_LINE);
-                }
-                break;
-            case SHOOT_MIDDLE_BLUE_ARTIFACTS:
-                if (!driver.isBusy()) {
-                    shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
+                    shooter.startShootingAtVelocity(1400);
+                    //shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_BOTTOM_ARTIFACTS);
                 }
                 break;
@@ -93,9 +58,66 @@ public class BlueFarAuto extends OpMode {
                     setAutoState(AutoState.MOVE_FROM_BOTTOM_BLUE_ARTIFACTS_TO_SHOOTING_LINE);
                 }
                 break;
+            case MOVE_FROM_BOTTOM_BLUE_ARTIFACTS_TO_SHOOTING_LINE:
+                if (!driver.isBusy() && !shooter.isShooting()){
+                    driver.moveToPose(DriverDanny.Poses.BLUE_FAR_SHOOTING_POSE, true);
+                    setAutoState(AutoState.SHOOT_BOTTOM_BLUE_ARTIFACTS);
+                }
+                break;
             case SHOOT_BOTTOM_BLUE_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
+                    shooter.startShootingAtVelocity(1400);
+                    //shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
+                    setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_MIDDLE_ARTIFACTS);
+                }
+                break;
+            case MOVE_FROM_SHOOTING_LINE_TO_BLUE_MIDDLE_ARTIFACTS:
+                if (!driver.isBusy() && !shooter.isShooting()){
+                    driver.moveToPose(DriverDanny.Poses.BLUE_MIDDLE_ARTIFACTS_POSE, true);
+                    setAutoState(AutoState.EAT_MIDDLE_BLUE_ARTIFACTS);
+                }
+                break;
+            case EAT_MIDDLE_BLUE_ARTIFACTS:
+                if (!driver.isBusy() && !shooter.isShooting()) {
+                    driver.moveToPose(DriverDanny.Poses.EAT_BLUE_MIDDLE_ARTIFACTS_POSE, true);
+                    setAutoState(AutoState.MOVE_FROM_MIDDLE_BLUE_ARTIFACTS_TO_SHOOTING_LINE);
+                }
+                break;
+            case MOVE_FROM_MIDDLE_BLUE_ARTIFACTS_TO_SHOOTING_LINE:
+                if (!driver.isBusy() && !shooter.isShooting()) {
+                    driver.moveToPose(DriverDanny.Poses.BLUE_FAR_SHOOTING_POSE, true);
+                    setAutoState(AutoState.SHOOT_MIDDLE_BLUE_ARTIFACTS);
+                }
+                break;
+            case SHOOT_MIDDLE_BLUE_ARTIFACTS:
+                if (!driver.isBusy()) {
+                    shooter.startShootingAtVelocity(1400);
+                    //shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
+                    setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_TOP_ARTIFACTS);
+                }
+                break;
+            case MOVE_FROM_SHOOTING_LINE_TO_BLUE_TOP_ARTIFACTS:
+                if (!driver.isBusy() && !shooter.isShooting()){
+                    driver.moveToPose(DriverDanny.Poses.BLUE_TOP_ARTIFACTS_POSE, true);
+                    setAutoState(AutoState.EAT_TOP_BLUE_ARTIFACTS);
+                }
+                break;
+            case EAT_TOP_BLUE_ARTIFACTS:
+                if (!driver.isBusy() && !shooter.isShooting()){
+                    driver.moveToPose(DriverDanny.Poses.EAT_BLUE_TOP_ARTIFACTS_POSE, true);
+                    setAutoState(AutoState.MOVE_FROM_TOP_BLUE_ARTIFACTS_TO_SHOOTING_LINE);
+                }
+                break;
+            case MOVE_FROM_TOP_BLUE_ARTIFACTS_TO_SHOOTING_LINE:
+                if (!driver.isBusy() && !shooter.isShooting()) {
+                    driver.moveToPose(DriverDanny.Poses.BLUE_NEAR_SHOOTING_POSE, true);
+                    setAutoState(AutoState.SHOOT_TOP_BLUE_ARTIFACTS);
+                }
+                break;
+            case SHOOT_TOP_BLUE_ARTIFACTS:
+                if (!driver.isBusy()) {
+                    shooter.startShootingAtVelocity(1100);
+                    //shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_END_POSE);
                 }
                 break;

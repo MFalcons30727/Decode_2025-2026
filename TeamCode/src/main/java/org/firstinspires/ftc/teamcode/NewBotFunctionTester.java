@@ -31,6 +31,7 @@ public class NewBotFunctionTester extends OpMode {
                 DriverDanny.Poses.BLUE_FAR_START_POSE);
 
         shooter = new ShooterMcGavin(hardwareMap, telemetry);
+        shooter.testMode = true;
     }
 
     @Override
@@ -51,25 +52,18 @@ public class NewBotFunctionTester extends OpMode {
             shooter.turnOffFlywheel();
         }
 
-        if (gamepad2.left_trigger > 0.25) {
+        if (gamepad2.left_trigger > 0.25 || gamepad2.right_trigger > 0.25)
+        {
             shooter.turnOnIntake();
+        } else {
+            shooter.turnOffIntake();
+        }
+
+        if (gamepad2.left_trigger > 0.25) {
             shooter.turnOnIndexer();
         } else {
-            shooter.turnOffIntake();
             shooter.turnOffIndexer();
         }
-
-        if (gamepad2.right_trigger > 0.25) {
-            shooter.turnOnIntake();
-        } else {
-            shooter.turnOffIntake();
-        }
-
-//        if (gamepad2.right_trigger > 0.25) {
-//            shooter.turnOnIntake();
-//        } else {
-//            shooter.turnOffIntake();
-//        }
 
         if (gamepad2.dpad_up) {
             shooter.setHoodUp();
