@@ -19,8 +19,8 @@ public class Constants {
             .mass(8.709) //has to be in kilograms, this is just a placeholder
             // the placeholders I have right now are for the tuning part of this
             // TODO need to get values from telemetry by running each under automatic
-            .forwardZeroPowerAcceleration(-32.62296532427744)
-            .lateralZeroPowerAcceleration(-55.017228794291604)
+            .forwardZeroPowerAcceleration(-46.035662205543034)
+            .lateralZeroPowerAcceleration(-67.00771610482386)
             // the PIDF needs to be tuned accordingly, these are also placeholders
             .translationalPIDFCoefficients(new PIDFCoefficients(0.06, 0, 0.0001, 0.025))
             .headingPIDFCoefficients(new PIDFCoefficients(0.7, 0, 0.0001, 0.03))
@@ -35,12 +35,12 @@ public class Constants {
             .leftRearMotorName("leftRear")
             .leftFrontMotorName("leftFront")
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             // TODO this is the same as the top, 1 is just acting as a placeholder
-            .xVelocity(65.27527047705462)
-            .yVelocity(53.946332796352124);
+            .xVelocity(59.988880605622539)
+            .yVelocity(47.580371285986715);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(-1.11)
@@ -48,8 +48,8 @@ public class Constants {
             .distanceUnit(DistanceUnit.CM)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
-            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
+            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
     public static PathConstraints pathConstraints = new PathConstraints(0.99,
             100,
             4,
