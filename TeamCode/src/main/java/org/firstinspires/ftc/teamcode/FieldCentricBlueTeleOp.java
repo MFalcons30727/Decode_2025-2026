@@ -87,6 +87,10 @@ public class FieldCentricBlueTeleOp extends OpMode {
 
         if (gamepad2.left_bumper) {
             rotate = driver.getHeadingErrorForAutoAimLimelight();
+
+            if (rotate == -1) {
+                rotate = driver.getHeadingErrorForAutoAimTrig();
+            }
         }
 
         if (gamepad2.left_trigger > 0.25 && !shooter.isShooting()) {

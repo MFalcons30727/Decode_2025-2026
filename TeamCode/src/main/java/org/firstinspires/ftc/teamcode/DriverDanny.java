@@ -83,6 +83,7 @@ public class DriverDanny {
         follower.setStartingPose(startingPose);
         telemetry = telemetryFromOpMode;
         currentAlliance = alliance;
+        currentGoalTx = -999;
 
         // initialize a new PIDF controller using the heading coefficients we already tuned for auto
         headingController = new PIDFController(follower.constants.coefficientsHeadingPIDF);
@@ -152,14 +153,18 @@ public class DriverDanny {
         // Use deadband to protect against sign flipping near PI
         if (Math.abs(currentGoalTx) < 2) {
             headingController.updateError(0);
-        } else {
+            return Range.clip(headingController.run(), -0.2, 0.2);
+        } else if (currentGoalTx != -999) {
             headingController.updateError(currentGoalTx);
+            return Range.clip(headingController.run(), -0.2, 0.2);
+        } else {
+            return -1;
         }
 
         // Use PIDF controller for smooth heading correction
         // Negate because robotCentricDrive treats +rotate as clockwise,
         // but PedroPathing's coordinate system uses +heading as counterclockwise
-        return Range.clip(headingController.run(), -0.2, 0.2);
+        //return Range.clip(headingController.run(), -0.2, 0.2);
     }
 
 
@@ -231,6 +236,7 @@ public class DriverDanny {
         telemetry.addData("CurrentHeading", Math.toDegrees(currentPose.getHeading()));
         telemetry.addData("CurrentAlliance", currentAlliance.toString());
         telemetry.addData("CurrentDistanceFromGoal", this.getCurrentDistanceFromGoal());
+        telemetry.addData("CurrentLLGoalTx", currentGoalTx);
     }
 
     public Pose getPose() {
@@ -285,8 +291,9 @@ public class DriverDanny {
                 }
                 else if (currentAlliance == Alliance.RED && tagID == 24) {
                     currentGoalTx = fr.getTargetXDegrees();
+                } else {
+                    currentGoalTx = -999;
                 }
-                telemetry.addData("CurrentGoalTx", currentGoalTx);
             }
 
 
