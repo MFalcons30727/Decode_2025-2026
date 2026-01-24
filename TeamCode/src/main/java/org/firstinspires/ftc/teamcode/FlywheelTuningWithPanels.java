@@ -17,8 +17,8 @@ public class FlywheelTuningWithPanels extends OpMode {
     private DcMotor indexer;
     @IgnoreConfigurable
     private DcMotorEx shooter;
-    private double highVelocity = 1250; // Set this to the target velocity
-    private double lowVelocity = 1000; // Set this to the drop normally seen immediately after shooting
+    private double highVelocity = 1100; // Set this to the target velocity
+    private double lowVelocity = 900; // Set this to the drop normally seen immediately after shooting
     @IgnoreConfigurable
     private double curTargetVelocity = highVelocity;
     private double F = 12;

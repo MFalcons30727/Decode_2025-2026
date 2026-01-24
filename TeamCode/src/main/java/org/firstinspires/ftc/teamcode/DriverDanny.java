@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
@@ -66,7 +68,7 @@ public class DriverDanny {
     private Alliance currentAlliance;
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
     private Limelight3A limelight;
-    private double kP = 0.2;
+    private PIDFController headingController;
 
     public DriverDanny(HardwareMap hardwareMap, Telemetry telemetryFromOpMode,
                        Alliance alliance, Pose startingPose) {
@@ -76,10 +78,13 @@ public class DriverDanny {
 
         // this is our constructor that gets called like this from our autos:  driver = new DriverDanny(hardwareMap, telemetry, DriverDanny.Poses.RED_FAR_START_POSE);
         // think of this like our "init" but for the DriverDanny specifically
-        follower = Constants.createFollower(hardwareMap);  // TODO: need to retune Pedro Pathing constants with the new bot
+        follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startingPose);
         telemetry = telemetryFromOpMode;
         currentAlliance = alliance;
+
+        // initialize a new PIDF controller using the heading coefficients we already tuned for auto
+        headingController = new PIDFController(follower.constants.coefficientsHeadingPIDF);
 
         frontLeftDrive = hardwareMap.get(DcMotor.class, "leftFront");
         frontRightDrive = hardwareMap.get(DcMotor.class, "rightFront");
@@ -125,27 +130,25 @@ public class DriverDanny {
 
         // change joystick "driver intent" to field X and Y intent
         if (currentAlliance == Alliance.BLUE) {
-            fieldX = -joyY; // if pressing down on joyY on blue alliance, intent is to increase field X
+            fieldX = joyY; // if pressing down on joyY on blue alliance, intent is to increase field X
             fieldY = joyX; // if pressing right on joyX on blue alliance, intent is to increase field Y
         } else {
-            fieldX = joyY; // if pressing up on joyY on red alliance, intent is to increase field X
+            fieldX = -joyY; // if pressing up on joyY on red alliance, intent is to increase field X
             fieldY = -joyX; // if pressing left on joyX on red alliance, intent is to increase field Y
         }
 
         // now translate field intent to robot actual direction
         double robotX = fieldX * Math.cos(currentRobotHeading)
-                        + fieldY * Math.sin(currentRobotHeading);
+                + fieldY * Math.sin(currentRobotHeading);
 
         double robotY = -fieldX * Math.sin(currentRobotHeading)
-                        + fieldY * Math.cos(currentRobotHeading);
+                + fieldY * Math.cos(currentRobotHeading);
 
         this.robotCentricDrive(robotX, robotY, rotate);
     }
 
     public double getHeadingErrorForAutoAimLimelight() {
-
-        return Range.clip(kP * currentGoalTx, -1.0, 1.0);
-
+        return Range.clip(currentGoalTx, -1.0, 1.0);
     }
 
 
@@ -168,33 +171,23 @@ public class DriverDanny {
 
         telemetry.addData("Target Heading", Math.toDegrees(targetHeading));
 
-        // get how much we need to change our heading
-        double headingError = targetHeading - currentPose.getHeading();
+        double turnDirection = MathFunctions.getTurnDirection(currentPose.getHeading(), targetHeading);
+        double angleDifference = MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), targetHeading);
+        double headingError = turnDirection * angleDifference;
 
-        telemetry.addData("Heading Error Before", Math.toDegrees(headingError));
+        telemetry.addData("Heading Error", Math.toDegrees(headingError));
 
-        headingError = AngleUnit.normalizeRadians(headingError);
-
-        // if the above doesn't work, here is how RoadRunner does heading normalization:
-        // headingError = Math.atan2(Math.sin(headingError), Math.cos(headingError));
-
-        // PedroPathing discord recommended adding a "deadband" like this (1.5 degrees) to protect against sign flipping near PI
+        // Use deadband to protect against sign flipping near PI
         if (Math.abs(headingError) < Math.toRadians(1.5)) {
-            headingError = 0;
+            headingController.updateError(0);
+        } else {
+            headingController.updateError(headingError);
         }
 
-        telemetry.addData("Heading Error After", Math.toDegrees(headingError));
-
-        // kP is the "P" coefficient of PIDF tuning
-        // it tells how strongly to correct or "snap" to the new heading
-        // if taking too long to correct the heading, increase
-        // if snapping too quickly or overshooting, decrease
-
-        // update our rotate value this loop to this value
-        //return kP * headingError;
-
-        // read that we might need to limit the values between 1 and -1 like this
-        return Range.clip(kP * headingError, -1.0, 1.0);
+        // Use PIDF controller for smooth heading correction
+        // Negate because robotCentricDrive treats +rotate as clockwise,
+        // but PedroPathing's coordinate system uses +heading as counterclockwise
+        return -Range.clip(headingController.run(), -0.5, 0.5);
     }
 
     public double getCurrentDistanceFromGoal() {

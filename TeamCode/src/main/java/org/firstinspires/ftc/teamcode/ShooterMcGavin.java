@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.util.InterpLUT;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -22,7 +24,7 @@ public class ShooterMcGavin {
         TEST_MODE_ONLY
     }
 
-    private static double SHOOTER_ACCEPTABLE_VELOCITY_ERROR = 30; // in case the shooter motor isn't able to reach that exact velocity, allow it to still shoot when being this close to the target velocity
+    private static double SHOOTER_ACCEPTABLE_VELOCITY_ERROR = 20; // in case the shooter motor isn't able to reach that exact velocity, allow it to still shoot when being this close to the target velocity
     private static double SHOOTER_VELOCITY_DROP_AFTER_SHOT = 80; // if velocity drops this amount in the START_FEEDING step, we know an artifact has been shot
     private static double HOOD_SERVO_ACCEPTABLE_ERROR = 0.05; // if servo doesn't make it to exact position, this is to say "good enough"
     private static double FEEDER_POWER = 1; // the power we send to the indexer motor to feed
@@ -38,6 +40,7 @@ public class ShooterMcGavin {
     private int shotsFired; // keeps track of how many artifacts we've attempted to shoot (between 0 and 3)
     private InterpLUT velocityLUT, hoodServoPositionLUT; // these are look-up-tables that will help us find the right velocity and hood angle at any distance
     public boolean testMode = false;
+    //TelemetryManager.TelemetryWrapper pTelemetry;
 
     public ShooterMcGavin(HardwareMap hardwareMap, Telemetry telemetryFromOpMode) { // this is our constructor that gets called like this from our autos:  shooter = new Shooter(hardwareMap);
         // think of this like our "init" but for the Shooter specifically
@@ -53,13 +56,18 @@ public class ShooterMcGavin {
         hoodServoPositionLUT = new InterpLUT();
         buildLUTS();
 
+        //pTelemetry = PanelsTelemetry.INSTANCE.getFtcTelemetry();
+
+        //pTelemetry.addLine("Init complete");
+        //pTelemetry.update();
+
         shootMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shootMotor.setDirection(DcMotorEx.Direction.REVERSE);
 
         indexer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(181,0,0,12); // TODO: need to retune these with the new bot
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(300,0,0,15); // TODO: need to retune these with the new bot
         shootMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
     }
 
@@ -68,8 +76,8 @@ public class ShooterMcGavin {
         // the first parameter of both velocityLUT and hoodServoPositionLUT below is the measured distance from goal (use tape measure from goal to front of robot)
         // on velocityLUT, the second parameter is what velocity we need to set the flywheel to for it to make it
         // on hoodServoPositionLUT, the second parameter is what position we need to set the hood servo to for the best angle
-        velocityLUT.add(36, 1100);
-        velocityLUT.add(60, 1400);
+        velocityLUT.add(67, 1100);
+        velocityLUT.add(150, 1400);
         velocityLUT.createLUT();
 
         hoodServoPositionLUT.add(36, 0.25);
@@ -96,17 +104,20 @@ public class ShooterMcGavin {
             case START_SPIN_UP: // start the shooter
                 shotsFired = 0;
                 shootMotor.setVelocity(shooterTargetVelocity);
-                hoodServo.setPosition(hoodServoPosition);
+                //hoodServo.setPosition(hoodServoPosition);
                 setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY);
                 break;
             case WAIT_FOR_TARGET_VELOCITY: // wait until we're close to the target velocity for the shooter
-                if ((Math.abs(shootMotor.getVelocity() - shooterTargetVelocity) < SHOOTER_ACCEPTABLE_VELOCITY_ERROR
-                        && Math.abs(hoodServo.getPosition() - hoodServoPosition) < HOOD_SERVO_ACCEPTABLE_ERROR)
-                        || shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) { // this makes sure the auto doesn't fail completely if it's not able to ever reach target velocity
+                if (
+                    //(
+                        Math.abs(shootMotor.getVelocity() - shooterTargetVelocity) < SHOOTER_ACCEPTABLE_VELOCITY_ERROR
+                                //&& Math.abs(hoodServo.getPosition() - hoodServoPosition) < HOOD_SERVO_ACCEPTABLE_ERROR)
+                                || shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) { // this makes sure the auto doesn't fail completely if it's not able to ever reach target velocity
                     setShootingState(ShootingState.START_FEEDING);
                 }
                 break;
             case START_FEEDING: // turn on the indexers to feed the next artifact
+                intake.setPower(FEEDER_POWER);
                 indexer.setPower(FEEDER_POWER);
 
                 // instead of waiting a certain delay, check for velocity drop to tell if an artifact was shot
@@ -139,19 +150,27 @@ public class ShooterMcGavin {
         telemetry.addData("HoodServoPosition", hoodServo.getPosition());
         telemetry.addData("HoodTargetPosition", hoodServoPosition);
         telemetry.addData("ShotsFired", shotsFired);
+
+//        pTelemetry.addData("ShooterState", currentShootingState.toString());
+//        pTelemetry.addData("FlywheelVelocity", shootMotor.getVelocity());
+//        pTelemetry.addData("TargetVelocity", shooterTargetVelocity);
+//        pTelemetry.addData("HoodServoPosition", hoodServo.getPosition());
+//        pTelemetry.addData("HoodTargetPosition", hoodServoPosition);
+//        pTelemetry.addData("ShotsFired", shotsFired);
+//        pTelemetry.update();
     }
 
     public void startShootingFromDistance(double distanceFromGoalInInches) { // if this version of startShooting is called with no arguments, use the LUTs to determine velocity and hood servo position
         // maybe with LEDs, if it's a distance we can shoot from, turn LED green.  otherwise turn it red.
         // may need to add some error handling here since InterpLUT will throw exceptions if we ask for a distance that is outside of the min/max values we measured
         shooterTargetVelocity = velocityLUT.get(distanceFromGoalInInches);
-        hoodServoPosition = hoodServoPositionLUT.get(distanceFromGoalInInches);
+        //hoodServoPosition = hoodServoPositionLUT.get(distanceFromGoalInInches);
         setShootingState(ShootingState.START_SPIN_UP);
     }
     public void startShootingAtVelocity(double targetVelocity) {
         // this lets us continue to shoot the old way if we need to for testing
         shooterTargetVelocity = targetVelocity;
-        hoodServoPosition = 0; // retract hood all the way
+        //hoodServoPosition = 0; // retract hood all the way
         setShootingState(ShootingState.START_SPIN_UP);
     }
 
@@ -159,7 +178,7 @@ public class ShooterMcGavin {
                                                        double targetHoodServoPosition) {
         // can use this one for testing of our LUT measurements
         shooterTargetVelocity = targetVelocity;
-        hoodServoPosition = targetHoodServoPosition;
+        //hoodServoPosition = targetHoodServoPosition;
         setShootingState(ShootingState.START_SPIN_UP);
     }
 

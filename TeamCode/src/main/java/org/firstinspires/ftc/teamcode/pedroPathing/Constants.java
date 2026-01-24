@@ -22,12 +22,12 @@ public class Constants {
             .forwardZeroPowerAcceleration(-46.035662205543034)
             .lateralZeroPowerAcceleration(-67.00771610482386)
             // the PIDF needs to be tuned accordingly, these are also placeholders
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.06, 0, 0.0001, 0.025))
-            .headingPIDFCoefficients(new PIDFCoefficients(0.7, 0, 0.0001, 0.03))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.07, 0, 0.005, 0.025))
+            .headingPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0.1, 0.025))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.06, 0, 0.0001, 1, 0.0025))
             //centripetal scaling is for curves, doesn't matter as much.
-            .centripetalScaling(0.0005);
-
+            .centripetalScaling(0.0005)
+            ;
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
             .rightFrontMotorName("rightFront")
@@ -40,19 +40,20 @@ public class Constants {
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             // TODO this is the same as the top, 1 is just acting as a placeholder
             .xVelocity(59.988880605622539)
-            .yVelocity(47.580371285986715);
+            .yVelocity(47.580371285986715)
+            ;
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(-1.11)
             .strafePodX(-14.605)
-            .distanceUnit(DistanceUnit.CM)
+            .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
     public static PathConstraints pathConstraints = new PathConstraints(0.99,
             100,
-            4,
+            1.2,
             1);
 
     public static Follower createFollower(HardwareMap hardwareMap) {

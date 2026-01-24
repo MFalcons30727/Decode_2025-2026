@@ -36,7 +36,7 @@ TODO:
     - LEDs?
 */
 
-@TeleOp (name="FieldCentricBlueTeleOp", group = "TeleOp")
+@TeleOp(name = "FieldCentricBlueTeleOp", group = "TeleOp")
 public class FieldCentricBlueTeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DriverDanny driver;
@@ -44,7 +44,8 @@ public class FieldCentricBlueTeleOp extends OpMode {
 
     @Override
     public void init() {
-        // not sure if this is going to work because the starting pose is going to be different
+        // not sure if this is going to work because the starting pose is going to be
+        // different
         // need to find a way to get what our starting pose is in TeleOp
         driver = new DriverDanny(hardwareMap,
                 telemetry,
@@ -64,12 +65,14 @@ public class FieldCentricBlueTeleOp extends OpMode {
         driver.update();
         shooter.update();
 
-        double joyY = -gamepad1.left_stick_y; // leaving this inverted so it works for robotCentricDrive (and we adjust for it on fieldCentricDrive)
+        double joyY = -gamepad1.left_stick_y; // leaving this inverted so it works for robotCentricDrive (and we adjust
+        // for it on fieldCentricDrive)
         double joyX = gamepad1.left_stick_x;
         double rotate = gamepad1.right_stick_x;
 
         if (gamepad2.right_trigger > 0.25 && !shooter.isShooting()) {
-            //shooter.startShootingAtVelocity(1100); // can go back to using this if needed until we have velocity scaling working
+            // shooter.startShootingAtVelocity(1100); // can go back to using this if needed
+            // until we have velocity scaling working
             try {
                 shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
             } catch (Exception e) {
@@ -77,9 +80,12 @@ public class FieldCentricBlueTeleOp extends OpMode {
             }
         }
 
-        // auto aim using headingError on field-centric driving.  no pedropathing needed.
+        // auto aim using headingError on field-centric driving. no pedropathing needed.
         if (gamepad2.right_bumper) {
-//            rotate = driver.getHeadingErrorForAutoAimTrig();
+            rotate = driver.getHeadingErrorForAutoAimTrig();
+        }
+
+        if (gamepad2.left_bumper) {
             rotate = driver.getHeadingErrorForAutoAimLimelight();
         }
 
@@ -117,5 +123,3 @@ public class FieldCentricBlueTeleOp extends OpMode {
         telemetry.update();
     }
 }
-
-
