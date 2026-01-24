@@ -74,6 +74,7 @@ public class DriverDanny {
                        Alliance alliance, Pose startingPose) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0); // april tag pipeline
+        limelight.setPollRateHz(100);
         limelight.start();
 
         // this is our constructor that gets called like this from our autos:  driver = new DriverDanny(hardwareMap, telemetry, DriverDanny.Poses.RED_FAR_START_POSE);
@@ -148,7 +149,17 @@ public class DriverDanny {
     }
 
     public double getHeadingErrorForAutoAimLimelight() {
-        return Range.clip(currentGoalTx, -1.0, 1.0);
+        // Use deadband to protect against sign flipping near PI
+        if (Math.abs(currentGoalTx) < 2) {
+            headingController.updateError(0);
+        } else {
+            headingController.updateError(currentGoalTx);
+        }
+
+        // Use PIDF controller for smooth heading correction
+        // Negate because robotCentricDrive treats +rotate as clockwise,
+        // but PedroPathing's coordinate system uses +heading as counterclockwise
+        return Range.clip(headingController.run(), -0.2, 0.2);
     }
 
 
