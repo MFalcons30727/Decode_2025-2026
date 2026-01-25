@@ -62,8 +62,7 @@ public class FieldCentricBlueTeleOp extends OpMode {
         driver.update();
         shooter.update();
 
-        double joyY = -gamepad1.left_stick_y; // leaving this inverted so it works for robotCentricDrive (and we adjust
-        // for it on fieldCentricDrive)
+        double joyY = -gamepad1.left_stick_y; // leaving this inverted so it works for robotCentricDrive (and we adjust for it on fieldCentricDrive)
         double joyX = gamepad1.left_stick_x;
         double rotate = gamepad1.right_stick_x;
 

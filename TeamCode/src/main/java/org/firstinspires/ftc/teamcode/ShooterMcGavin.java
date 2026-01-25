@@ -57,7 +57,6 @@ public class ShooterMcGavin {
         buildLUTS();
 
         //pTelemetry = PanelsTelemetry.INSTANCE.getFtcTelemetry();
-
         //pTelemetry.addLine("Init complete");
         //pTelemetry.update();
 
@@ -67,7 +66,7 @@ public class ShooterMcGavin {
         indexer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(300,0,0,15); // TODO: need to retune these with the new bot
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(300,0,0,15);
         shootMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
     }
 

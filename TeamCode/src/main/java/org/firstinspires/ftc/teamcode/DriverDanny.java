@@ -74,14 +74,14 @@ public class DriverDanny {
     private Follower follower; // part of the Pedro Pathing package, follows the path
     private Telemetry telemetry;
     private PathChain currentPath;// the current or most recent path we've built for the robot
-    private double currentGoalTx;
+    private double limelightGoalHeadingError;
     private Alliance currentAlliance;
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
     private Limelight3A limelight;
     private PIDFController headingController;
     private boolean shouldRelocalize;
-    private double PedroX;
-    private double PedroY;
+    private double pedroX;
+    private double pedroY;
 
     public DriverDanny(HardwareMap hardwareMap, Telemetry telemetryFromOpMode,
                        Alliance alliance, Pose startingPose) {
@@ -102,7 +102,7 @@ public class DriverDanny {
 
         telemetry = telemetryFromOpMode;
         currentAlliance = alliance;
-        currentGoalTx = -999;
+        limelightGoalHeadingError = -999;
 
         // initialize a new PIDF controller using the heading coefficients we already tuned for auto
         headingController = new PIDFController(follower.constants.coefficientsHeadingPIDF);
@@ -170,22 +170,16 @@ public class DriverDanny {
 
     public double getHeadingErrorForAutoAimLimelight() {
         // Use deadband to protect against sign flipping near PI
-        if (Math.abs(currentGoalTx) < 2) {
+        if (Math.abs(limelightGoalHeadingError) < 2) {
             headingController.updateError(0);
             return Range.clip(headingController.run(), -0.2, 0.2);
-        } else if (currentGoalTx != -999) {
-            headingController.updateError(currentGoalTx);
+        } else if (limelightGoalHeadingError != -999) {
+            headingController.updateError(limelightGoalHeadingError);
             return Range.clip(headingController.run(), -0.2, 0.2);
         } else {
             return -1;
         }
-
-        // Use PIDF controller for smooth heading correction
-        // Negate because robotCentricDrive treats +rotate as clockwise,
-        // but PedroPathing's coordinate system uses +heading as counterclockwise
-        //return Range.clip(headingController.run(), -0.2, 0.2);
     }
-
 
     public double getHeadingErrorForAutoAimTrig() {
         Pose currentPose = this.getPose();
@@ -255,9 +249,9 @@ public class DriverDanny {
         telemetry.addData("CurrentHeading", Math.toDegrees(lastPose.getHeading()));
         telemetry.addData("CurrentAlliance", currentAlliance.toString());
         telemetry.addData("CurrentDistanceFromGoal", this.getCurrentDistanceFromGoal());
-        telemetry.addData("CurrentLLGoalTx", currentGoalTx);
-        telemetry.addData("LLPedroX", PedroX);
-        telemetry.addData("LLPedroY", PedroY);
+        telemetry.addData("CurrentLLGoalHeadingError", limelightGoalHeadingError);
+        telemetry.addData("LLPedroX", pedroX);
+        telemetry.addData("LLPedroY", pedroY);
     }
 
     public Pose getPose() {
@@ -305,33 +299,29 @@ public class DriverDanny {
         if (result != null && result.isValid()) {
             List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
             for (LLResultTypes.FiducialResult fr : fiducialResults) {
-                //telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
                 int tagID = fr.getFiducialId();
-//                telemetry.addData("ID", fr.getFiducialId()) ;
-//                telemetry.addData("target is", tagID);
-//                telemetry.addData("Tx", result.getTx());
-//                telemetry.addData("Ty", result.getTx());
 
                 if (currentAlliance == Alliance.BLUE && tagID == 20) {
-                    currentGoalTx = fr.getTargetXDegrees();
+                    limelightGoalHeadingError = fr.getTargetXDegrees();
                 }
                 else if (currentAlliance == Alliance.RED && tagID == 24) {
-                    currentGoalTx = fr.getTargetXDegrees();
+                    limelightGoalHeadingError = fr.getTargetXDegrees();
                 } else {
-                    currentGoalTx = -999;
+                    limelightGoalHeadingError = -999;
                 }
             }
 
             if (shouldRelocalize) {
-                limelight.updateRobotOrientation(Math.toDegrees(currentHeading)-90);
+                limelight.updateRobotOrientation(Math.toDegrees(currentHeading)-90); // subtract 90 degrees here for pedropathing heading conversion
 
                 Pose3D botpose = result.getBotpose();
 
                 if (botpose != null) {
-                    PedroX = (botpose.getPosition().x * 39.3700787) + 72;
-                    PedroY = (botpose.getPosition().y * 39.3700787) + 72;
+                    // convert from meters to inches and adjust for 0,0 origin like pedropathing instead of -72,-72 that limelight uses
+                    pedroX = (botpose.getPosition().y * 39.3700787) + 72; // x and y are intentionally flipped here
+                    pedroY = (botpose.getPosition().x * 39.3700787) + 72;
 
-                    Pose newPedroPose = new Pose(PedroY, PedroX, currentHeading);
+                    Pose newPedroPose = new Pose(pedroX, pedroY, currentHeading);
 
                     this.follower.setPose(newPedroPose);
                     shouldRelocalize = false;
