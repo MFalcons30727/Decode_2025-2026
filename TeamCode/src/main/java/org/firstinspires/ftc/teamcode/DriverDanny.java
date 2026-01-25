@@ -2,11 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.ftc.FTCCoordinates;
-import com.pedropathing.ftc.InvertedFTCCoordinates;
-import com.pedropathing.ftc.PoseConverter;
 import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
 import com.pedropathing.paths.PathChain;
@@ -18,11 +14,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.List;
@@ -61,7 +53,6 @@ public class DriverDanny {
         public static final Pose BLUE_GOAL_POSE = new Pose(0, 144, 0);
         public static final Pose RED_FINAL_PARK_POSE = new Pose(38, 33, 0);
         public static final Pose BLUE_FINAL_PARK_POSE = new Pose(105, 33, 0);
-
     }
 
     public enum Alliance {
@@ -69,19 +60,29 @@ public class DriverDanny {
         BLUE
     }
 
-    public static Pose lastPose;
+    public enum DriveMode {
+        FIELD,
+        ROBOT
+    }
 
-    private Follower follower; // part of the Pedro Pathing package, follows the path
-    private Telemetry telemetry;
-    private PathChain currentPath;// the current or most recent path we've built for the robot
-    private double limelightGoalHeadingError;
-    private Alliance currentAlliance;
+    private static final double AUTO_AIM_DEADBAND_IN_DEGREES = 1.5;
+    private static final double AUTO_AIM_MAX_CORRECTION = 0.5;
+
+    public static Pose lastKnownPose;
+    public static Alliance currentAlliance;
+    public static DriveMode currentDriveMode;
+
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
     private Limelight3A limelight;
-    private PIDFController headingController;
+    private Telemetry telemetry;
+    private Follower follower; // part of the Pedro Pathing package, follows the path
+
+    private boolean slowMode = false;
+    private double limelightGoalHeadingError;
+    private PIDFController headingPIDFController;
     private boolean shouldRelocalize;
-    private double pedroX;
-    private double pedroY;
+    private double relocalizePedroX;
+    private double relocalizePedroY;
 
     public DriverDanny(HardwareMap hardwareMap, Telemetry telemetryFromOpMode,
                        Alliance alliance, Pose startingPose) {
@@ -93,19 +94,15 @@ public class DriverDanny {
         // this is our constructor that gets called like this from our autos:  driver = new DriverDanny(hardwareMap, telemetry, DriverDanny.Poses.RED_FAR_START_POSE);
         // think of this like our "init" but for the DriverDanny specifically
         follower = Constants.createFollower(hardwareMap);
-
-        //if (lastPose != null) {
-            //follower.setStartingPose(lastPose);
-        //} else {
-            follower.setStartingPose(startingPose);
-        //}
+        follower.setStartingPose(startingPose);
 
         telemetry = telemetryFromOpMode;
         currentAlliance = alliance;
+        currentDriveMode = DriveMode.FIELD;
         limelightGoalHeadingError = -999;
 
         // initialize a new PIDF controller using the heading coefficients we already tuned for auto
-        headingController = new PIDFController(follower.constants.coefficientsHeadingPIDF);
+        headingPIDFController = new PIDFController(follower.constants.coefficientsHeadingPIDF);
 
         frontLeftDrive = hardwareMap.get(DcMotor.class, "leftFront");
         frontRightDrive = hardwareMap.get(DcMotor.class, "rightFront");
@@ -123,7 +120,14 @@ public class DriverDanny {
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void robotCentricDrive(double forward, double strafe, double rotate) {
+    public void drive(double joyY, double joyX, double rotate) {
+        if (currentDriveMode == DriveMode.FIELD) {
+            fieldCentricDrive(joyY, joyX, rotate);
+        } else {
+            robotCentricDrive(joyY, joyX, rotate);
+        }
+    }
+    private void robotCentricDrive(double forward, double strafe, double rotate) {
         // followed brogan's tutorial on this
         double frontLeftPower = forward + strafe + rotate;
         double backLeftPower = forward - strafe + rotate;
@@ -131,7 +135,10 @@ public class DriverDanny {
         double backRightPower = forward + strafe - rotate;
 
         double maxPower = 1.0;
-        double maxSpeed = 1.0; // this is speed, can be changed to lower if you want to let other drive during outreach events
+        double maxSpeed = 1.0;
+
+        // this is useful when precision driving is needed (like parking adjustments)
+        if (slowMode) { maxSpeed = 0.5; }
 
         maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
         maxPower = Math.max(maxPower, Math.abs(backLeftPower));
@@ -144,7 +151,7 @@ public class DriverDanny {
         backRightDrive.setPower(maxSpeed * (backRightPower / maxPower));
     }
 
-    public void fieldCentricDrive(double joyY, double joyX, double rotate) {
+    private void fieldCentricDrive(double joyY, double joyX, double rotate) {
         double fieldX;
         double fieldY;
         double currentRobotHeading = this.getPose().getHeading();
@@ -165,20 +172,30 @@ public class DriverDanny {
         double robotY = -fieldX * Math.sin(currentRobotHeading)
                 + fieldY * Math.cos(currentRobotHeading);
 
-        this.robotCentricDrive(robotX, robotY, rotate);
+        // If our currentDriveMode is robotCentric, ignore the translations and use original paramters
+        if (currentDriveMode == DriveMode.ROBOT) {
+            this.robotCentricDrive(joyY, joyX, rotate);
+        } else {
+            this.robotCentricDrive(robotX, robotY, rotate);
+        }
     }
 
     public double getHeadingErrorForAutoAimLimelight() {
+        // If limelightGoalHeadingError is -999, it means we don't have visual on the goal's AprilTag
+        // This is determined in the updateLimeLight() function that gets called every loop
+        if (limelightGoalHeadingError == 999) { return -1; }
+
         // Use deadband to protect against sign flipping near PI
-        if (Math.abs(limelightGoalHeadingError) < 2) {
-            headingController.updateError(0);
-            return Range.clip(headingController.run(), -0.2, 0.2);
-        } else if (limelightGoalHeadingError != -999) {
-            headingController.updateError(limelightGoalHeadingError);
-            return Range.clip(headingController.run(), -0.2, 0.2);
+        if (Math.abs(limelightGoalHeadingError) < AUTO_AIM_DEADBAND_IN_DEGREES) {
+            headingPIDFController.updateError(0);
         } else {
-            return -1;
+            headingPIDFController.updateError(limelightGoalHeadingError);
         }
+
+        // Use PIDF controller for smooth heading correction
+        return Range.clip(headingPIDFController.run(),
+                          -AUTO_AIM_MAX_CORRECTION,
+                          AUTO_AIM_MAX_CORRECTION);
     }
 
     public double getHeadingErrorForAutoAimTrig() {
@@ -197,26 +214,26 @@ public class DriverDanny {
 
         // use atan2 to get heading from x-axis to goal in radians
         double targetHeading = Math.atan2(dy, dx);
-
-        telemetry.addData("Target Heading", Math.toDegrees(targetHeading));
+        //telemetry.addData("Target Heading", Math.toDegrees(targetHeading));
 
         double turnDirection = MathFunctions.getTurnDirection(currentPose.getHeading(), targetHeading);
         double angleDifference = MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), targetHeading);
         double headingError = turnDirection * angleDifference;
-
-        telemetry.addData("Heading Error", Math.toDegrees(headingError));
+        //telemetry.addData("Heading Error", Math.toDegrees(headingError));
 
         // Use deadband to protect against sign flipping near PI
-        if (Math.abs(headingError) < Math.toRadians(1.5)) {
-            headingController.updateError(0);
+        if (Math.abs(headingError) < Math.toRadians(AUTO_AIM_DEADBAND_IN_DEGREES)) {
+            headingPIDFController.updateError(0);
         } else {
-            headingController.updateError(headingError);
+            headingPIDFController.updateError(headingError);
         }
 
         // Use PIDF controller for smooth heading correction
         // Negate because robotCentricDrive treats +rotate as clockwise,
         // but PedroPathing's coordinate system uses +heading as counterclockwise
-        return -Range.clip(headingController.run(), -0.5, 0.5);
+        return -Range.clip(headingPIDFController.run(),
+                           -AUTO_AIM_MAX_CORRECTION,
+                            AUTO_AIM_MAX_CORRECTION);
     }
 
     public double getCurrentDistanceFromGoal() {
@@ -227,10 +244,6 @@ public class DriverDanny {
         }
     }
 
-    public Alliance getCurrentAlliance() {
-        return currentAlliance;
-    }
-
     public void swapCurrentAlliance() {
         if (currentAlliance == Alliance.BLUE) {
             currentAlliance = Alliance.RED;
@@ -239,19 +252,32 @@ public class DriverDanny {
         }
     }
 
+    public void swapCurrentDriveMode() {
+        if (currentDriveMode == DriveMode.FIELD) {
+            currentDriveMode = DriveMode.ROBOT;
+        } else {
+            currentDriveMode = DriveMode.FIELD;
+        }
+    }
+
+    public void toggleSlowMode() {
+        slowMode = !slowMode;
+    }
+
     public void update() { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL
         follower.update(); // this will just update the Pedro Pathing following but can add additional steps if we need to later
-        this.updateLimeLight();
+        this.updateLimeLight(); // should update our limelight every loop
 
-        lastPose = this.getPose();
-        telemetry.addData("CurrentXPos", lastPose.getX());
-        telemetry.addData("CurrentYPos", lastPose.getY());
-        telemetry.addData("CurrentHeading", Math.toDegrees(lastPose.getHeading()));
+        lastKnownPose = this.getPose();
+        telemetry.addData("CurrentXPos", lastKnownPose.getX());
+        telemetry.addData("CurrentYPos", lastKnownPose.getY());
+        telemetry.addData("CurrentHeading", Math.toDegrees(lastKnownPose.getHeading()));
         telemetry.addData("CurrentAlliance", currentAlliance.toString());
         telemetry.addData("CurrentDistanceFromGoal", this.getCurrentDistanceFromGoal());
-        telemetry.addData("CurrentLLGoalHeadingError", limelightGoalHeadingError);
-        telemetry.addData("LLPedroX", pedroX);
-        telemetry.addData("LLPedroY", pedroY);
+        telemetry.addData("CurrentDriveMode", currentDriveMode.toString());
+        telemetry.addData("SlowModeEnabled", slowMode);
+        telemetry.addData("LLPedroX", relocalizePedroX);
+        telemetry.addData("LLPedroY", relocalizePedroY);
     }
 
     public Pose getPose() {
@@ -263,20 +289,20 @@ public class DriverDanny {
     }
 
     public void moveToPose(Pose newPose, boolean holdEnd) {
-        currentPath = follower.pathBuilder()
+        PathChain newPath = follower.pathBuilder()
                 .addPath(new BezierLine(getPose(), newPose))
                 .setLinearHeadingInterpolation(getPose().getHeading(), newPose.getHeading(), 0.8)
                 .build();
 
-        follower.followPath(currentPath, holdEnd); // start the robot moving towards the new pose immediately
+        follower.followPath(newPath, holdEnd); // start the robot moving towards the new pose immediately
     }
 
     public void finalPark() {
         if (!this.isBusy()) {
             if (currentAlliance == Alliance.RED) {
-                this.moveToPose(Poses.RED_FINAL_PARK_POSE, true);
+                this.moveToPose(Poses.RED_FINAL_PARK_POSE, false);
             } else {
-                this.moveToPose(Poses.BLUE_FINAL_PARK_POSE, true);
+                this.moveToPose(Poses.BLUE_FINAL_PARK_POSE, false);
             }
         }
     }
@@ -293,6 +319,7 @@ public class DriverDanny {
 
     public void updateLimeLight() {
         double currentHeading = this.follower.getHeading();
+        limelight.updateRobotOrientation(Math.toDegrees(currentHeading)-90); // subtract 90 degrees here for pedropathing heading conversion
 
         // Learned that Tx, Ty, and Ta are degrees of error from tag, not meters.
         LLResult result = limelight.getLatestResult();
@@ -312,16 +339,14 @@ public class DriverDanny {
             }
 
             if (shouldRelocalize) {
-                limelight.updateRobotOrientation(Math.toDegrees(currentHeading)-90); // subtract 90 degrees here for pedropathing heading conversion
-
-                Pose3D botpose = result.getBotpose();
+                Pose3D botpose = result.getBotpose_MT2();
 
                 if (botpose != null) {
                     // convert from meters to inches and adjust for 0,0 origin like pedropathing instead of -72,-72 that limelight uses
-                    pedroX = (botpose.getPosition().y * 39.3700787) + 72; // x and y are intentionally flipped here
-                    pedroY = (botpose.getPosition().x * 39.3700787) + 72;
+                    relocalizePedroX = (botpose.getPosition().y * 39.3700787) + 72; // x and y are intentionally flipped here
+                    relocalizePedroY = (botpose.getPosition().x * 39.3700787) + 72;
 
-                    Pose newPedroPose = new Pose(pedroX, pedroY, currentHeading);
+                    Pose newPedroPose = new Pose(relocalizePedroX, relocalizePedroY, currentHeading);
 
                     this.follower.setPose(newPedroPose);
                     shouldRelocalize = false;

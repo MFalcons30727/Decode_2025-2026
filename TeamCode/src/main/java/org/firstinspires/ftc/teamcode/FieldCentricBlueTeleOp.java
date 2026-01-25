@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -33,7 +34,12 @@ TODO:
     - Add ability to start the shooter from anywhere but don't feed artifact until odometry tells
       us we're inside of one of the allowed shooting areas.
     - Figure out a way to pass the final pose of Auto as the start pose of TeleOp
-    - LEDs?
+    - LEDs?  Red means red alliance green means blue alliance
+    - Toggle slow mode (for precision driving over speed)
+    - Alliance swapping in TeleOp - Done
+    - Test to see if flywheel is already being given 100% power after shooting
+    -   If so, PIDF tuning alone likely can't make it more efficient.
+    -   May need to decrease compression
 */
 
 @TeleOp(name = "FieldCentricBlueTeleOp", group = "TeleOp")
@@ -44,10 +50,21 @@ public class FieldCentricBlueTeleOp extends OpMode {
 
     @Override
     public void init() {
+        DriverDanny.Alliance startingAlliance = DriverDanny.Alliance.BLUE;
+        Pose startingPose = DriverDanny.Poses.BLUE_FAR_START_POSE;
+
+        if (DriverDanny.currentAlliance != null) {
+            startingAlliance = DriverDanny.currentAlliance;
+        }
+
+        if (DriverDanny.lastKnownPose != null) {
+            startingPose = DriverDanny.lastKnownPose;
+        }
+
         driver = new DriverDanny(hardwareMap,
                 telemetry,
-                DriverDanny.Alliance.BLUE,
-                DriverDanny.Poses.BLUE_FAR_START_POSE);
+                startingAlliance,
+                startingPose);
 
         shooter = new ShooterMcGavin(hardwareMap, telemetry);
 
@@ -66,9 +83,8 @@ public class FieldCentricBlueTeleOp extends OpMode {
         double joyX = gamepad1.left_stick_x;
         double rotate = gamepad1.right_stick_x;
 
-        if (gamepad2.right_trigger > 0.25 && !shooter.isShooting()) {
-            // shooter.startShootingAtVelocity(1100); // can go back to using this if needed
-            // until we have velocity scaling working
+        if (gamepad2.aWasPressed() && !shooter.isShooting()) {
+            // shooter.startShootingAtVelocity(1100); // can go back to using this if needed until we have velocity scaling working
             try {
                 shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
             } catch (Exception e) {
@@ -77,13 +93,14 @@ public class FieldCentricBlueTeleOp extends OpMode {
         }
 
         // auto aim using headingError on field-centric driving. no pedropathing needed.
-        if (gamepad2.right_bumper) {
+        if (gamepad2.right_trigger > 0.25 && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
             rotate = driver.getHeadingErrorForAutoAimTrig();
         }
 
-        if (gamepad2.left_bumper) {
+        if (gamepad2.right_bumper && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
             rotate = driver.getHeadingErrorForAutoAimLimelight();
 
+            //if not able to find april tag revert to Trig based aiming
             if (rotate == -1) {
                 rotate = driver.getHeadingErrorForAutoAimTrig();
             }
@@ -94,34 +111,40 @@ public class FieldCentricBlueTeleOp extends OpMode {
         } else if (!shooter.isShooting()) {
             shooter.turnOffIntake();
         }
-
-        if (gamepad2.dpad_up) {
-            shooter.setHoodUp();
-        }
-
-        if (gamepad2.dpad_down) {
-            shooter.setHoodDown();
-        }
-
-        if (gamepad1.aWasPressed()) {
-            driver.swapCurrentAlliance(); // lets us swap our alliance (for auto-aim / driver testing)
-        }
-
-        if (gamepad1.bWasPressed()) {
-            driver.finalPark();
-        }
-
-        if (gamepad1.xWasPressed()) {
-            driver.abortPath();
-        }
-
-        if (gamepad2.xWasPressed()) {
+        // TODO: fix hood
+//        if (gamepad2.dpad_up) {
+//            shooter.setHoodUp();
+//        }
+//
+//        if (gamepad2.dpad_down) {
+//            shooter.setHoodDown();
+//        }
+        if (gamepad1.yWasPressed()) {
             driver.relocalize();
         }
 
-        // if holding down right bumper, it will lock the heading with autoaim.
-        // otherwise, it will use the rotation from the right stick x
-        driver.fieldCentricDrive(joyY, joyX, rotate);
+        if (gamepad1.left_bumper) {
+            driver.swapCurrentAlliance(); // lets us swap our alliance (for auto-aim / driver testing)
+        }
+
+        if (gamepad1.xWasPressed()) {
+            driver.finalPark();
+        }
+
+        if (gamepad1.aWasPressed()) {
+            driver.abortPath();
+        }
+
+        if (gamepad1.bWasPressed()) {
+            driver.toggleSlowMode(); // allows us to cut robot movement speed in half when precision is needed
+        }
+
+        if (gamepad1.right_bumper) {
+            driver.swapCurrentDriveMode();
+        }
+
+        // this drive function uses field-centric driving by default unless toggled to robot
+        driver.drive(joyY, joyX, rotate);
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.update();
