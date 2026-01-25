@@ -28,7 +28,7 @@ public class ShooterMcGavin {
     private static double SHOOTER_VELOCITY_DROP_AFTER_SHOT = 80; // if velocity drops this amount in the START_FEEDING step, we know an artifact has been shot
     private static double HOOD_SERVO_ACCEPTABLE_ERROR = 0.05; // if servo doesn't make it to exact position, this is to say "good enough"
     private static double FEEDER_POWER = 1; // the power we send to the indexer motor to feed
-    private static double STEP_TIMEOUT_IN_MILLISECONDS = 5000; // this helps to make sure our "waiting for" steps never run longer than a certain time
+    private static double STEP_TIMEOUT_IN_MILLISECONDS = 4000; // this helps to make sure our "waiting for" steps never run longer than a certain time
     private double shooterTargetVelocity = 1100; // the velocity we want our shooter to be set to
     private double hoodServoPosition = 0; // the servo position of the adjustable hood
     private DcMotorEx shootMotor;
@@ -66,7 +66,7 @@ public class ShooterMcGavin {
         indexer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(300,0,0,15);
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(400,0,0,15);
         shootMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
     }
 
@@ -75,12 +75,26 @@ public class ShooterMcGavin {
         // the first parameter of both velocityLUT and hoodServoPositionLUT below is the measured distance from goal (use tape measure from goal to front of robot)
         // on velocityLUT, the second parameter is what velocity we need to set the flywheel to for it to make it
         // on hoodServoPositionLUT, the second parameter is what position we need to set the hood servo to for the best angle
-        velocityLUT.add(67, 1100);
-        velocityLUT.add(150, 1400);
+        velocityLUT.add(60, 900);
+        velocityLUT.add(72, 920);
+        velocityLUT.add(84, 1040);
+        velocityLUT.add(96, 1100);
+        velocityLUT.add(108, 1160);
+        velocityLUT.add(120, 1300);
+        velocityLUT.add(132, 1360);
+        velocityLUT.add(144, 1500);
+        velocityLUT.add(156, 1540);
         velocityLUT.createLUT();
 
-        hoodServoPositionLUT.add(36, 0.25);
-        hoodServoPositionLUT.add(60, 0.75);
+        hoodServoPositionLUT.add(60, 0);
+        hoodServoPositionLUT.add(72, 0);
+        hoodServoPositionLUT.add(84, 0);
+        hoodServoPositionLUT.add(96, 0);
+        hoodServoPositionLUT.add(108, 0);
+        hoodServoPositionLUT.add(120, 0);
+        hoodServoPositionLUT.add(132, 0);
+        hoodServoPositionLUT.add(144, 0);
+        hoodServoPositionLUT.add(156, 0);
         hoodServoPositionLUT.createLUT();
     }
 

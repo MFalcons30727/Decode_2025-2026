@@ -47,6 +47,7 @@ public class FieldCentricBlueTeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DriverDanny driver;
     private ShooterMcGavin shooter;
+    //private double currentTargetVelocity = 1100;
 
     @Override
     public void init() {
@@ -85,7 +86,7 @@ public class FieldCentricBlueTeleOp extends OpMode {
         double rotate = gamepad1.right_stick_x;
 
         if (gamepad2.aWasPressed() && !shooter.isShooting()) {
-            // shooter.startShootingAtVelocity(1100); // can go back to using this if needed until we have velocity scaling working
+             //shooter.startShootingAtVelocity(currentTargetVelocity); // can go back to using this if needed until we have velocity scaling working
             try {
                 shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
             } catch (Exception e) {
@@ -120,6 +121,16 @@ public class FieldCentricBlueTeleOp extends OpMode {
 //        if (gamepad2.dpad_down) {
 //            shooter.setHoodDown();
 //        }
+
+        // this is for LUT table building
+//        if (gamepad2.yWasPressed()) {
+//            currentTargetVelocity += 20;
+//        }
+//
+//        if (gamepad2.aWasPressed()) {
+//            currentTargetVelocity -= 20;
+//        }
+
         if (gamepad1.yWasPressed()) {
             driver.relocalize();
         }
@@ -148,6 +159,7 @@ public class FieldCentricBlueTeleOp extends OpMode {
         driver.drive(joyY, joyX, rotate);
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
+        //telemetry.addData("VTest", currentTargetVelocity);
         telemetry.update();
     }
 }

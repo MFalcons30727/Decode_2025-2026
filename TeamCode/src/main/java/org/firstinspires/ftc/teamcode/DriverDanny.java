@@ -23,6 +23,7 @@ public class DriverDanny {
     public static class Poses {
         // put any poses we would ever need to go to in this list
         public static final Pose TEST_START_POSE = new Pose(72, 8, Math.toRadians(90));
+        public static final Pose TEST_PARK_POSE = new Pose(72, 50, Math.toRadians(0));
         public static final Pose RED_FAR_START_POSE = new Pose(96, 8, Math.toRadians(90));
         public static final Pose BLUE_FAR_START_POSE = new Pose(49, 8, Math.toRadians(90));
         public static final Pose RED_BACKUP_START_POSE = new Pose(122, 125, Math.toRadians(40));
@@ -66,7 +67,7 @@ public class DriverDanny {
         ROBOT
     }
 
-    private static final double AUTO_AIM_DEADBAND_IN_DEGREES = 1.5;
+    private static final double AUTO_AIM_DEADBAND_IN_DEGREES = 2;
     private static final double AUTO_AIM_MAX_CORRECTION = 0.5;
 
     public static Pose lastKnownPose;
@@ -81,7 +82,7 @@ public class DriverDanny {
     private boolean slowMode = false;
     private double limelightGoalHeadingError;
     private PIDFController headingPIDFController;
-    private boolean shouldRelocalize;
+    private boolean shouldRelocalize = false;
     private double relocalizePedroX;
     private double relocalizePedroY;
 
@@ -155,14 +156,14 @@ public class DriverDanny {
     private void fieldCentricDrive(double joyY, double joyX, double rotate) {
         double fieldX;
         double fieldY;
-        double currentRobotHeading = this.getPose().getHeading();
+        double currentRobotHeading = this.follower.getHeading();
 
         // change joystick "driver intent" to field X and Y intent
         if (currentAlliance == Alliance.BLUE) {
-            fieldX = joyY; // if pressing down on joyY on blue alliance, intent is to increase field X
+            fieldX = -joyY; // if pressing down on joyY on blue alliance, intent is to increase field X
             fieldY = joyX; // if pressing right on joyX on blue alliance, intent is to increase field Y
         } else {
-            fieldX = -joyY; // if pressing up on joyY on red alliance, intent is to increase field X
+            fieldX = joyY; // if pressing up on joyY on red alliance, intent is to increase field X
             fieldY = -joyX; // if pressing left on joyX on red alliance, intent is to increase field Y
         }
 
@@ -170,8 +171,8 @@ public class DriverDanny {
         double robotX = fieldX * Math.cos(currentRobotHeading)
                 + fieldY * Math.sin(currentRobotHeading);
 
-        double robotY = -fieldX * Math.sin(currentRobotHeading)
-                + fieldY * Math.cos(currentRobotHeading);
+        double robotY = fieldX * Math.sin(currentRobotHeading)
+                - fieldY * Math.cos(currentRobotHeading);
 
         // If our currentDriveMode is robotCentric, ignore the translations and use original paramters
         if (currentDriveMode == DriveMode.ROBOT) {
@@ -182,21 +183,31 @@ public class DriverDanny {
     }
 
     public double getHeadingErrorForAutoAimLimelight() {
-        // If limelightGoalHeadingError is -999, it means we don't have visual on the goal's AprilTag
-        // This is determined in the updateLimeLight() function that gets called every loop
-        if (limelightGoalHeadingError == 999) { return -1; }
-
+//        // If limelightGoalHeadingError is -999, it means we don't have visual on the goal's AprilTag
+//        // This is determined in the updateLimeLight() function that gets called every loop
+//        if (limelightGoalHeadingError == -999) { return -1; }
+//
+//        // Use deadband to protect against sign flipping near PI
+//        if (Math.abs(limelightGoalHeadingError) < AUTO_AIM_DEADBAND_IN_DEGREES) {
+//            headingPIDFController.updateError(0);
+//        } else {
+//            headingPIDFController.updateError(limelightGoalHeadingError);
+//        }
+//
+//        // Use PIDF controller for smooth heading correction
+//        return Range.clip(headingPIDFController.run(),
+//                          -AUTO_AIM_MAX_CORRECTION,
+//                          AUTO_AIM_MAX_CORRECTION);
         // Use deadband to protect against sign flipping near PI
-        if (Math.abs(limelightGoalHeadingError) < AUTO_AIM_DEADBAND_IN_DEGREES) {
+        if (Math.abs(limelightGoalHeadingError) < 2) {
             headingPIDFController.updateError(0);
-        } else {
+            return Range.clip(headingPIDFController.run(), -0.2, 0.2);
+        } else if (limelightGoalHeadingError != -999) {
             headingPIDFController.updateError(limelightGoalHeadingError);
+            return Range.clip(headingPIDFController.run(), -0.2, 0.2);
+        } else {
+            return -1;
         }
-
-        // Use PIDF controller for smooth heading correction
-        return Range.clip(headingPIDFController.run(),
-                          -AUTO_AIM_MAX_CORRECTION,
-                          AUTO_AIM_MAX_CORRECTION);
     }
 
     public double getHeadingErrorForAutoAimTrig() {
@@ -222,8 +233,21 @@ public class DriverDanny {
         double headingError = turnDirection * angleDifference;
         //telemetry.addData("Heading Error", Math.toDegrees(headingError));
 
+//        // Use deadband to protect against sign flipping near PI
+//        if (Math.abs(headingError) < Math.toRadians(AUTO_AIM_DEADBAND_IN_DEGREES)) {
+//            headingPIDFController.updateError(0);
+//        } else {
+//            headingPIDFController.updateError(headingError);
+//        }
+//
+//        // Use PIDF controller for smooth heading correction
+//        // Negate because robotCentricDrive treats +rotate as clockwise,
+//        // but PedroPathing's coordinate system uses +heading as counterclockwise
+//        return -Range.clip(headingPIDFController.run(),
+//                           -AUTO_AIM_MAX_CORRECTION,
+//                            AUTO_AIM_MAX_CORRECTION);
         // Use deadband to protect against sign flipping near PI
-        if (Math.abs(headingError) < Math.toRadians(AUTO_AIM_DEADBAND_IN_DEGREES)) {
+        if (Math.abs(headingError) < Math.toRadians(1.5)) {
             headingPIDFController.updateError(0);
         } else {
             headingPIDFController.updateError(headingError);
@@ -232,9 +256,7 @@ public class DriverDanny {
         // Use PIDF controller for smooth heading correction
         // Negate because robotCentricDrive treats +rotate as clockwise,
         // but PedroPathing's coordinate system uses +heading as counterclockwise
-        return -Range.clip(headingPIDFController.run(),
-                           -AUTO_AIM_MAX_CORRECTION,
-                            AUTO_AIM_MAX_CORRECTION);
+        return -Range.clip(headingPIDFController.run(), -0.5, 0.5);
     }
 
     public double getCurrentDistanceFromGoal() {
@@ -277,8 +299,8 @@ public class DriverDanny {
         telemetry.addData("CurrentDistanceFromGoal", this.getCurrentDistanceFromGoal());
         telemetry.addData("CurrentDriveMode", currentDriveMode.toString());
         telemetry.addData("SlowModeEnabled", slowMode);
-        telemetry.addData("LLPedroX", relocalizePedroX);
-        telemetry.addData("LLPedroY", relocalizePedroY);
+        //telemetry.addData("LLPedroX", relocalizePedroX);
+        //telemetry.addData("LLPedroY", relocalizePedroY);
     }
 
     public Pose getPose() {
@@ -314,8 +336,14 @@ public class DriverDanny {
         }
     }
 
+    // to localize right now, make sure to drive into your alliance corner and make sure the robot is facing upfield towards the goals (90 degrees)
     public void relocalize() {
-        shouldRelocalize = true;
+        //shouldRelocalize = true;
+        if (currentAlliance == Alliance.RED) {
+            this.follower.setPose(new Pose(8.5, 8.5, Math.toRadians(90)));
+        } else {
+            this.follower.setPose(new Pose(135.5, 8.5, Math.toRadians(90)));
+        }
     }
 
     public void updateLimeLight() {
