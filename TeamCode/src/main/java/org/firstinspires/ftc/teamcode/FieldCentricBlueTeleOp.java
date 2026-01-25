@@ -51,15 +51,16 @@ public class FieldCentricBlueTeleOp extends OpMode {
     @Override
     public void init() {
         DriverDanny.Alliance startingAlliance = DriverDanny.Alliance.BLUE;
-        Pose startingPose = DriverDanny.Poses.BLUE_FAR_START_POSE;
+        //Pose startingPose = DriverDanny.Poses.BLUE_FAR_START_POSE;
+        Pose startingPose = DriverDanny.Poses.TEST_START_POSE;
 
-        if (DriverDanny.currentAlliance != null) {
-            startingAlliance = DriverDanny.currentAlliance;
-        }
+        //if (DriverDanny.currentAlliance != null) {
+        //    startingAlliance = DriverDanny.currentAlliance;
+        //}
 
-        if (DriverDanny.lastKnownPose != null) {
-            startingPose = DriverDanny.lastKnownPose;
-        }
+        //if (DriverDanny.lastKnownPose != null) {
+        //    startingPose = DriverDanny.lastKnownPose;
+        //}
 
         driver = new DriverDanny(hardwareMap,
                 telemetry,

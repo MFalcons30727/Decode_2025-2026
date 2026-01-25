@@ -43,7 +43,7 @@ public class NewBotFunctionTester extends OpMode {
         double joyX = gamepad1.left_stick_x;
         double rotate = gamepad1.right_stick_x;
 
-        driver.robotCentricDrive(joyY, joyX, rotate);
+        driver.drive(joyY, joyX, rotate);
 
         if (gamepad2.x){
             shooter.turnOnFlywheel();
