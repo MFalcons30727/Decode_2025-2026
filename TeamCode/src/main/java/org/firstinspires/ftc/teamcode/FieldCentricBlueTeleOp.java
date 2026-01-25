@@ -11,25 +11,25 @@ TODO:
 
 - New Bot Setup (get us back to where the old bot was)
     - Test all hardware to see what may need to be reversed (test using this teleOp)
-        - Flywheel
-        - Intake
-        - Indexer
-        - Hood
-        - Pinpoint
-        - Limelight
-    - Remeasure deadwheel offsets
-    - Retune PedroPathing constants (use Tuning class under PedroPathing folder)
-    - Test PedroPathing poses (make an opmode for testing this)
-    - Add intake to the autonomous state machine
-    - Retune flywheel (use FlywheelTuningWithPanels)
+        - Flywheel - Done
+        - Intake - Done
+        - Indexer - Done
+        - Hood - Not Working
+        - Pinpoint - Done
+        - Limelight - Done
+    - Remeasure deadwheel offsets - Done
+    - Retune PedroPathing constants (use Tuning class under PedroPathing folder) - Done
+    - Test PedroPathing poses
+    - Add intake to the autonomous state machine - Done
+    - Retune flywheel (use FlywheelTuningWithPanels) - Done
 - New functionality
     - plug in InterPLUT table values for hood adjustment and velocity scaling
-    - Test field-centric driving
-    - Test odometry-based auto-aim
+    - Test field-centric driving - Done
+    - Test odometry-based auto-aim - Done
     - Test auto-park
     - Fix abort path
     - Add Limelight odometry correction
-    - Add Limelight-based auto-aim (if needed)
+    - Add Limelight-based auto-aim (if needed) - Done
     - Add ability to start the shooter from anywhere but don't feed artifact until odometry tells
       us we're inside of one of the allowed shooting areas.
     - Figure out a way to pass the final pose of Auto as the start pose of TeleOp
@@ -44,9 +44,6 @@ public class FieldCentricBlueTeleOp extends OpMode {
 
     @Override
     public void init() {
-        // not sure if this is going to work because the starting pose is going to be
-        // different
-        // need to find a way to get what our starting pose is in TeleOp
         driver = new DriverDanny(hardwareMap,
                 telemetry,
                 DriverDanny.Alliance.BLUE,
@@ -117,6 +114,10 @@ public class FieldCentricBlueTeleOp extends OpMode {
 
         if (gamepad1.xWasPressed()) {
             driver.abortPath();
+        }
+
+        if (gamepad2.xWasPressed()) {
+            driver.relocalize();
         }
 
         // if holding down right bumper, it will lock the heading with autoaim.

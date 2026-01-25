@@ -2,7 +2,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.ftc.FTCCoordinates;
+import com.pedropathing.ftc.InvertedFTCCoordinates;
+import com.pedropathing.ftc.PoseConverter;
 import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
 import com.pedropathing.paths.PathChain;
@@ -15,6 +19,10 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.List;
@@ -61,6 +69,8 @@ public class DriverDanny {
         BLUE
     }
 
+    public static Pose lastPose;
+
     private Follower follower; // part of the Pedro Pathing package, follows the path
     private Telemetry telemetry;
     private PathChain currentPath;// the current or most recent path we've built for the robot
@@ -69,6 +79,9 @@ public class DriverDanny {
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
     private Limelight3A limelight;
     private PIDFController headingController;
+    private boolean shouldRelocalize;
+    private double PedroX;
+    private double PedroY;
 
     public DriverDanny(HardwareMap hardwareMap, Telemetry telemetryFromOpMode,
                        Alliance alliance, Pose startingPose) {
@@ -80,7 +93,13 @@ public class DriverDanny {
         // this is our constructor that gets called like this from our autos:  driver = new DriverDanny(hardwareMap, telemetry, DriverDanny.Poses.RED_FAR_START_POSE);
         // think of this like our "init" but for the DriverDanny specifically
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(startingPose);
+
+        //if (lastPose != null) {
+            //follower.setStartingPose(lastPose);
+        //} else {
+            follower.setStartingPose(startingPose);
+        //}
+
         telemetry = telemetryFromOpMode;
         currentAlliance = alliance;
         currentGoalTx = -999;
@@ -230,13 +249,15 @@ public class DriverDanny {
         follower.update(); // this will just update the Pedro Pathing following but can add additional steps if we need to later
         this.updateLimeLight();
 
-        Pose currentPose = this.getPose();
-        telemetry.addData("CurrentXPos", currentPose.getX());
-        telemetry.addData("CurrentYPos", currentPose.getY());
-        telemetry.addData("CurrentHeading", Math.toDegrees(currentPose.getHeading()));
+        lastPose = this.getPose();
+        telemetry.addData("CurrentXPos", lastPose.getX());
+        telemetry.addData("CurrentYPos", lastPose.getY());
+        telemetry.addData("CurrentHeading", Math.toDegrees(lastPose.getHeading()));
         telemetry.addData("CurrentAlliance", currentAlliance.toString());
         telemetry.addData("CurrentDistanceFromGoal", this.getCurrentDistanceFromGoal());
         telemetry.addData("CurrentLLGoalTx", currentGoalTx);
+        telemetry.addData("LLPedroX", PedroX);
+        telemetry.addData("LLPedroY", PedroY);
     }
 
     public Pose getPose() {
@@ -272,9 +293,14 @@ public class DriverDanny {
         }
     }
 
+    public void relocalize() {
+        shouldRelocalize = true;
+    }
+
     public void updateLimeLight() {
+        double currentHeading = this.follower.getHeading();
+
         // Learned that Tx, Ty, and Ta are degrees of error from tag, not meters.
-        //limelight.updateRobotOrientation(follower.getHeading());
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
             List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
@@ -296,15 +322,21 @@ public class DriverDanny {
                 }
             }
 
+            if (shouldRelocalize) {
+                limelight.updateRobotOrientation(Math.toDegrees(currentHeading)-90);
 
-            //Pose3D botPose = llResult.getBotpose_MT2();
-//            telemetry.addData("Tx", result.getTx());
+                Pose3D botpose = result.getBotpose();
 
-            //telemetry.addData("Ty", llResult.getTy());
-            //telemetry.addData("Ta", llResult.getTa());
-            //telemetry.addData("robo x", botPose.getPosition().x);
-            //telemetry.addData("robo y", botPose.getPosition().y);
-            //telemetry.addData("robo z", botPose.getPosition().z);
+                if (botpose != null) {
+                    PedroX = (botpose.getPosition().x * 39.3700787) + 72;
+                    PedroY = (botpose.getPosition().y * 39.3700787) + 72;
+
+                    Pose newPedroPose = new Pose(PedroY, PedroX, currentHeading);
+
+                    this.follower.setPose(newPedroPose);
+                    shouldRelocalize = false;
+                }
+            }
         }
     }
 }
