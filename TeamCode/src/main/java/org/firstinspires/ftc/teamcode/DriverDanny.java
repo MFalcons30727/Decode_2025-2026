@@ -22,8 +22,6 @@ import java.util.List;
 public class DriverDanny {
     public static class Poses {
         // put any poses we would ever need to go to in this list
-        public static final Pose TEST_START_POSE = new Pose(72, 8, Math.toRadians(90));
-        public static final Pose TEST_PARK_POSE = new Pose(72, 50, Math.toRadians(0));
         public static final Pose RED_FAR_START_POSE = new Pose(96, 8, Math.toRadians(90));
         public static final Pose BLUE_FAR_START_POSE = new Pose(49, 8, Math.toRadians(90));
         public static final Pose RED_BACKUP_START_POSE = new Pose(122, 125, Math.toRadians(40));

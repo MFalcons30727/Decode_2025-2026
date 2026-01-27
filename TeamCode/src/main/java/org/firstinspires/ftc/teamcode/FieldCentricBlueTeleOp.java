@@ -52,8 +52,7 @@ public class FieldCentricBlueTeleOp extends OpMode {
     @Override
     public void init() {
         DriverDanny.Alliance startingAlliance = DriverDanny.Alliance.BLUE;
-        //Pose startingPose = DriverDanny.Poses.BLUE_FAR_START_POSE;
-        Pose startingPose = DriverDanny.Poses.TEST_START_POSE;
+        Pose startingPose = DriverDanny.Poses.BLUE_FAR_START_POSE;
 
         //if (DriverDanny.currentAlliance != null) {
         //    startingAlliance = DriverDanny.currentAlliance;
@@ -80,15 +79,16 @@ public class FieldCentricBlueTeleOp extends OpMode {
     public void loop() {
         driver.update();
         shooter.update();
+        //shooter.update2(driver.getCurrentDistanceFromGoal());
 
         double joyY = -gamepad1.left_stick_y; // leaving this inverted so it works for robotCentricDrive (and we adjust for it on fieldCentricDrive)
         double joyX = gamepad1.left_stick_x;
         double rotate = gamepad1.right_stick_x;
 
         if (gamepad2.aWasPressed() && !shooter.isShooting()) {
-             //shooter.startShootingAtVelocity(currentTargetVelocity); // can go back to using this if needed until we have velocity scaling working
             try {
                 shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
+                //shooter.startShooting();
             } catch (Exception e) {
                 telemetry.addData("shooter", "NOT IN RANGE");
             }

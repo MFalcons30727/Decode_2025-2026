@@ -173,6 +173,72 @@ public class ShooterMcGavin {
 //        pTelemetry.update();
     }
 
+    public void update2(double distanceFromGoalInInches) { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL
+        if (currentShootingState != ShootingState.OFF) {
+            shooterTargetVelocity = velocityLUT.get(distanceFromGoalInInches);
+            shootMotor.setVelocity(shooterTargetVelocity);
+        }
+
+        switch (currentShootingState) {
+            case START_SPIN_UP: // start the shooter
+                shotsFired = 0;
+                shootMotor.setVelocity(shooterTargetVelocity);
+                //hoodServo.setPosition(hoodServoPosition);
+                setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY);
+                break;
+            case WAIT_FOR_TARGET_VELOCITY: // wait until we're close to the target velocity for the shooter
+                if (
+                    //(
+                        Math.abs(shootMotor.getVelocity() - shooterTargetVelocity) < SHOOTER_ACCEPTABLE_VELOCITY_ERROR
+                                //&& Math.abs(hoodServo.getPosition() - hoodServoPosition) < HOOD_SERVO_ACCEPTABLE_ERROR)
+                                || shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) { // this makes sure the auto doesn't fail completely if it's not able to ever reach target velocity
+                    setShootingState(ShootingState.START_FEEDING);
+                }
+                break;
+            case START_FEEDING: // turn on the indexers to feed the next artifact
+                intake.setPower(FEEDER_POWER);
+                indexer.setPower(FEEDER_POWER);
+
+                // instead of waiting a certain delay, check for velocity drop to tell if an artifact was shot
+                if (shootMotor.getVelocity() < (shooterTargetVelocity - SHOOTER_VELOCITY_DROP_AFTER_SHOT)
+                        || shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) {
+                    shotsFired++;
+
+                    if (shotsFired >= 3) { // after 3 shot attempts, power off shooter
+                        shotsFired = 0;
+                        setShootingState(ShootingState.OFF);
+                    }
+                    else {
+                        indexer.setPower(0); // stop feeding until we reach target velocity again
+                        setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY); // if more shots to fire, wait for the shooter to reach target velocity again
+                    }
+                }
+                break;
+            case OFF:
+                shootMotor.setVelocity(0);
+                hoodServo.setPosition(0);
+                indexer.setPower(0);
+                shooterTargetVelocity = 1100;
+                hoodServoPosition = 0;
+                break;
+        }
+
+        telemetry.addData("ShooterState", currentShootingState.toString());
+        telemetry.addData("FlywheelVelocity", shootMotor.getVelocity());
+        telemetry.addData("TargetVelocity", shooterTargetVelocity);
+        telemetry.addData("HoodServoPosition", hoodServo.getPosition());
+        telemetry.addData("HoodTargetPosition", hoodServoPosition);
+        telemetry.addData("ShotsFired", shotsFired);
+
+//        pTelemetry.addData("ShooterState", currentShootingState.toString());
+//        pTelemetry.addData("FlywheelVelocity", shootMotor.getVelocity());
+//        pTelemetry.addData("TargetVelocity", shooterTargetVelocity);
+//        pTelemetry.addData("HoodServoPosition", hoodServo.getPosition());
+//        pTelemetry.addData("HoodTargetPosition", hoodServoPosition);
+//        pTelemetry.addData("ShotsFired", shotsFired);
+//        pTelemetry.update();
+    }
+
     public void startShootingFromDistance(double distanceFromGoalInInches) { // if this version of startShooting is called with no arguments, use the LUTs to determine velocity and hood servo position
         // maybe with LEDs, if it's a distance we can shoot from, turn LED green.  otherwise turn it red.
         // may need to add some error handling here since InterpLUT will throw exceptions if we ask for a distance that is outside of the min/max values we measured
@@ -192,6 +258,10 @@ public class ShooterMcGavin {
         // can use this one for testing of our LUT measurements
         shooterTargetVelocity = targetVelocity;
         //hoodServoPosition = targetHoodServoPosition;
+        setShootingState(ShootingState.START_SPIN_UP);
+    }
+
+    public void startShooting() {
         setShootingState(ShootingState.START_SPIN_UP);
     }
 
