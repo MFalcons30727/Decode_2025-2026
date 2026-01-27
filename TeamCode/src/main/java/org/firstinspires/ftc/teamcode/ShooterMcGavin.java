@@ -66,7 +66,7 @@ public class ShooterMcGavin {
         indexer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(400,0,0,15);
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(191,0,0,15);
         shootMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
     }
 
@@ -143,7 +143,7 @@ public class ShooterMcGavin {
                         setShootingState(ShootingState.OFF);
                     }
                     else {
-                        indexer.setPower(0); // stop feeding until we reach target velocity again
+                        //indexer.setPower(0); // stop feeding until we reach target velocity again
                         setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY); // if more shots to fire, wait for the shooter to reach target velocity again
                     }
                 }
@@ -209,7 +209,7 @@ public class ShooterMcGavin {
                         setShootingState(ShootingState.OFF);
                     }
                     else {
-                        indexer.setPower(0); // stop feeding until we reach target velocity again
+                        //indexer.setPower(0); // stop feeding until we reach target velocity again
                         setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY); // if more shots to fire, wait for the shooter to reach target velocity again
                     }
                 }
