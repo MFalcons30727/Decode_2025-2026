@@ -75,26 +75,26 @@ public class ShooterMcGavin {
         // the first parameter of both velocityLUT and hoodServoPositionLUT below is the measured distance from goal (use tape measure from goal to front of robot)
         // on velocityLUT, the second parameter is what velocity we need to set the flywheel to for it to make it
         // on hoodServoPositionLUT, the second parameter is what position we need to set the hood servo to for the best angle
-        velocityLUT.add(60, 900);
-        velocityLUT.add(72, 920);
-        velocityLUT.add(84, 1040);
-        velocityLUT.add(96, 1100);
-        velocityLUT.add(108, 1160);
-        velocityLUT.add(120, 1300);
-        velocityLUT.add(132, 1360);
-        velocityLUT.add(144, 1500);
-        velocityLUT.add(156, 1540);
+        velocityLUT.add(60, 980);
+        velocityLUT.add(72, 1020);
+        velocityLUT.add(84, 1080);
+        velocityLUT.add(96, 1160);
+        velocityLUT.add(108, 1200);
+        velocityLUT.add(120, 1240);
+        velocityLUT.add(132, 1300);
+        velocityLUT.add(144, 1380);
+        velocityLUT.add(156, 1440);
         velocityLUT.createLUT();
 
-        hoodServoPositionLUT.add(60, 0);
-        hoodServoPositionLUT.add(72, 0);
-        hoodServoPositionLUT.add(84, 0);
-        hoodServoPositionLUT.add(96, 0);
-        hoodServoPositionLUT.add(108, 0);
-        hoodServoPositionLUT.add(120, 0);
-        hoodServoPositionLUT.add(132, 0);
-        hoodServoPositionLUT.add(144, 0);
-        hoodServoPositionLUT.add(156, 0);
+        hoodServoPositionLUT.add(60, 0.15);
+        hoodServoPositionLUT.add(72, 0.6);
+        hoodServoPositionLUT.add(84, 0.6);
+        hoodServoPositionLUT.add(96, 0.6);
+        hoodServoPositionLUT.add(108, 0.85);
+        hoodServoPositionLUT.add(120, 0.85);
+        hoodServoPositionLUT.add(132, 0.85);
+        hoodServoPositionLUT.add(144, 1);
+        hoodServoPositionLUT.add(156, 1);
         hoodServoPositionLUT.createLUT();
     }
 
@@ -117,14 +117,14 @@ public class ShooterMcGavin {
             case START_SPIN_UP: // start the shooter
                 shotsFired = 0;
                 shootMotor.setVelocity(shooterTargetVelocity);
-                //hoodServo.setPosition(hoodServoPosition);
+                hoodServo.setPosition(hoodServoPosition);
                 setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY);
                 break;
             case WAIT_FOR_TARGET_VELOCITY: // wait until we're close to the target velocity for the shooter
                 if (
-                    //(
+                    (
                         Math.abs(shootMotor.getVelocity() - shooterTargetVelocity) < SHOOTER_ACCEPTABLE_VELOCITY_ERROR
-                                //&& Math.abs(hoodServo.getPosition() - hoodServoPosition) < HOOD_SERVO_ACCEPTABLE_ERROR)
+                                && Math.abs(hoodServo.getPosition() - hoodServoPosition) < HOOD_SERVO_ACCEPTABLE_ERROR)
                                 || shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) { // this makes sure the auto doesn't fail completely if it's not able to ever reach target velocity
                     setShootingState(ShootingState.START_FEEDING);
                 }
@@ -143,14 +143,14 @@ public class ShooterMcGavin {
                         setShootingState(ShootingState.OFF);
                     }
                     else {
-                        //indexer.setPower(0); // stop feeding until we reach target velocity again
+                        indexer.setPower(0); // stop feeding until we reach target velocity again
                         setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY); // if more shots to fire, wait for the shooter to reach target velocity again
                     }
                 }
                 break;
             case OFF:
                 shootMotor.setVelocity(0);
-                hoodServo.setPosition(0);
+                //hoodServo.setPosition(0);
                 indexer.setPower(0);
                 shooterTargetVelocity = 1100;
                 hoodServoPosition = 0;
@@ -209,7 +209,7 @@ public class ShooterMcGavin {
                         setShootingState(ShootingState.OFF);
                     }
                     else {
-                        //indexer.setPower(0); // stop feeding until we reach target velocity again
+                        indexer.setPower(0); // stop feeding until we reach target velocity again
                         setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY); // if more shots to fire, wait for the shooter to reach target velocity again
                     }
                 }
@@ -243,13 +243,13 @@ public class ShooterMcGavin {
         // maybe with LEDs, if it's a distance we can shoot from, turn LED green.  otherwise turn it red.
         // may need to add some error handling here since InterpLUT will throw exceptions if we ask for a distance that is outside of the min/max values we measured
         shooterTargetVelocity = velocityLUT.get(distanceFromGoalInInches);
-        //hoodServoPosition = hoodServoPositionLUT.get(distanceFromGoalInInches);
+        hoodServoPosition = hoodServoPositionLUT.get(distanceFromGoalInInches);
         setShootingState(ShootingState.START_SPIN_UP);
     }
     public void startShootingAtVelocity(double targetVelocity) {
         // this lets us continue to shoot the old way if we need to for testing
         shooterTargetVelocity = targetVelocity;
-        //hoodServoPosition = 0; // retract hood all the way
+        hoodServoPosition = 0; // retract hood all the way
         setShootingState(ShootingState.START_SPIN_UP);
     }
 
@@ -257,7 +257,7 @@ public class ShooterMcGavin {
                                                        double targetHoodServoPosition) {
         // can use this one for testing of our LUT measurements
         shooterTargetVelocity = targetVelocity;
-        //hoodServoPosition = targetHoodServoPosition;
+        hoodServoPosition = targetHoodServoPosition;
         setShootingState(ShootingState.START_SPIN_UP);
     }
 
