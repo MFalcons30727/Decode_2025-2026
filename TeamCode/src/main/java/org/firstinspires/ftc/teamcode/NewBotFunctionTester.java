@@ -31,7 +31,7 @@ public class NewBotFunctionTester extends OpMode {
                 DriverDanny.Poses.BLUE_FAR_START_POSE);
 
         shooter = new ShooterMcGavin(hardwareMap, telemetry);
-        shooter.testMode = true;
+        shooter.TEST_MODE = true;
     }
 
     @Override

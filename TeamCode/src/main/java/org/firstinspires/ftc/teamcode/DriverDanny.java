@@ -14,12 +14,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.List;
 
 public class DriverDanny {
+
+    //region Poses
     public static class Poses {
         // put any poses we would ever need to go to in this list
         public static final Pose RED_FAR_START_POSE = new Pose(96, 8, Math.toRadians(90));
@@ -54,7 +55,9 @@ public class DriverDanny {
         public static final Pose RED_FINAL_PARK_POSE = new Pose(38, 33, 0);
         public static final Pose BLUE_FINAL_PARK_POSE = new Pose(105, 33, 0);
     }
+    //endregion
 
+    //region Enums
     public enum Alliance {
         RED,
         BLUE
@@ -64,14 +67,15 @@ public class DriverDanny {
         FIELD,
         ROBOT
     }
+    //endregion
 
-    private static final double AUTO_AIM_DEADBAND_IN_DEGREES = 2;
-    private static final double AUTO_AIM_MAX_CORRECTION = 0.5;
-
+    //region Static Variables
     public static Pose lastKnownPose;
     public static Alliance currentAlliance;
     public static DriveMode currentDriveMode;
+    //endregion
 
+    //region Class Members
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
     private Limelight3A limelight;
     private Telemetry telemetry;
@@ -80,10 +84,12 @@ public class DriverDanny {
     private boolean slowMode = false;
     private double limelightGoalHeadingError;
     private PIDFController headingPIDFController;
-    private boolean shouldRelocalize = false;
+    //private boolean shouldRelocalize = false;
     private double relocalizePedroX;
     private double relocalizePedroY;
+    //endregion
 
+    //region Constructors
     public DriverDanny(HardwareMap hardwareMap, Telemetry telemetryFromOpMode,
                        Alliance alliance, Pose startingPose) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -119,7 +125,65 @@ public class DriverDanny {
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+    //endregion
 
+    //region Update Functions
+    public void update() { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL
+        follower.update(); // this will just update the Pedro Pathing following but can add additional steps if we need to later
+        this.updateLimeLight(); // should update our limelight every loop
+
+        lastKnownPose = this.getPose();
+        telemetry.addData("CurrentXPos", lastKnownPose.getX());
+        telemetry.addData("CurrentYPos", lastKnownPose.getY());
+        telemetry.addData("CurrentHeading", Math.toDegrees(lastKnownPose.getHeading()));
+        telemetry.addData("CurrentAlliance", currentAlliance.toString());
+        telemetry.addData("CurrentDistanceFromGoal", this.getCurrentDistanceFromGoal());
+        telemetry.addData("CurrentDriveMode", currentDriveMode.toString());
+        telemetry.addData("SlowModeEnabled", slowMode);
+        //telemetry.addData("LLPedroX", relocalizePedroX);
+        //telemetry.addData("LLPedroY", relocalizePedroY);
+    }
+
+    public void updateLimeLight() {
+        double currentHeading = this.follower.getHeading();
+        limelight.updateRobotOrientation(Math.toDegrees(currentHeading)-90); // subtract 90 degrees here for pedropathing heading conversion
+
+        // Learned that Tx, Ty, and Ta are degrees of error from tag, not meters.
+        LLResult result = limelight.getLatestResult();
+        if (result != null && result.isValid()) {
+            List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
+            for (LLResultTypes.FiducialResult fr : fiducialResults) {
+                int tagID = fr.getFiducialId();
+
+                if (currentAlliance == Alliance.BLUE && tagID == 20) {
+                    limelightGoalHeadingError = fr.getTargetXDegrees();
+                }
+                else if (currentAlliance == Alliance.RED && tagID == 24) {
+                    limelightGoalHeadingError = fr.getTargetXDegrees();
+                } else {
+                    limelightGoalHeadingError = -999;
+                }
+            }
+
+//            if (shouldRelocalize) {
+//                Pose3D botpose = result.getBotpose_MT2();
+//
+//                if (botpose != null) {
+//                    // convert from meters to inches and adjust for 0,0 origin like pedropathing instead of -72,-72 that limelight uses
+//                    relocalizePedroX = (botpose.getPosition().y * 39.3700787) + 72; // x and y are intentionally flipped here
+//                    relocalizePedroY = (botpose.getPosition().x * 39.3700787) + 72;
+//
+//                    Pose newPedroPose = new Pose(relocalizePedroX, relocalizePedroY, currentHeading);
+//
+//                    this.follower.setPose(newPedroPose);
+//                    shouldRelocalize = false;
+//                }
+//            }
+        }
+    }
+    //endregion
+
+    //region Drive Functions
     public void drive(double joyY, double joyX, double rotate) {
         if (currentDriveMode == DriveMode.FIELD) {
             fieldCentricDrive(joyY, joyX, rotate);
@@ -179,23 +243,10 @@ public class DriverDanny {
             this.robotCentricDrive(robotX, robotY, rotate);
         }
     }
+    //endregion
 
+    //region Auto-aim Functions
     public double getHeadingErrorForAutoAimLimelight() {
-//        // If limelightGoalHeadingError is -999, it means we don't have visual on the goal's AprilTag
-//        // This is determined in the updateLimeLight() function that gets called every loop
-//        if (limelightGoalHeadingError == -999) { return -1; }
-//
-//        // Use deadband to protect against sign flipping near PI
-//        if (Math.abs(limelightGoalHeadingError) < AUTO_AIM_DEADBAND_IN_DEGREES) {
-//            headingPIDFController.updateError(0);
-//        } else {
-//            headingPIDFController.updateError(limelightGoalHeadingError);
-//        }
-//
-//        // Use PIDF controller for smooth heading correction
-//        return Range.clip(headingPIDFController.run(),
-//                          -AUTO_AIM_MAX_CORRECTION,
-//                          AUTO_AIM_MAX_CORRECTION);
         // Use deadband to protect against sign flipping near PI
         if (Math.abs(limelightGoalHeadingError) < 2) {
             headingPIDFController.updateError(0);
@@ -231,19 +282,6 @@ public class DriverDanny {
         double headingError = turnDirection * angleDifference;
         //telemetry.addData("Heading Error", Math.toDegrees(headingError));
 
-//        // Use deadband to protect against sign flipping near PI
-//        if (Math.abs(headingError) < Math.toRadians(AUTO_AIM_DEADBAND_IN_DEGREES)) {
-//            headingPIDFController.updateError(0);
-//        } else {
-//            headingPIDFController.updateError(headingError);
-//        }
-//
-//        // Use PIDF controller for smooth heading correction
-//        // Negate because robotCentricDrive treats +rotate as clockwise,
-//        // but PedroPathing's coordinate system uses +heading as counterclockwise
-//        return -Range.clip(headingPIDFController.run(),
-//                           -AUTO_AIM_MAX_CORRECTION,
-//                            AUTO_AIM_MAX_CORRECTION);
         // Use deadband to protect against sign flipping near PI
         if (Math.abs(headingError) < Math.toRadians(1.5)) {
             headingPIDFController.updateError(0);
@@ -256,7 +294,9 @@ public class DriverDanny {
         // but PedroPathing's coordinate system uses +heading as counterclockwise
         return -Range.clip(headingPIDFController.run(), -0.5, 0.5);
     }
+    //endregion
 
+    //region Other Helper Functions
     public double getCurrentDistanceFromGoal() {
         if (currentAlliance == Alliance.RED) {
             return this.getPose().distanceFrom(Poses.RED_GOAL_POSE);
@@ -283,22 +323,6 @@ public class DriverDanny {
 
     public void toggleSlowMode() {
         slowMode = !slowMode;
-    }
-
-    public void update() { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL
-        follower.update(); // this will just update the Pedro Pathing following but can add additional steps if we need to later
-        this.updateLimeLight(); // should update our limelight every loop
-
-        lastKnownPose = this.getPose();
-        telemetry.addData("CurrentXPos", lastKnownPose.getX());
-        telemetry.addData("CurrentYPos", lastKnownPose.getY());
-        telemetry.addData("CurrentHeading", Math.toDegrees(lastKnownPose.getHeading()));
-        telemetry.addData("CurrentAlliance", currentAlliance.toString());
-        telemetry.addData("CurrentDistanceFromGoal", this.getCurrentDistanceFromGoal());
-        telemetry.addData("CurrentDriveMode", currentDriveMode.toString());
-        telemetry.addData("SlowModeEnabled", slowMode);
-        //telemetry.addData("LLPedroX", relocalizePedroX);
-        //telemetry.addData("LLPedroY", relocalizePedroY);
     }
 
     public Pose getPose() {
@@ -343,42 +367,5 @@ public class DriverDanny {
             this.follower.setPose(new Pose(135.5, 8.5, Math.toRadians(90)));
         }
     }
-
-    public void updateLimeLight() {
-        double currentHeading = this.follower.getHeading();
-        limelight.updateRobotOrientation(Math.toDegrees(currentHeading)-90); // subtract 90 degrees here for pedropathing heading conversion
-
-        // Learned that Tx, Ty, and Ta are degrees of error from tag, not meters.
-        LLResult result = limelight.getLatestResult();
-        if (result != null && result.isValid()) {
-            List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
-            for (LLResultTypes.FiducialResult fr : fiducialResults) {
-                int tagID = fr.getFiducialId();
-
-                if (currentAlliance == Alliance.BLUE && tagID == 20) {
-                    limelightGoalHeadingError = fr.getTargetXDegrees();
-                }
-                else if (currentAlliance == Alliance.RED && tagID == 24) {
-                    limelightGoalHeadingError = fr.getTargetXDegrees();
-                } else {
-                    limelightGoalHeadingError = -999;
-                }
-            }
-
-            if (shouldRelocalize) {
-                Pose3D botpose = result.getBotpose_MT2();
-
-                if (botpose != null) {
-                    // convert from meters to inches and adjust for 0,0 origin like pedropathing instead of -72,-72 that limelight uses
-                    relocalizePedroX = (botpose.getPosition().y * 39.3700787) + 72; // x and y are intentionally flipped here
-                    relocalizePedroY = (botpose.getPosition().x * 39.3700787) + 72;
-
-                    Pose newPedroPose = new Pose(relocalizePedroX, relocalizePedroY, currentHeading);
-
-                    this.follower.setPose(newPedroPose);
-                    shouldRelocalize = false;
-                }
-            }
-        }
-    }
+    //endregion
 }

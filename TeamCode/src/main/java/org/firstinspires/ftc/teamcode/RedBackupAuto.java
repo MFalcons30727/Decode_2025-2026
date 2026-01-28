@@ -41,8 +41,7 @@ public class RedBackupAuto extends OpMode {
                 break;
             case SHOOT_PRELOAD:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocity(1100);
-                    //shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
+                    shooter.startShootingAtVelocityAndHoodPosition(1020, 0.6);
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_RED_TOP_ARTIFACTS);
                 }
                 break;
@@ -66,8 +65,7 @@ public class RedBackupAuto extends OpMode {
                 break;
             case SHOOT_TOP_RED_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocity(1100);
-                    //shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
+                    shooter.startShootingAtVelocityAndHoodPosition(1020, 0.6);
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_RED_MIDDLE_ARTIFACTS);
                 }
                 break;
@@ -91,8 +89,7 @@ public class RedBackupAuto extends OpMode {
                 break;
             case SHOOT_MIDDLE_RED_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocity(1100);
-                    //shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
+                    shooter.startShootingAtVelocityAndHoodPosition(1020, 0.6);
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_RED_BOTTOM_ARTIFACTS);
                 }
                 break;
@@ -116,8 +113,7 @@ public class RedBackupAuto extends OpMode {
                 break;
             case SHOOT_BOTTOM_RED_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocity(1400);
-                    //shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
+                    shooter.startShootingAtVelocityAndHoodPosition(1440, 1);
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_RED_END_POSE);
                 }
                 break;
