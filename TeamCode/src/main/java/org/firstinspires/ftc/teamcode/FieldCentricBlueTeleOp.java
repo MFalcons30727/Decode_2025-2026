@@ -14,6 +14,12 @@ TODO:
 - Add ability to start the shooter from anywhere but don't feed artifact until odometry tells
       us we're inside of one of the allowed shooting areas.
 - Test passing the final pose of Auto as the start pose of TeleOp
+
+- New shooter button that:
+  - Starts flywheel
+  - Starts Auto-aim
+  - Waits to be still for 0.5 seconds
+  - Only shoots if within shooting zone
 */
 
 @TeleOp(name = "FieldCentricBlueTeleOp", group = "TeleOp")
