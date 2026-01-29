@@ -44,6 +44,7 @@ public class ShooterMcGavin {
     private ShootingState currentShootingState; // keeping track of the current step we're on in our shooting state machine
     private int shotsFired; // keeps track of how many artifacts we've attempted to shoot (between 0 and 3)
     private InterpLUT velocityLUT, hoodServoPositionLUT; // these are look-up-tables that will help us find the right velocity and hood angle at any distance
+    public boolean restrictedShooting = false;
     //endregion
 
     //region Constructors
@@ -83,7 +84,10 @@ public class ShooterMcGavin {
                 break;
             case WAIT_FOR_TARGET_VELOCITY: // wait until we're close to the target velocity for the shooter
                 if (Math.abs(shootMotor.getVelocity() - shooterTargetVelocity) < SHOOTER_ACCEPTABLE_VELOCITY_ERROR
-                        || shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) { // this makes sure the auto doesn't fail completely if it's not able to ever reach target velocity
+//                        || shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) { // this makes sure the auto doesn't fail completely if it's not able to ever reach target velocity
+                    && (!restrictedShooting || DriverDanny.inFarShootingZone || DriverDanny.inNearShootingZone)
+                    && DriverDanny.isAlignedToGoal
+                    && DriverDanny.idleTimer.milliseconds() > 250)
                     setShootingState(ShootingState.START_FEEDING);
                 }
                 break;

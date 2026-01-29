@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name = "ImprovedTeleOp", group = "TeleOp")
 public class ImprovedTeleOp extends OpMode {
     private static final boolean MATCH_MODE_ENABLED = false;
+    private boolean headingLock = false;
 
     private ElapsedTime runtime = new ElapsedTime();
     private DriverDanny driver;
@@ -83,12 +84,25 @@ public class ImprovedTeleOp extends OpMode {
             }
         }
 
+        if (gamepad2.bWasPressed() && !shooter.isShooting()) {
+            headingLock = true;
+            try {
+                shooter.startShooting();
+            } catch (Exception e) {
+                telemetry.addData("shooter", "NOT IN RANGE");
+            }
+        }
+
+        if (gamepad2.yWasPressed() && !shooter.isShooting()) {
+            headingLock = false;
+        }
+
         // auto aim using headingError on field-centric driving. no pedropathing needed.
         if (gamepad2.right_trigger > 0.25 && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
             rotate = driver.getHeadingErrorForAutoAimTrig();
         }
 
-        if (gamepad2.right_bumper && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
+        if ((gamepad2.right_bumper || headingLock) && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
             rotate = driver.getHeadingErrorForAutoAimLimelight();
 
             //if not able to find april tag revert to Trig based aiming

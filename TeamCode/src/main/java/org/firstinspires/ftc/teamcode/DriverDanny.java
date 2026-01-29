@@ -11,6 +11,7 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -42,14 +43,14 @@ public class DriverDanny {
         public static final Pose EAT_BLUE_TOP_ARTIFACTS_POSE = new Pose(18, 83, Math.toRadians(180));
         public static final Pose EAT_BLUE_MIDDLE_ARTIFACTS_POSE = new Pose(18, 60, Math.toRadians(180));
         public static final Pose EAT_BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(18, 35, Math.toRadians(180));
-        public static final Pose RED_NEAR_SHOOTING_POSE = new Pose (96, 96, Math.toRadians(40));
-        public static final Pose BLUE_NEAR_SHOOTING_POSE = new Pose (49, 96, Math.toRadians(130));
-        public static final Pose RED_FAR_SHOOTING_POSE = new Pose (85, 16, Math.toRadians(65));
-        public static final Pose BLUE_FAR_SHOOTING_POSE = new Pose (60, 14, Math.toRadians(110));
-        public static final Pose BLUE_FAR_END_POSE = new Pose (48, 132, Math.toRadians(90));
-        public static final Pose RED_FAR_END_POSE = new Pose (95, 132, Math.toRadians(90));
-        public static final Pose PARK_RED_GATE_POSE = new Pose (120,70, Math.toRadians(180));
-        public static final Pose PARK_BLUE_GATE_POSE = new Pose (28,70, Math.toRadians(0));
+        public static final Pose RED_NEAR_SHOOTING_POSE = new Pose(96, 96, Math.toRadians(40));
+        public static final Pose BLUE_NEAR_SHOOTING_POSE = new Pose(49, 96, Math.toRadians(130));
+        public static final Pose RED_FAR_SHOOTING_POSE = new Pose(85, 16, Math.toRadians(65));
+        public static final Pose BLUE_FAR_SHOOTING_POSE = new Pose(60, 14, Math.toRadians(110));
+        public static final Pose BLUE_FAR_END_POSE = new Pose(48, 132, Math.toRadians(90));
+        public static final Pose RED_FAR_END_POSE = new Pose(95, 132, Math.toRadians(90));
+        public static final Pose PARK_RED_GATE_POSE = new Pose(120, 70, Math.toRadians(180));
+        public static final Pose PARK_BLUE_GATE_POSE = new Pose(28, 70, Math.toRadians(0));
         public static final Pose RED_GOAL_POSE = new Pose(144, 144, 0);
         public static final Pose BLUE_GOAL_POSE = new Pose(0, 144, 0);
         public static final Pose RED_FINAL_PARK_POSE = new Pose(38, 33, 0);
@@ -82,6 +83,11 @@ public class DriverDanny {
     private Follower follower; // part of the Pedro Pathing package, follows the path
 
     private boolean slowMode = false;
+    public static boolean inFarShootingZone = false;
+    public static boolean inNearShootingZone = false;
+    public static boolean isAlignedToGoal = false;
+    private static ElapsedTime idleTimer;
+
     private double limelightGoalHeadingError;
     private PIDFController headingPIDFController;
     //private boolean shouldRelocalize = false;
@@ -106,6 +112,8 @@ public class DriverDanny {
         currentAlliance = alliance;
         currentDriveMode = DriveMode.FIELD;
         limelightGoalHeadingError = -999;
+
+        idleTimer = new ElapsedTime();
 
         // initialize a new PIDF controller using the heading coefficients we already tuned for auto
         headingPIDFController = new PIDFController(follower.constants.coefficientsHeadingPIDF);
@@ -132,7 +140,19 @@ public class DriverDanny {
         follower.update(); // this will just update the Pedro Pathing following but can add additional steps if we need to later
         this.updateLimeLight(); // should update our limelight every loop
 
+        if (lastKnownPose.getX() != this.getPose().getX()
+            || lastKnownPose.getY() != this.getPose().getY())
+        {
+            idleTimer.reset();
+        }
         lastKnownPose = this.getPose();
+        checkForFarShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 9);
+        checkForNearShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 9);
+        if (limelightGoalHeadingError <= 3) {
+            isAlignedToGoal = true;
+        } else {
+            isAlignedToGoal = false;
+        }
         telemetry.addData("CurrentXPos", lastKnownPose.getX());
         telemetry.addData("CurrentYPos", lastKnownPose.getY());
         telemetry.addData("CurrentHeading", Math.toDegrees(lastKnownPose.getHeading()));
@@ -146,7 +166,7 @@ public class DriverDanny {
 
     public void updateLimeLight() {
         double currentHeading = this.follower.getHeading();
-        limelight.updateRobotOrientation(Math.toDegrees(currentHeading)-90); // subtract 90 degrees here for pedropathing heading conversion
+        limelight.updateRobotOrientation(Math.toDegrees(currentHeading) - 90); // subtract 90 degrees here for pedropathing heading conversion
 
         // Learned that Tx, Ty, and Ta are degrees of error from tag, not meters.
         LLResult result = limelight.getLatestResult();
@@ -157,8 +177,7 @@ public class DriverDanny {
 
                 if (currentAlliance == Alliance.BLUE && tagID == 20) {
                     limelightGoalHeadingError = fr.getTargetXDegrees();
-                }
-                else if (currentAlliance == Alliance.RED && tagID == 24) {
+                } else if (currentAlliance == Alliance.RED && tagID == 24) {
                     limelightGoalHeadingError = fr.getTargetXDegrees();
                 } else {
                     limelightGoalHeadingError = -999;
@@ -191,6 +210,7 @@ public class DriverDanny {
             robotCentricDrive(joyY, joyX, rotate);
         }
     }
+
     private void robotCentricDrive(double forward, double strafe, double rotate) {
         // followed brogan's tutorial on this
         double frontLeftPower = forward + strafe + rotate;
@@ -202,7 +222,9 @@ public class DriverDanny {
         double maxSpeed = 1.0;
 
         // this is useful when precision driving is needed (like parking adjustments)
-        if (slowMode) { maxSpeed = 0.5; }
+        if (slowMode) {
+            maxSpeed = 0.5;
+        }
 
         maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
         maxPower = Math.max(maxPower, Math.abs(backLeftPower));
@@ -365,6 +387,22 @@ public class DriverDanny {
             this.follower.setPose(new Pose(8.5, 8.5, Math.toRadians(90)));
         } else {
             this.follower.setPose(new Pose(135.5, 8.5, Math.toRadians(90)));
+        }
+    }
+
+    public void checkForNearShootZone(double x, double y, double buffer) {
+        if ((y <= 144 + buffer) && (y >= -x + 144 - buffer) && (y >= x - buffer)) {
+            inNearShootingZone = true;
+        } else {
+            inNearShootingZone = false;
+        }
+    }
+
+    public void checkForFarShootZone(double x, double y, double buffer) {
+        if ((y >= 0 - buffer) && (y <= x - 48 + buffer) && (y <= -x + 96 + buffer)) {
+            inFarShootingZone = true;
+        } else {
+            inFarShootingZone = false;
         }
     }
     //endregion
