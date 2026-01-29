@@ -86,7 +86,7 @@ public class DriverDanny {
     public static boolean inFarShootingZone = false;
     public static boolean inNearShootingZone = false;
     public static boolean isAlignedToGoal = false;
-    private static ElapsedTime idleTimer;
+    public static ElapsedTime idleTimer;
 
     private double limelightGoalHeadingError;
     private PIDFController headingPIDFController;

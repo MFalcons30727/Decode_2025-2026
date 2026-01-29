@@ -83,11 +83,11 @@ public class ShooterMcGavin {
                 setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY);
                 break;
             case WAIT_FOR_TARGET_VELOCITY: // wait until we're close to the target velocity for the shooter
-                if (Math.abs(shootMotor.getVelocity() - shooterTargetVelocity) < SHOOTER_ACCEPTABLE_VELOCITY_ERROR
+                if (Math.abs(shootMotor.getVelocity()) - shooterTargetVelocity < SHOOTER_ACCEPTABLE_VELOCITY_ERROR
 //                        || shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) { // this makes sure the auto doesn't fail completely if it's not able to ever reach target velocity
                     && (!restrictedShooting || DriverDanny.inFarShootingZone || DriverDanny.inNearShootingZone)
                     && DriverDanny.isAlignedToGoal
-                    && DriverDanny.idleTimer.milliseconds() > 250)
+                    && DriverDanny.idleTimer.milliseconds() > 250) {
                     setShootingState(ShootingState.START_FEEDING);
                 }
                 break;
