@@ -177,13 +177,16 @@ public class ShooterMcGavin {
         if (currentShootingState != ShootingState.OFF) {
             shooterTargetVelocity = velocityLUT.get(distanceFromGoalInInches);
             shootMotor.setVelocity(shooterTargetVelocity);
+
+            hoodServoPosition = hoodServoPositionLUT.get(distanceFromGoalInInches);
+            hoodServo.setPosition(hoodServoPosition);
         }
 
         switch (currentShootingState) {
             case START_SPIN_UP: // start the shooter
                 shotsFired = 0;
                 shootMotor.setVelocity(shooterTargetVelocity);
-                //hoodServo.setPosition(hoodServoPosition);
+                hoodServo.setPosition(hoodServoPosition);
                 setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY);
                 break;
             case WAIT_FOR_TARGET_VELOCITY: // wait until we're close to the target velocity for the shooter
@@ -216,7 +219,7 @@ public class ShooterMcGavin {
                 break;
             case OFF:
                 shootMotor.setVelocity(0);
-                hoodServo.setPosition(0);
+                //hoodServo.setPosition(0);
                 indexer.setPower(0);
                 shooterTargetVelocity = 1100;
                 hoodServoPosition = 0;

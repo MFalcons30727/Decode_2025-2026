@@ -16,7 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(8.709) //has to be in kilograms, this is just a placeholder
+            .mass(12) //has to be in kilograms, this is just a placeholder
             // the placeholders I have right now are for the tuning part of this
             // TODO need to get values from telemetry by running each under automatic
             .forwardZeroPowerAcceleration(-46.035662205543034)
@@ -44,8 +44,8 @@ public class Constants {
             ;
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(-1.11)
-            .strafePodX(-14.605)
+            .forwardPodY(-1.41732)
+            .strafePodX(-4.72441)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
