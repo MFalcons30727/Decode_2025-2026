@@ -33,6 +33,10 @@ public class ShooterMcGavin {
     public static boolean TEST_MODE = false;
     //endregion
 
+    //region Static Variables
+    public static boolean restrictedShooting = false;
+    //endregion
+
     //region Class Members
     private double shooterTargetVelocity = 1100; // the velocity we want our shooter to be set to by default
     private double hoodServoPosition = 0; // the servo position of the adjustable hood
@@ -44,7 +48,6 @@ public class ShooterMcGavin {
     private ShootingState currentShootingState; // keeping track of the current step we're on in our shooting state machine
     private int shotsFired; // keeps track of how many artifacts we've attempted to shoot (between 0 and 3)
     private InterpLUT velocityLUT, hoodServoPositionLUT; // these are look-up-tables that will help us find the right velocity and hood angle at any distance
-    public boolean restrictedShooting = false;
     //endregion
 
     //region Constructors

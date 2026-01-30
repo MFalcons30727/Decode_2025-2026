@@ -30,13 +30,10 @@ public class DriverDanny {
         public static final Pose BLUE_BACKUP_START_POSE = new Pose(22, 125, Math.toRadians(130));
         public static final Pose RED_TOP_ARTIFACTS_POSE = new Pose(100, 83, Math.toRadians(180));
         public static final Pose RED_MIDDLE_ARTIFACTS_POSE = new Pose(100, 60, Math.toRadians(180));
-
         public static final Pose RED_BOTTOM_ARTIFACTS_POSE = new Pose(100, 35, Math.toRadians(180));
-
         public static final Pose BLUE_TOP_ARTIFACTS_POSE = new Pose(45, 83, Math.toRadians(0));
         public static final Pose BLUE_MIDDLE_ARTIFACTS_POSE = new Pose(45, 60, Math.toRadians(0));
         public static final Pose BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(45, 35, Math.toRadians(0));
-
         public static final Pose EAT_RED_TOP_ARTIFACTS_POSE = new Pose(125, 83, Math.toRadians(0));
         public static final Pose EAT_RED_MIDDLE_ARTIFACTS_POSE = new Pose(125, 60, Math.toRadians(0));
         public static final Pose EAT_RED_BOTTOM_ARTIFACTS_POSE = new Pose(125, 35, Math.toRadians(0));
@@ -74,6 +71,10 @@ public class DriverDanny {
     public static Pose lastKnownPose;
     public static Alliance currentAlliance;
     public static DriveMode currentDriveMode;
+    public static boolean inFarShootingZone = false;
+    public static boolean inNearShootingZone = false;
+    public static boolean isAlignedToGoal = false;
+    public static ElapsedTime idleTimer;
     //endregion
 
     //region Class Members
@@ -83,10 +84,6 @@ public class DriverDanny {
     private Follower follower; // part of the Pedro Pathing package, follows the path
 
     private boolean slowMode = false;
-    public static boolean inFarShootingZone = false;
-    public static boolean inNearShootingZone = false;
-    public static boolean isAlignedToGoal = false;
-    public static ElapsedTime idleTimer;
 
     private double limelightGoalHeadingError;
     private PIDFController headingPIDFController;
@@ -140,19 +137,23 @@ public class DriverDanny {
         follower.update(); // this will just update the Pedro Pathing following but can add additional steps if we need to later
         this.updateLimeLight(); // should update our limelight every loop
 
+        // if the robot has changed position, reset the timer so we can track how long we've been idle
         if (lastKnownPose.getX() != this.getPose().getX()
             || lastKnownPose.getY() != this.getPose().getY())
         {
             idleTimer.reset();
         }
         lastKnownPose = this.getPose();
+
         checkForFarShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 9);
         checkForNearShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 9);
-        if (limelightGoalHeadingError <= 3) {
+
+        if (Math.abs(limelightGoalHeadingError) < 2) {
             isAlignedToGoal = true;
         } else {
             isAlignedToGoal = false;
         }
+
         telemetry.addData("CurrentXPos", lastKnownPose.getX());
         telemetry.addData("CurrentYPos", lastKnownPose.getY());
         telemetry.addData("CurrentHeading", Math.toDegrees(lastKnownPose.getHeading()));
