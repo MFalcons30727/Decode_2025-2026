@@ -32,20 +32,20 @@ public class DriverDanny {
 
         public static final Pose RED_BOTTOM_ARTIFACTS_POSE = new Pose(100, 35, Math.toRadians(180));
 
-        public static final Pose BLUE_TOP_ARTIFACTS_POSE = new Pose(45, 83, Math.toRadians(0));
-        public static final Pose BLUE_MIDDLE_ARTIFACTS_POSE = new Pose(45, 60, Math.toRadians(0));
-        public static final Pose BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(45, 35, Math.toRadians(0));
+        public static final Pose BLUE_TOP_ARTIFACTS_POSE = new Pose(45, 57, Math.toRadians(180));
+        public static final Pose BLUE_MIDDLE_ARTIFACTS_POSE = new Pose(45, 43, Math.toRadians(180));
+        public static final Pose BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(45, 23, Math.toRadians(180));
 
         public static final Pose EAT_RED_TOP_ARTIFACTS_POSE = new Pose(125, 83, Math.toRadians(0));
         public static final Pose EAT_RED_MIDDLE_ARTIFACTS_POSE = new Pose(125, 60, Math.toRadians(0));
         public static final Pose EAT_RED_BOTTOM_ARTIFACTS_POSE = new Pose(125, 35, Math.toRadians(0));
-        public static final Pose EAT_BLUE_TOP_ARTIFACTS_POSE = new Pose(18, 83, Math.toRadians(180));
-        public static final Pose EAT_BLUE_MIDDLE_ARTIFACTS_POSE = new Pose(18, 60, Math.toRadians(180));
-        public static final Pose EAT_BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(18, 35, Math.toRadians(180));
+        public static final Pose EAT_BLUE_TOP_ARTIFACTS_POSE = new Pose(15, 57, Math.toRadians(180));
+        public static final Pose EAT_BLUE_MIDDLE_ARTIFACTS_POSE = new Pose(7, 43, Math.toRadians(180));
+        public static final Pose EAT_BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(7, 23, Math.toRadians(180));
         public static final Pose RED_NEAR_SHOOTING_POSE = new Pose (96, 96, Math.toRadians(40));
         public static final Pose BLUE_NEAR_SHOOTING_POSE = new Pose (49, 96, Math.toRadians(130));
         public static final Pose RED_FAR_SHOOTING_POSE = new Pose (85, 16, Math.toRadians(65));
-        public static final Pose BLUE_FAR_SHOOTING_POSE = new Pose (60, 14, Math.toRadians(110));
+        public static final Pose BLUE_FAR_SHOOTING_POSE = new Pose (60, 14, Math.toRadians(118));
         public static final Pose BLUE_FAR_END_POSE = new Pose (48, 132, Math.toRadians(90));
         public static final Pose RED_FAR_END_POSE = new Pose (95, 132, Math.toRadians(90));
         public static final Pose PARK_RED_GATE_POSE = new Pose (120,70, Math.toRadians(180));
@@ -367,5 +367,13 @@ public class DriverDanny {
             this.follower.setPose(new Pose(135.5, 8.5, Math.toRadians(90)));
         }
     }
+
+    public void slowSpeedForAutoPaths() {
+        frontLeftDrive.setPower(0.3);
+        frontRightDrive.setPower(0.3);
+        backLeftDrive.setPower(0.3);
+        backRightDrive.setPower(0.3);
+    }
+
     //endregion
 }

@@ -24,7 +24,7 @@ public class Constants {
             // the PIDF needs to be tuned accordingly, these are also placeholders
             .translationalPIDFCoefficients(new PIDFCoefficients(0.07, 0, 0.005, 0.025))
             .headingPIDFCoefficients(new PIDFCoefficients(0.88, 0, 0.004, 0.025))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.06, 0, 0.0001, 1, 0.0025))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.06, 0, 0.0001, 0.4, 0.0025))
             //centripetal scaling is for curves, doesn't matter as much.
             .centripetalScaling(0.0005)
             ;
