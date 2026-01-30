@@ -19,11 +19,11 @@ public class Constants {
             .mass(8.709) //has to be in kilograms, this is just a placeholder
             // the placeholders I have right now are for the tuning part of this
             // TODO need to get values from telemetry by running each under automatic
-            .forwardZeroPowerAcceleration(-46.035662205543034)
-            .lateralZeroPowerAcceleration(-67.00771610482386)
+            .forwardZeroPowerAcceleration(-36.23251140162128)
+            .lateralZeroPowerAcceleration(-57.76687780044757)
             // the PIDF needs to be tuned accordingly, these are also placeholders
             .translationalPIDFCoefficients(new PIDFCoefficients(0.07, 0, 0.005, 0.025))
-            .headingPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0.1, 0.025))
+            .headingPIDFCoefficients(new PIDFCoefficients(0.88, 0, 0.004, 0.025))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.06, 0, 0.0001, 1, 0.0025))
             //centripetal scaling is for curves, doesn't matter as much.
             .centripetalScaling(0.0005)
@@ -39,8 +39,8 @@ public class Constants {
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             // TODO this is the same as the top, 1 is just acting as a placeholder
-            .xVelocity(59.988880605622539)
-            .yVelocity(47.580371285986715)
+            .xVelocity(62.03094818836123)
+            .yVelocity(49.822540523499015)
             ;
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
@@ -53,7 +53,7 @@ public class Constants {
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
     public static PathConstraints pathConstraints = new PathConstraints(0.99,
             100,
-            1.2,
+            1.25,
             1);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
