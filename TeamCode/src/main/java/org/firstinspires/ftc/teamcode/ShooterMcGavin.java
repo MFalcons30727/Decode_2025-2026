@@ -143,22 +143,22 @@ public class ShooterMcGavin {
         velocityLUT.add(60, 980);
         velocityLUT.add(72, 1020);
         velocityLUT.add(84, 1080);
-        velocityLUT.add(96, 1160);
+        velocityLUT.add(96, 1140);
         velocityLUT.add(108, 1200);
-        velocityLUT.add(120, 1240);
+        velocityLUT.add(120, 1220);
         velocityLUT.add(132, 1300);
-        velocityLUT.add(144, 1380);
-        velocityLUT.add(156, 1440);
+        velocityLUT.add(144, 1340);
+        velocityLUT.add(156, 1400);
         velocityLUT.createLUT();
 
-        hoodServoPositionLUT.add(60, 0.15);
-        hoodServoPositionLUT.add(72, 0.6);
-        hoodServoPositionLUT.add(84, 0.6);
-        hoodServoPositionLUT.add(96, 0.6);
-        hoodServoPositionLUT.add(108, 0.85);
-        hoodServoPositionLUT.add(120, 0.85);
-        hoodServoPositionLUT.add(132, 0.85);
-        hoodServoPositionLUT.add(144, 1);
+        hoodServoPositionLUT.add(60, 0.1);
+        hoodServoPositionLUT.add(72, 0.1);
+        hoodServoPositionLUT.add(84, 0.35);
+        hoodServoPositionLUT.add(96, 0.45);
+        hoodServoPositionLUT.add(108, 0.6);
+        hoodServoPositionLUT.add(120, 0.65);
+        hoodServoPositionLUT.add(132, 0.8);
+        hoodServoPositionLUT.add(144, 0.9);
         hoodServoPositionLUT.add(156, 1);
         hoodServoPositionLUT.createLUT();
     }
@@ -209,6 +209,7 @@ public class ShooterMcGavin {
     //region Testing Only Functions
     public void turnOnIntake() { intake.setPower(1); }
     public void turnOffIntake() { intake.setPower(0); }
+    public void reverseIntake() { intake.setPower(-1);}
     public void setHoodUp() { hoodServo.setPosition(1); }
     public void setHoodDown() { hoodServo.setPosition(0); }
     public void turnOnIndexer() { indexer.setPower(1); }

@@ -95,6 +95,10 @@ public class FieldCentricBlueTeleOp extends OpMode {
         } else if (!shooter.isShooting()) {
             shooter.turnOffIntake();
         }
+
+        if (gamepad1.left_bumper) {
+            shooter.reverseIntake();
+        }
         // TODO: fix hood
 //        if (gamepad2.dpad_up) {
 //            currentHoodPosition += 0.05;
