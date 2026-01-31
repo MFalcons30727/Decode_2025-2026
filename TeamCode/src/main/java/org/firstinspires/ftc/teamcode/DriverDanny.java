@@ -11,6 +11,7 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -73,6 +74,10 @@ public class DriverDanny {
     public static Pose lastKnownPose;
     public static Alliance currentAlliance;
     public static DriveMode currentDriveMode;
+    public static boolean inFarShootingZone = false;
+    public static boolean inNearShootingZone = false;
+    public static boolean isAlignedToGoal = false;
+    public static ElapsedTime idleTimer;
     //endregion
 
     //region Class Members
@@ -107,6 +112,8 @@ public class DriverDanny {
         currentDriveMode = DriveMode.FIELD;
         limelightGoalHeadingError = -999;
 
+        idleTimer = new ElapsedTime();
+
         // initialize a new PIDF controller using the heading coefficients we already tuned for auto
         headingPIDFController = new PIDFController(follower.constants.coefficientsHeadingPIDF);
 
@@ -132,7 +139,24 @@ public class DriverDanny {
         follower.update(); // this will just update the Pedro Pathing following but can add additional steps if we need to later
         this.updateLimeLight(); // should update our limelight every loop
 
+        // if the robot has changed position, reset the timer so we can track how long we've been idle
+        if (lastKnownPose != null && (lastKnownPose.getX() != this.getPose().getX()
+                || lastKnownPose.getY() != this.getPose().getY()))
+        {
+            idleTimer.reset();
+        }
+
         lastKnownPose = this.getPose();
+
+        checkForFarShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 9);
+        checkForNearShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 9);
+
+        if (Math.abs(limelightGoalHeadingError) < 2) {
+            isAlignedToGoal = true;
+        } else {
+            isAlignedToGoal = false;
+        }
+
         telemetry.addData("CurrentXPos", lastKnownPose.getX());
         telemetry.addData("CurrentYPos", lastKnownPose.getY());
         telemetry.addData("CurrentHeading", Math.toDegrees(lastKnownPose.getHeading()));
@@ -368,12 +392,20 @@ public class DriverDanny {
         }
     }
 
-    public void slowSpeedForAutoPaths() {
-        frontLeftDrive.setPower(0.3);
-        frontRightDrive.setPower(0.3);
-        backLeftDrive.setPower(0.3);
-        backRightDrive.setPower(0.3);
+    public void checkForNearShootZone(double x, double y, double buffer) {
+        if ((y <= 144 + buffer) && (y >= -x + 144 - buffer) && (y >= x - buffer)) {
+            inNearShootingZone = true;
+        } else {
+            inNearShootingZone = false;
+        }
     }
 
+    public void checkForFarShootZone(double x, double y, double buffer) {
+        if ((y >= 0 - buffer) && (y <= x - 48 + buffer) && (y <= -x + 96 + buffer)) {
+            inFarShootingZone = true;
+        } else {
+            inFarShootingZone = false;
+        }
+    }
     //endregion
 }

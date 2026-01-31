@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,6 +21,7 @@ TODO:
   - Only shoots if within shooting zone
 */
 
+@Disabled
 @TeleOp(name = "FieldCentricBlueTeleOp", group = "TeleOp")
 public class FieldCentricBlueTeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
@@ -64,6 +66,30 @@ public class FieldCentricBlueTeleOp extends OpMode {
         double joyX = gamepad1.left_stick_x;
         double rotate = gamepad1.right_stick_x;
 
+        if (gamepad1.leftBumperWasPressed()) {
+            driver.swapCurrentAlliance(); // lets us swap our alliance (for auto-aim / driver testing)
+        }
+
+        if (gamepad1.rightBumperWasPressed()) {
+            driver.swapCurrentDriveMode();
+        }
+
+        if (gamepad1.aWasPressed()) {
+            driver.abortPath();
+        }
+
+        if (gamepad1.bWasPressed()) {
+            driver.toggleSlowMode(); // allows us to cut robot movement speed in half when precision is needed
+        }
+
+        if (gamepad1.xWasPressed()) {
+            driver.finalPark();
+        }
+
+        if (gamepad1.yWasPressed()) {
+            driver.relocalize();
+        }
+
         if (gamepad2.aWasPressed() && !shooter.isShooting()) {
             try {
                 //shooter.startShootingFromDistance(driver.getCurrentDistanceFromGoal());
@@ -98,29 +124,11 @@ public class FieldCentricBlueTeleOp extends OpMode {
             shooter.reverseIntake();
         }
 
-        if (gamepad1.yWasPressed()) {
-            driver.relocalize();
-        }
 
-        if (gamepad1.left_bumper) {
-            driver.swapCurrentAlliance(); // lets us swap our alliance (for auto-aim / driver testing)
-        }
 
-        if (gamepad1.xWasPressed()) {
-            driver.finalPark();
-        }
 
-        if (gamepad1.aWasPressed()) {
-            driver.abortPath();
-        }
 
-        if (gamepad1.bWasPressed()) {
-            driver.toggleSlowMode(); // allows us to cut robot movement speed in half when precision is needed
-        }
 
-        if (gamepad1.right_bumper) {
-            driver.swapCurrentDriveMode();
-        }
 
         // this drive function uses field-centric driving by default unless toggled to robot
         driver.drive(joyY, joyX, rotate);

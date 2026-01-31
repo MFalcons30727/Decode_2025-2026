@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,6 +17,7 @@ CONTROLS:
  - Press Dpad Down: Set hood servo position to 0.0 (single press)
  */
 
+@Disabled
 @TeleOp (name="NewBotFunctionTester", group = "TeleOp")
 public class NewBotFunctionTester extends OpMode {
     private DriverDanny driver;

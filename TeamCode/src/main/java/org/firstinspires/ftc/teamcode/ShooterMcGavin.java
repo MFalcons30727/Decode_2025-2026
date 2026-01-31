@@ -34,6 +34,10 @@ public class ShooterMcGavin {
     public static boolean FLYWHEEL_ALWAYS_ON = true;
     //endregion
 
+    //region Static Variables
+    public static boolean restrictedShooting = false;
+    //endregion
+
     //region Class Members
     private double shooterTargetVelocity = 1200; // the velocity we want our shooter to be set to by default
     private double hoodServoPosition = 0; // the servo position of the adjustable hood
@@ -84,7 +88,10 @@ public class ShooterMcGavin {
                 break;
             case WAIT_FOR_TARGET_VELOCITY: // wait until we're close to the target velocity for the shooter
                 if (Math.abs(shootMotor.getVelocity() - shooterTargetVelocity) < SHOOTER_ACCEPTABLE_VELOCITY_ERROR
-                        || shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) { // this makes sure the auto doesn't fail completely if it's not able to ever reach target velocity
+                        // || shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) { // this makes sure the auto doesn't fail completely if it's not able to ever reach target velocity
+                        && DriverDanny.isAlignedToGoal
+                        && DriverDanny.idleTimer.milliseconds() > 250
+                        && (!restrictedShooting || DriverDanny.inFarShootingZone || DriverDanny.inNearShootingZone)) {
                     setShootingState(ShootingState.START_FEEDING);
                 }
                 break;
@@ -187,6 +194,10 @@ public class ShooterMcGavin {
     //region Shooting Function Options
     public void startShooting() {
         setShootingState(ShootingState.START_SPIN_UP);
+    }
+
+    public void stopShooting() {
+        setShootingState(ShootingState.OFF);
     }
 
     public void startShootingAtVelocity(double targetVelocity) {
