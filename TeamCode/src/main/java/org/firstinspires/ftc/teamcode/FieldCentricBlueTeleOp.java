@@ -10,16 +10,10 @@ TODO:
 - Retune PedroPathing constants (use Tuning class under PedroPathing folder)
 - Test auto-park
 - Test PedroPathing poses
-- Add Limelight odometry correction
 - Add ability to start the shooter from anywhere but don't feed artifact until odometry tells
       us we're inside of one of the allowed shooting areas.
 - Test passing the final pose of Auto as the start pose of TeleOp
-
-- New shooter button that:
-  - Starts flywheel
-  - Starts Auto-aim
-  - Waits to be still for 0.5 seconds
-  - Only shoots if within shooting zone
+- Drive Practice!!!
 */
 
 @TeleOp(name = "FieldCentricBlueTeleOp", group = "TeleOp")
