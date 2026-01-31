@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name = "ImprovedTeleOp", group = "TeleOp")
 public class ImprovedTeleOp extends OpMode {
     //NEED TO REMEMBER THAT SETTING THIS IS TRUE IS WHAT ENABLES US TO CARRY OVER LAST POSE FROM AUTO.
-    private static final boolean MATCH_MODE_ENABLED = false;
+    private static final boolean USE_LAST_POSE_FROM_AUTO = false;
 
     private ElapsedTime runtime = new ElapsedTime();
     private DriverDanny driver;
@@ -20,11 +20,11 @@ public class ImprovedTeleOp extends OpMode {
         DriverDanny.Alliance startingAlliance = DriverDanny.Alliance.BLUE;
         Pose startingPose = DriverDanny.Poses.BLUE_FAR_START_POSE;
 
-        if (MATCH_MODE_ENABLED && DriverDanny.currentAlliance != null) {
+        if (USE_LAST_POSE_FROM_AUTO && DriverDanny.currentAlliance != null) {
             startingAlliance = DriverDanny.currentAlliance;
         }
 
-        if (MATCH_MODE_ENABLED && DriverDanny.lastKnownPose != null) {
+        if (USE_LAST_POSE_FROM_AUTO && DriverDanny.lastKnownPose != null) {
             startingPose = DriverDanny.lastKnownPose;
         }
 
@@ -34,7 +34,6 @@ public class ImprovedTeleOp extends OpMode {
                 startingPose);
 
         shooter = new ShooterMcGavin(hardwareMap, telemetry);
-        ShooterMcGavin.restrictedShooting = true;
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -46,6 +45,11 @@ public class ImprovedTeleOp extends OpMode {
     public void loop() {
         driver.update();
         shooter.updateWithLUT(driver.getCurrentDistanceFromGoal());
+
+        // we only need to allow locking our heading and allowing restrictedShooting when shooting routine has been started
+        if(!shooter.isShooting()) {
+            headingLock = false;
+        }
 
         double joyY = -gamepad1.left_stick_y; // leaving this inverted so it works for robotCentricDrive (and we adjust for it on fieldCentricDrive)
         double joyX = gamepad1.left_stick_x;
@@ -88,6 +92,7 @@ public class ImprovedTeleOp extends OpMode {
 
         if (gamepad2.bWasPressed() && !shooter.isShooting()) {
             headingLock = true;
+            ShooterMcGavin.restrictedShooting = true;
 
             try {
                 shooter.startShooting();
@@ -98,10 +103,6 @@ public class ImprovedTeleOp extends OpMode {
 
         if (gamepad2.xWasPressed() && shooter.isShooting()) {
             shooter.stopShooting();
-        }
-
-        if (gamepad2.yWasPressed() && !shooter.isShooting()) {
-            headingLock = false;
         }
 
         // auto aim using headingError on field-centric driving. no pedropathing needed.

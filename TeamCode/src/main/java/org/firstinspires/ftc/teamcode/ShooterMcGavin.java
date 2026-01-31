@@ -62,6 +62,7 @@ public class ShooterMcGavin {
         shootStateTimer = new ElapsedTime();
         currentShootingState = TEST_MODE ? ShootingState.TEST_MODE_ONLY : ShootingState.OFF;
         shotsFired = 0;
+        restrictedShooting = false;
         velocityLUT = new InterpLUT();
         hoodServoPositionLUT = new InterpLUT();
         buildLUTS();
@@ -87,11 +88,14 @@ public class ShooterMcGavin {
                 setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY);
                 break;
             case WAIT_FOR_TARGET_VELOCITY: // wait until we're close to the target velocity for the shooter
-                if (Math.abs(shootMotor.getVelocity() - shooterTargetVelocity) < SHOOTER_ACCEPTABLE_VELOCITY_ERROR
-                        // || shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) { // this makes sure the auto doesn't fail completely if it's not able to ever reach target velocity
-                        && DriverDanny.isAlignedToGoal
-                        && DriverDanny.idleTimer.milliseconds() > 250
-                        && (!restrictedShooting || DriverDanny.inFarShootingZone || DriverDanny.inNearShootingZone)) {
+                if ((!restrictedShooting && (atTargetVelocity() || stepTimedOut()))
+                        || (restrictedShooting && atTargetVelocity()
+                                    && (DriverDanny.inFarShootingZone || DriverDanny.inNearShootingZone)
+                                    && DriverDanny.isAlignedToGoal
+                                    && DriverDanny.idleTimer.milliseconds() > 250
+                           )
+                    )
+                {
                     setShootingState(ShootingState.START_FEEDING);
                 }
                 break;
@@ -100,8 +104,7 @@ public class ShooterMcGavin {
                 indexer.setPower(FEEDER_POWER);
 
                 // instead of waiting a certain delay, check for velocity drop to tell if an artifact was shot
-                if (shootMotor.getVelocity() < (shooterTargetVelocity - SHOOTER_VELOCITY_DROP_AFTER_SHOT)
-                        || shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS) {
+                if (velocityDropDetected() || stepTimedOut()) {
                     shotsFired++;
 
                     if (shotsFired >= 3) { // after 3 shot attempts, power off shooter
@@ -119,6 +122,7 @@ public class ShooterMcGavin {
                 shooterTargetVelocity = 1200;
                 hoodServoPosition = 0.5;
                 hoodServo.setPosition(hoodServoPosition);
+                restrictedShooting = false;
 
                 if (FLYWHEEL_ALWAYS_ON) {
                     shootMotor.setVelocity(shooterTargetVelocity);
@@ -188,6 +192,18 @@ public class ShooterMcGavin {
         else {
             return true;
         }
+    }
+
+    private boolean atTargetVelocity() {
+        return Math.abs(shootMotor.getVelocity() - shooterTargetVelocity) < SHOOTER_ACCEPTABLE_VELOCITY_ERROR;
+    }
+
+    private boolean stepTimedOut() {
+        return shootStateTimer.milliseconds() > STEP_TIMEOUT_IN_MILLISECONDS;
+    }
+
+    private boolean velocityDropDetected() {
+        return shootMotor.getVelocity() < (shooterTargetVelocity - SHOOTER_VELOCITY_DROP_AFTER_SHOT);
     }
     //endregion
 

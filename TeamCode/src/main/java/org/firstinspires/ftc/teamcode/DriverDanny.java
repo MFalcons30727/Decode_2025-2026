@@ -111,6 +111,9 @@ public class DriverDanny {
         currentAlliance = alliance;
         currentDriveMode = DriveMode.FIELD;
         limelightGoalHeadingError = -999;
+        inFarShootingZone = false;
+        inNearShootingZone = false;
+        isAlignedToGoal = false;
 
         idleTimer = new ElapsedTime();
 
