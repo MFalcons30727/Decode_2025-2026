@@ -339,7 +339,7 @@ public class DriverDanny {
                 .setLinearHeadingInterpolation(getPose().getHeading(), newPose.getHeading(), 0.8)
                 .build();
 
-        follower.followPath(newPath, holdEnd); // start the robot moving towards the new pose immediately
+        follower.followPath(newPath,0.67, holdEnd); // start the robot moving towards the new pose immediately
     }
 
     public void finalPark() {

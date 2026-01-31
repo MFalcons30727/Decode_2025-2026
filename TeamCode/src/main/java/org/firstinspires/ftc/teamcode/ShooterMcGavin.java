@@ -31,10 +31,11 @@ public class ShooterMcGavin {
     private static double FEEDER_POWER = 1; // the power we send to the indexer motor to feed
     private static double STEP_TIMEOUT_IN_MILLISECONDS = 3000; // this helps to make sure our "waiting for" steps never run longer than a certain time
     public static boolean TEST_MODE = false;
+    public static boolean FLYWHEEL_ALWAYS_ON = true;
     //endregion
 
     //region Class Members
-    private double shooterTargetVelocity = 1100; // the velocity we want our shooter to be set to by default
+    private double shooterTargetVelocity = 1200; // the velocity we want our shooter to be set to by default
     private double hoodServoPosition = 0; // the servo position of the adjustable hood
     private DcMotorEx shootMotor;
     private DcMotor indexer, intake;
@@ -107,11 +108,16 @@ public class ShooterMcGavin {
                 }
                 break;
             case OFF:
-                shootMotor.setVelocity(0);
-                //hoodServo.setPosition(0);
                 indexer.setPower(0);
-                shooterTargetVelocity = 1100;
-                hoodServoPosition = 0;
+                shooterTargetVelocity = 1200;
+                hoodServoPosition = 0.5;
+                hoodServo.setPosition(hoodServoPosition);
+
+                if (FLYWHEEL_ALWAYS_ON) {
+                    shootMotor.setVelocity(shooterTargetVelocity);
+                } else {
+                    shootMotor.setVelocity(0);
+                }
                 break;
         }
 

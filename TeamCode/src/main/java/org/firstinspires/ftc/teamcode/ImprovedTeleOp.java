@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "ImprovedTeleOp", group = "TeleOp")
 public class ImprovedTeleOp extends OpMode {
+    //NEED TO REMEMBER THAT SETTING THIS IS TRUE IS WHAT ENABLES US TO CARRY OVER.
     private static final boolean MATCH_MODE_ENABLED = false;
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -101,6 +102,10 @@ public class ImprovedTeleOp extends OpMode {
             shooter.turnOnIntake();
         } else if (!shooter.isShooting()) {
             shooter.turnOffIntake();
+        }
+
+        if (gamepad2.left_bumper) {
+            shooter.reverseIntake();
         }
         //endregion
 

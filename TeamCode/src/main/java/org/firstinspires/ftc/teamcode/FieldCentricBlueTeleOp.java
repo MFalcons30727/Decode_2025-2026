@@ -7,10 +7,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
 TODO:
-- Retune PedroPathing constants (use Tuning class under PedroPathing folder)
-- Test auto-park
+- fix auto-park
 - Test PedroPathing poses
-- Add Limelight odometry correction
 - Add ability to start the shooter from anywhere but don't feed artifact until odometry tells
       us we're inside of one of the allowed shooting areas.
 - Test passing the final pose of Auto as the start pose of TeleOp
@@ -96,26 +94,9 @@ public class FieldCentricBlueTeleOp extends OpMode {
             shooter.turnOffIntake();
         }
 
-        if (gamepad1.left_bumper) {
+        if (gamepad2.left_bumper) {
             shooter.reverseIntake();
         }
-        // TODO: fix hood
-//        if (gamepad2.dpad_up) {
-//            currentHoodPosition += 0.05;
-//        }
-//
-//        if (gamepad2.dpad_down) {
-//            currentHoodPosition -= 0.05;
-//        }
-
-        // this is for LUT table building
-//        if (gamepad2.yWasPressed()) {
-//            currentTargetVelocity += 20;
-//        }
-//
-//        if (gamepad2.aWasPressed()) {
-//            currentTargetVelocity -= 20;
-//        }
 
         if (gamepad1.yWasPressed()) {
             driver.relocalize();
