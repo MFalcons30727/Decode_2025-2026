@@ -18,6 +18,7 @@ public class BlueFarAuto extends OpMode {
         SHOOT_TOP_BLUE_ARTIFACTS,
         MOVE_FROM_SHOOTING_LINE_TO_BLUE_MIDDLE_ARTIFACTS,
         EAT_MIDDLE_BLUE_ARTIFACTS,
+        AVOID_GATE_AFTER_EATING_MIDDLE_BLUE_ARTIFACTS,
         MOVE_FROM_MIDDLE_BLUE_ARTIFACTS_TO_SHOOTING_LINE,
         SHOOT_MIDDLE_BLUE_ARTIFACTS,
         MOVE_FROM_SHOOTING_LINE_TO_BLUE_BOTTOM_ARTIFACTS,
@@ -78,6 +79,12 @@ public class BlueFarAuto extends OpMode {
             case EAT_MIDDLE_BLUE_ARTIFACTS:
                 if (!driver.isBusy() && !shooter.isShooting()) {
                     driver.moveToPose(DriverDanny.Poses.EAT_BLUE_MIDDLE_ARTIFACTS_POSE, true);
+                    setAutoState(AutoState.AVOID_GATE_AFTER_EATING_MIDDLE_BLUE_ARTIFACTS);
+                }
+                break;
+            case AVOID_GATE_AFTER_EATING_MIDDLE_BLUE_ARTIFACTS:
+                if (!driver.isBusy() && !shooter.isShooting()) {
+                    driver.moveToPose(DriverDanny.Poses.BLUE_MIDDLE_ARTIFACTS_POSE, true);
                     setAutoState(AutoState.MOVE_FROM_MIDDLE_BLUE_ARTIFACTS_TO_SHOOTING_LINE);
                 }
                 break;

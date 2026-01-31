@@ -18,6 +18,7 @@ public class RedFarAuto extends OpMode {
         SHOOT_TOP_RED_ARTIFACTS,
         MOVE_FROM_SHOOTING_LINE_TO_RED_MIDDLE_ARTIFACTS,
         EAT_MIDDLE_RED_ARTIFACTS,
+        AVOID_GATE_AFTER_EATING_MIDDLE_RED_ARTIFACTS,
         MOVE_FROM_MIDDLE_RED_ARTIFACTS_TO_SHOOTING_LINE,
         SHOOT_MIDDLE_RED_ARTIFACTS,
         MOVE_FROM_SHOOTING_LINE_TO_RED_BOTTOM_ARTIFACTS,
@@ -78,18 +79,24 @@ public class RedFarAuto extends OpMode {
             case EAT_MIDDLE_RED_ARTIFACTS:
                 if (!driver.isBusy() && !shooter.isShooting()) {
                     driver.moveToPose(DriverDanny.Poses.EAT_RED_MIDDLE_ARTIFACTS_POSE, true);
+                    setAutoState(AutoState.AVOID_GATE_AFTER_EATING_MIDDLE_RED_ARTIFACTS);
+                }
+                break;
+            case AVOID_GATE_AFTER_EATING_MIDDLE_RED_ARTIFACTS:
+                if (!driver.isBusy() && !shooter.isShooting()) {
+                    driver.moveToPose(DriverDanny.Poses.RED_MIDDLE_ARTIFACTS_POSE, true);
                     setAutoState(AutoState.MOVE_FROM_MIDDLE_RED_ARTIFACTS_TO_SHOOTING_LINE);
                 }
                 break;
             case MOVE_FROM_MIDDLE_RED_ARTIFACTS_TO_SHOOTING_LINE:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    driver.moveToPose(DriverDanny.Poses.RED_FAR_SHOOTING_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.RED_NEAR_SHOOTING_POSE, true);
                     setAutoState(AutoState.SHOOT_MIDDLE_RED_ARTIFACTS);
                 }
                 break;
             case SHOOT_MIDDLE_RED_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocityAndHoodPosition(1440, 1);
+                    shooter.startShootingAtVelocityAndHoodPosition(1080, 1);
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_RED_TOP_ARTIFACTS);
                 }
                 break;
@@ -113,7 +120,7 @@ public class RedFarAuto extends OpMode {
                 break;
             case SHOOT_TOP_RED_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocityAndHoodPosition(1020, 0.6);
+                    shooter.startShootingAtVelocityAndHoodPosition(1080, 0.6);
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_RED_END_POSE);
                 }
                 break;

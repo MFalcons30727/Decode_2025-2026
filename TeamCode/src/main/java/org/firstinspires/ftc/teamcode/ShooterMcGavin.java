@@ -29,7 +29,7 @@ public class ShooterMcGavin {
     private static double SHOOTER_ACCEPTABLE_VELOCITY_ERROR = 20; // in case the shooter motor isn't able to reach that exact velocity, allow it to still shoot when being this close to the target velocity
     private static double SHOOTER_VELOCITY_DROP_AFTER_SHOT = 80; // if velocity drops this amount in the START_FEEDING step, we know an artifact has been shot
     private static double FEEDER_POWER = 1; // the power we send to the indexer motor to feed
-    private static double STEP_TIMEOUT_IN_MILLISECONDS = 4000; // this helps to make sure our "waiting for" steps never run longer than a certain time
+    private static double STEP_TIMEOUT_IN_MILLISECONDS = 3000; // this helps to make sure our "waiting for" steps never run longer than a certain time
     public static boolean TEST_MODE = false;
     //endregion
 
