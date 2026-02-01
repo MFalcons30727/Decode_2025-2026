@@ -7,13 +7,14 @@ import com.pedropathing.util.Timer;
 // panels dashboard: 192.168.43.1:8001
 
 @Autonomous
-public class BlueBackupAuto extends OpMode {
+public class BlueBackupAutoWithOpenGate extends OpMode {
 
     public enum AutoState {
         MOVE_FROM_START_POS_TO_SHOOTING_LINE,
         SHOOT_PRELOAD,
         MOVE_FROM_SHOOTING_LINE_TO_BLUE_TOP_ARTIFACTS,
         EAT_TOP_BLUE_ARTIFACTS,
+        TAP_OPEN_BLUE_GATE,
         MOVE_FROM_TOP_BLUE_ARTIFACTS_TO_SHOOTING_LINE,
         SHOOT_TOP_BLUE_ARTIFACTS,
         MOVE_FROM_SHOOTING_LINE_TO_BLUE_MIDDLE_ARTIFACTS,
@@ -55,6 +56,12 @@ public class BlueBackupAuto extends OpMode {
             case EAT_TOP_BLUE_ARTIFACTS:
                 if (!driver.isBusy() && !shooter.isShooting()){
                     driver.moveToPose(DriverDanny.Poses.EAT_BLUE_TOP_ARTIFACTS_POSE, true);
+                    setAutoState(AutoState.TAP_OPEN_BLUE_GATE);
+                }
+                break;
+            case TAP_OPEN_BLUE_GATE:
+                if (!driver.isBusy() && !shooter.isShooting()){
+                    driver.moveToPose(DriverDanny.Poses.BLUE_TAP_OPEN_GATE_POSE, true);
                     setAutoState(AutoState.MOVE_FROM_TOP_BLUE_ARTIFACTS_TO_SHOOTING_LINE);
                 }
                 break;

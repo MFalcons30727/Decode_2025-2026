@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class ImprovedTeleOp extends OpMode {
     //NEED TO REMEMBER THAT SETTING THIS IS TRUE IS WHAT ENABLES US TO CARRY OVER LAST POSE FROM AUTO.
     private static final boolean USE_LAST_POSE_FROM_AUTO = false;
-
     private ElapsedTime runtime = new ElapsedTime();
     private DriverDanny driver;
     private ShooterMcGavin shooter;
