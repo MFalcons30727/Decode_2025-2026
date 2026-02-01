@@ -143,9 +143,7 @@ public class DriverDanny {
         this.updateLimeLight(); // should update our limelight every loop
 
         // if the robot has changed position, reset the timer so we can track how long we've been idle
-        if (lastKnownPose != null && (lastKnownPose.getX() != this.getPose().getX()
-                || lastKnownPose.getY() != this.getPose().getY()))
-        {
+        if (lastKnownPose != null && lastKnownPose.distanceFrom(this.getPose()) > 0.5) {
             idleTimer.reset();
         }
 
@@ -184,9 +182,11 @@ public class DriverDanny {
 
                 if (currentAlliance == Alliance.BLUE && tagID == 20) {
                     limelightGoalHeadingError = fr.getTargetXDegrees();
+                    break;
                 }
                 else if (currentAlliance == Alliance.RED && tagID == 24) {
                     limelightGoalHeadingError = fr.getTargetXDegrees();
+                    break;
                 } else {
                     limelightGoalHeadingError = -999;
                 }
