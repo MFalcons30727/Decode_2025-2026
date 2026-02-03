@@ -46,17 +46,17 @@ public class DriverDanny {
 
         //region red alliance poses
         //I checked all of these in the visualizer, these poses are all correct as long as the odometry offsets are measured correctly.
-        public static final Pose RED_FAR_START_POSE = new Pose(96, 8, Math.toRadians(90));
+        public static final Pose RED_FAR_START_POSE = new Pose(96, 8, Math.toRadians(97));
         public static final Pose RED_BACKUP_START_POSE = new Pose(122, 125, Math.toRadians(40));
-        public static final Pose RED_TOP_ARTIFACTS_POSE = new Pose(100, 83, Math.toRadians(0));
-        public static final Pose RED_MIDDLE_ARTIFACTS_POSE = new Pose(100, 60, Math.toRadians(0));
-        public static final Pose RED_BOTTOM_ARTIFACTS_POSE = new Pose(100, 35, Math.toRadians(0));
-        public static final Pose EAT_RED_TOP_ARTIFACTS_POSE = new Pose(128, 83, Math.toRadians(0));
-        public static final Pose EAT_RED_MIDDLE_ARTIFACTS_POSE = new Pose(136, 58, Math.toRadians(0));
-        public static final Pose EAT_RED_BOTTOM_ARTIFACTS_POSE = new Pose(136, 35, Math.toRadians(0));
-        public static final Pose RED_NEAR_SHOOTING_POSE = new Pose (96, 96, Math.toRadians(40));
+        public static final Pose RED_TOP_ARTIFACTS_POSE = new Pose(100, 86, Math.toRadians(0));
+        public static final Pose RED_MIDDLE_ARTIFACTS_POSE = new Pose(100, 64, Math.toRadians(0));
+        public static final Pose RED_BOTTOM_ARTIFACTS_POSE = new Pose(100, 41, Math.toRadians(0));
+        public static final Pose EAT_RED_TOP_ARTIFACTS_POSE = new Pose(124, 85, Math.toRadians(0));
+        public static final Pose EAT_RED_MIDDLE_ARTIFACTS_POSE = new Pose(130, 62, Math.toRadians(0));
+        public static final Pose EAT_RED_BOTTOM_ARTIFACTS_POSE = new Pose(130, 39, Math.toRadians(0));
+        public static final Pose RED_NEAR_SHOOTING_POSE = new Pose (96, 96, Math.toRadians(30));
         public static final Pose RED_FAR_SHOOTING_POSE = new Pose (90, 16, Math.toRadians(65));
-        public static final Pose RED_FAR_END_POSE = new Pose (95, 132, Math.toRadians(90));
+        public static final Pose RED_FAR_END_POSE = new Pose (95, 128, Math.toRadians(90));
         public static final Pose PARK_RED_GATE_POSE = new Pose (120,70, Math.toRadians(180));
         public static final Pose RED_GOAL_POSE = new Pose(144, 144, 0);
         public static final Pose RED_FINAL_PARK_POSE = new Pose(38, 33, 0);
