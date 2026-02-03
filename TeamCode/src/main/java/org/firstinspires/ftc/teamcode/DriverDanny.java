@@ -29,16 +29,16 @@ public class DriverDanny {
         public static final Pose BLUE_FINAL_PARK_POSE = new Pose(105, 33, 0);
         public static final Pose BLUE_GOAL_POSE = new Pose(0, 144, 0);
         public static final Pose PARK_BLUE_GATE_POSE = new Pose (28,70, Math.toRadians(0));
-        public static final Pose BLUE_FAR_SHOOTING_POSE = new Pose (53, 14, Math.toRadians(118));
-        public static final Pose BLUE_FAR_END_POSE = new Pose (48, 132, Math.toRadians(90));
-        public static final Pose BLUE_NEAR_SHOOTING_POSE = new Pose (49, 96, Math.toRadians(130));
-        public static final Pose EAT_BLUE_TOP_ARTIFACTS_POSE = new Pose(17, 84, Math.toRadians(180));
-        public static final Pose EAT_BLUE_MIDDLE_ARTIFACTS_POSE = new Pose(9, 60, Math.toRadians(180));
-        public static final Pose EAT_BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(9, 35, Math.toRadians(180));
-        public static final Pose BLUE_TOP_ARTIFACTS_POSE = new Pose(45, 85, Math.toRadians(180));
-        public static final Pose BLUE_MIDDLE_ARTIFACTS_POSE = new Pose(45, 60, Math.toRadians(180));
-        public static final Pose BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(45, 36, Math.toRadians(180));
-        public static final Pose BLUE_BACKUP_START_POSE = new Pose(22, 125, Math.toRadians(130));
+        public static final Pose BLUE_FAR_SHOOTING_POSE = new Pose (53, 14, Math.toRadians(111));
+        public static final Pose BLUE_FAR_END_POSE = new Pose (48, 128, Math.toRadians(90));
+        public static final Pose BLUE_NEAR_SHOOTING_POSE = new Pose (49, 96, Math.toRadians(140));
+        public static final Pose EAT_BLUE_TOP_ARTIFACTS_POSE = new Pose(22, 82, Math.toRadians(180));
+        public static final Pose EAT_BLUE_MIDDLE_ARTIFACTS_POSE = new Pose(15, 56, Math.toRadians(180));
+        public static final Pose EAT_BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(15, 31, Math.toRadians(180));
+        public static final Pose BLUE_TOP_ARTIFACTS_POSE = new Pose(45, 82, Math.toRadians(180));
+        public static final Pose BLUE_MIDDLE_ARTIFACTS_POSE = new Pose(45, 56, Math.toRadians(180));
+        public static final Pose BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(45, 31, Math.toRadians(180));
+        public static final Pose BLUE_BACKUP_START_POSE = new Pose(17, 125, Math.toRadians(135));
         public static final Pose BLUE_FAR_START_POSE = new Pose(49, 8, Math.toRadians(90));
         public static final Pose BLUE_TAP_OPEN_GATE_POSE = new Pose(19, 72, Math.toRadians(90));
 
@@ -374,7 +374,7 @@ public class DriverDanny {
                 .setLinearHeadingInterpolation(getPose().getHeading(), newPose.getHeading(), 0.8)
                 .build();
 
-        follower.followPath(newPath,0.67, holdEnd); // start the robot moving towards the new pose immediately
+        follower.followPath(newPath,0.89, holdEnd); // start the robot moving towards the new pose immediately
     }
 
     public void finalPark() {

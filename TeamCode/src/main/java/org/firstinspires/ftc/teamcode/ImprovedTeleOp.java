@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "ImprovedTeleOp", group = "TeleOp")
-public class ImprovedTeleOp extends OpMode {
+public class  ImprovedTeleOp extends OpMode {
     //NEED TO REMEMBER THAT SETTING THIS IS TRUE IS WHAT ENABLES US TO CARRY OVER LAST POSE FROM AUTO.
     private static final boolean USE_LAST_POSE_FROM_AUTO = false;
     private ElapsedTime runtime = new ElapsedTime();
