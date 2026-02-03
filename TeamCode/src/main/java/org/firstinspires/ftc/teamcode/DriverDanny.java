@@ -55,7 +55,7 @@ public class DriverDanny {
         public static final Pose EAT_RED_MIDDLE_ARTIFACTS_POSE = new Pose(130, 62, Math.toRadians(0));
         public static final Pose EAT_RED_BOTTOM_ARTIFACTS_POSE = new Pose(130, 39, Math.toRadians(0));
         public static final Pose RED_NEAR_SHOOTING_POSE = new Pose (96, 96, Math.toRadians(30));
-        public static final Pose RED_FAR_SHOOTING_POSE = new Pose (90, 16, Math.toRadians(65));
+        public static final Pose RED_FAR_SHOOTING_POSE = new Pose (90, 16, Math.toRadians(73));
         public static final Pose RED_FAR_END_POSE = new Pose (95, 128, Math.toRadians(90));
         public static final Pose PARK_RED_GATE_POSE = new Pose (120,70, Math.toRadians(180));
         public static final Pose RED_GOAL_POSE = new Pose(144, 144, 0);
