@@ -48,20 +48,20 @@ public class DriverDanny {
         //region red alliance poses
         //I checked all of these in the visualizer, these poses are all correct as long as the odometry offsets are measured correctly.
         public static Pose RED_FAR_START_POSE = new Pose(144-BLUE_FAR_START_POSE.getX(), BLUE_FAR_START_POSE.getY(), Math.toRadians(90));
-        public static Pose RED_FAR_SHOOTING_POSE = new Pose(144-BLUE_FAR_SHOOTING_POSE.getX(), BLUE_FAR_SHOOTING_POSE.getY(), Math.toRadians(73));
+        public static Pose RED_FAR_SHOOTING_POSE = new Pose(144-BLUE_FAR_SHOOTING_POSE.getX(), BLUE_FAR_SHOOTING_POSE.getY(), Math.toRadians(67));
         public static Pose RED_BOTTOM_ARTIFACTS_POSE = new Pose(144-BLUE_BOTTOM_ARTIFACTS_POSE.getX(), BLUE_BOTTOM_ARTIFACTS_POSE.getY(), Math.toRadians(0));
         public static Pose EAT_RED_BOTTOM_ARTIFACTS_POSE = new Pose(144-EAT_BLUE_BOTTOM_ARTIFACTS_POSE.getX(), EAT_BLUE_BOTTOM_ARTIFACTS_POSE.getY(), Math.toRadians(0));
         public static Pose RED_MIDDLE_ARTIFACTS_POSE = new Pose(144-BLUE_MIDDLE_ARTIFACTS_POSE.getX(), BLUE_MIDDLE_ARTIFACTS_POSE.getY(), Math.toRadians(0));
         public static Pose EAT_RED_MIDDLE_ARTIFACTS_POSE = new Pose(144-EAT_BLUE_MIDDLE_ARTIFACTS_POSE.getX(), EAT_BLUE_MIDDLE_ARTIFACTS_POSE.getY(), Math.toRadians(0));
         public static Pose RED_TOP_ARTIFACTS_POSE = new Pose(144-BLUE_TOP_ARTIFACTS_POSE.getX(), BLUE_TOP_ARTIFACTS_POSE.getY(), Math.toRadians(0));
         public static Pose EAT_RED_TOP_ARTIFACTS_POSE = new Pose(144-EAT_BLUE_TOP_ARTIFACTS_POSE.getX(), EAT_BLUE_TOP_ARTIFACTS_POSE.getY(), Math.toRadians(0));
-        public static Pose RED_NEAR_SHOOTING_POSE = new Pose(144-BLUE_NEAR_SHOOTING_POSE.getX(), BLUE_NEAR_SHOOTING_POSE.getY(), Math.toRadians(30));
-        public static Pose RED_NEAR_FINAL_SHOOTING_POSE = new Pose(144-BLUE_NEAR_FINAL_SHOOTING_POSE.getX(), BLUE_NEAR_FINAL_SHOOTING_POSE.getY(), Math.toRadians(144));
+        public static Pose RED_NEAR_SHOOTING_POSE = new Pose(144-BLUE_NEAR_SHOOTING_POSE.getX(), BLUE_NEAR_SHOOTING_POSE.getY(), Math.toRadians(45));
+        public static Pose RED_NEAR_FINAL_SHOOTING_POSE = new Pose(144-BLUE_NEAR_FINAL_SHOOTING_POSE.getX(), BLUE_NEAR_FINAL_SHOOTING_POSE.getY(), Math.toRadians(37));
         public static Pose RED_FAR_END_POSE = new Pose(144-BLUE_FAR_END_POSE.getX(), BLUE_FAR_END_POSE.getY(), Math.toRadians(90));
         public static Pose PARK_RED_GATE_POSE = new Pose(144-PARK_BLUE_GATE_POSE.getX(),PARK_BLUE_GATE_POSE.getY(), Math.toRadians(180));
-        public static Pose RED_BACKUP_START_POSE = new Pose(144-BLUE_BACKUP_START_POSE.getX(), BLUE_BACKUP_START_POSE.getY(), Math.toRadians(40));
+        public static Pose RED_BACKUP_START_POSE = new Pose(144-BLUE_BACKUP_START_POSE.getX(), BLUE_BACKUP_START_POSE.getY(), Math.toRadians(37));
         public static Pose RED_BACKUP_END_POSE = new Pose(144-BLUE_BACKUP_END_POSE.getX(), BLUE_BACKUP_END_POSE.getY(), Math.toRadians(0));
-        public static Pose RED_TAP_OPEN_GATE_POSE = new Pose(144-BLUE_TAP_OPEN_GATE_POSE.getX(), BLUE_TAP_OPEN_GATE_POSE.getY(), Math.toRadians(90));
+        public static Pose RED_TAP_OPEN_GATE_POSE = new Pose(144-BLUE_TAP_OPEN_GATE_POSE.getX(), BLUE_TAP_OPEN_GATE_POSE.getY(), Math.toRadians(0));
         public static Pose RED_FINAL_PARK_POSE = new Pose(38, 33, 0);
         public static Pose RED_GOAL_POSE = new Pose(144, 144, 0);
         //endregion
