@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.pedropathing.util.Timer;
 
 // panels dashboard: 192.168.43.1:8001
 
+@Disabled
 @Autonomous
 public class BlueBackupAutoWithOpenGate extends OpMode {
 
