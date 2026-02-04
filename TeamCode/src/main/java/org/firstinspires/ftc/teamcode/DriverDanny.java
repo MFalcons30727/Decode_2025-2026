@@ -176,8 +176,8 @@ public class DriverDanny {
         telemetry.addData("CurrentDistanceFromGoal", this.getCurrentDistanceFromGoal());
         telemetry.addData("CurrentDriveMode", currentDriveMode.toString());
         telemetry.addData("SlowModeEnabled", slowMode);
-        telemetry.addData("InFarShootZone", inFarShootZone);
-        telemetry.addData("InNearShootZone", inNearShootZone);
+        telemetry.addData("InFarShootingZone", inFarShootingZone);
+        telemetry.addData("InNearShootingZone", inNearShootingZone);
         telemetry.addData("IsAlignedToGoal", isAlignedToGoal);
         telemetry.addData("IdleTimer", idleTimer.milliseconds());
         //telemetry.addData("LLPedroX", relocalizePedroX);
