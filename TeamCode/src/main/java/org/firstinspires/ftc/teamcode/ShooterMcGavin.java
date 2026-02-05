@@ -90,11 +90,11 @@ public class ShooterMcGavin {
             case WAIT_FOR_TARGET_VELOCITY: // wait until we're close to the target velocity for the shooter
                 if ((!restrictedShooting && (atTargetVelocity() || stepTimedOut()))
                         || (restrictedShooting && atTargetVelocity()
-                                    && (DriverDanny.inFarShootingZone || DriverDanny.inNearShootingZone)
-                                    && DriverDanny.isAlignedToGoal
-                                    && DriverDanny.idleTimer.milliseconds() > 250
-                           )
-                    )
+                        && (DriverDanny.inFarShootingZone || DriverDanny.inNearShootingZone)
+                        && DriverDanny.isAlignedToGoal
+                        && DriverDanny.idleTimer.milliseconds() > 250
+                )
+                )
                 {
                     setShootingState(ShootingState.START_FEEDING);
                 }
@@ -135,9 +135,9 @@ public class ShooterMcGavin {
         telemetry.addData("ShooterState", currentShootingState.toString());
         telemetry.addData("FlywheelVelocity", shootMotor.getVelocity());
         telemetry.addData("TargetVelocity", shooterTargetVelocity);
-        telemetry.addData("HoodServoPosition", hoodServo.getPosition());
         telemetry.addData("HoodTargetPosition", hoodServoPosition);
         telemetry.addData("ShotsFired", shotsFired);
+        telemetry.addData("RestrictedShooting", restrictedShooting);
     }
 
     public void updateWithLUT(double distanceFromGoalInInches) { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL
