@@ -16,7 +16,7 @@ public class  ImprovedTeleOp extends OpMode {
     @Override
     public void init() {
         DriverDanny.Alliance startingAlliance = DriverDanny.Alliance.BLUE;
-        Pose startingPose = DriverDanny.Poses.BLUE_FAR_START_POSE;
+        Pose startingPose = DriverDanny.Poses.BFA_START_POSE;
 
         if (USE_LAST_POSE_FROM_AUTO && DriverDanny.currentAlliance != null) {
             startingAlliance = DriverDanny.currentAlliance;
