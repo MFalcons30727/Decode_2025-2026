@@ -45,7 +45,7 @@ public class DriverDanny {
 
         //region RFA (Red Far Auto)
         public static Pose RFA_START_POSE = new Pose(95, 8, Math.toRadians(90));
-        public static Pose RFA_FAR_SHOOTING_POSE = new Pose(91, 14, Math.toRadians(72));
+        public static Pose RFA_FAR_SHOOTING_POSE = new Pose(91, 14, Math.toRadians(69));
         public static Pose RFA_BOTTOM_ARTIFACTS_POSE = new Pose(99, 31, Math.toRadians(0));
         public static Pose RFA_EAT_BOTTOM_ARTIFACTS_POSE = new Pose(129, 31, Math.toRadians(0));
         public static Pose RFA_MIDDLE_ARTIFACTS_POSE = new Pose(99, 56, Math.toRadians(0));
@@ -59,12 +59,12 @@ public class DriverDanny {
         //region BBA (Blue Backup Auto)
         public static Pose BBA_START_POSE = new Pose(22, 123, Math.toRadians(144));
         public static Pose BBA_NEAR_SHOOTING_POSE = new Pose(49, 96, Math.toRadians(140));
-        public static Pose BBA_TOP_ARTIFACTS_POSE = new Pose(45, 82, Math.toRadians(180));
+        public static Pose BBA_TOP_ARTIFACTS_POSE = new Pose(47, 82, Math.toRadians(180));
         public static Pose BBA_EAT_TOP_ARTIFACTS_POSE = new Pose(22, 82, Math.toRadians(180));
-        public static Pose BBA_MIDDLE_ARTIFACTS_POSE = new Pose(45, 56, Math.toRadians(180));
-        public static Pose BBA_EAT_MIDDLE_ARTIFACTS_POSE = new Pose(15, 56, Math.toRadians(180));
-        public static Pose BBA_BOTTOM_ARTIFACTS_POSE = new Pose(45, 31, Math.toRadians(180));
-        public static Pose BBA_EAT_BOTTOM_ARTIFACTS_POSE = new Pose(15, 31, Math.toRadians(180));
+        public static Pose BBA_MIDDLE_ARTIFACTS_POSE = new Pose(47, 59, Math.toRadians(180));
+        public static Pose BBA_EAT_MIDDLE_ARTIFACTS_POSE = new Pose(15, 59, Math.toRadians(180));
+        public static Pose BBA_BOTTOM_ARTIFACTS_POSE = new Pose(47, 37, Math.toRadians(180));
+        public static Pose BBA_EAT_BOTTOM_ARTIFACTS_POSE = new Pose(15, 37, Math.toRadians(180));
         public static Pose BBA_FAR_SHOOTING_POSE = new Pose(53, 14, Math.toRadians(111));
         public static Pose BBA_END_POSE = new Pose(48, 55, Math.toRadians(180));
         //endregion
@@ -263,7 +263,7 @@ public class DriverDanny {
             return Range.clip(headingPIDFController.run(), -0.3, 0.3);
         } else if (limelightGoalHeadingError != -999) {
             headingPIDFController.updateError(limelightGoalHeadingError);
-            return Range.clip(headingPIDFController.run(), -0.3, 0.3);
+            return Range.clip(headingPIDFController.run(), -0.2, 0.2);
         } else {
             return -1;
         }
