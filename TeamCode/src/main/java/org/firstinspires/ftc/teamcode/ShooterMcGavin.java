@@ -34,10 +34,6 @@ public class ShooterMcGavin {
     public static boolean FLYWHEEL_ALWAYS_ON = true;
     //endregion
 
-    //region Static Variables
-    public static boolean restrictedShooting = false;
-    //endregion
-
     //region Class Members
     private double shooterTargetVelocity = 1200; // the velocity we want our shooter to be set to by default
     private double hoodServoPosition = 0; // the servo position of the adjustable hood
@@ -62,7 +58,6 @@ public class ShooterMcGavin {
         shootStateTimer = new ElapsedTime();
         currentShootingState = TEST_MODE ? ShootingState.TEST_MODE_ONLY : ShootingState.OFF;
         shotsFired = 0;
-        restrictedShooting = false;
         velocityLUT = new InterpLUT();
         hoodServoPositionLUT = new InterpLUT();
         buildLUTS();
@@ -88,14 +83,7 @@ public class ShooterMcGavin {
                 setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY);
                 break;
             case WAIT_FOR_TARGET_VELOCITY: // wait until we're close to the target velocity for the shooter
-                if ((!restrictedShooting && (atTargetVelocity() || stepTimedOut()))
-                        || (restrictedShooting && atTargetVelocity()
-                        && (DriverDanny.inFarShootingZone || DriverDanny.inNearShootingZone)
-                        && DriverDanny.isAlignedToGoal
-                        && DriverDanny.idleTimer.milliseconds() > 250
-                )
-                )
-                {
+                if (atTargetVelocity() || stepTimedOut()) {
                     setShootingState(ShootingState.START_FEEDING);
                 }
                 break;
@@ -122,7 +110,6 @@ public class ShooterMcGavin {
                 shooterTargetVelocity = 1200;
                 hoodServoPosition = 0.5;
                 hoodServo.setPosition(hoodServoPosition);
-                restrictedShooting = false;
 
                 if (FLYWHEEL_ALWAYS_ON) {
                     shootMotor.setVelocity(shooterTargetVelocity);
@@ -137,13 +124,17 @@ public class ShooterMcGavin {
         telemetry.addData("TargetVelocity", shooterTargetVelocity);
         telemetry.addData("HoodTargetPosition", hoodServoPosition);
         telemetry.addData("ShotsFired", shotsFired);
-        telemetry.addData("RestrictedShooting", restrictedShooting);
     }
 
     public void updateWithLUT(double distanceFromGoalInInches) { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL
         if (currentShootingState != ShootingState.OFF) {
-            shooterTargetVelocity = velocityLUT.get(distanceFromGoalInInches);
-            hoodServoPosition = hoodServoPositionLUT.get(distanceFromGoalInInches);
+            try {
+                shooterTargetVelocity = velocityLUT.get(distanceFromGoalInInches);
+                hoodServoPosition = hoodServoPositionLUT.get(distanceFromGoalInInches);
+            } catch (Exception e) {
+                telemetry.addData("shooter", "NOT IN RANGE");
+            }
+
             shootMotor.setVelocity(shooterTargetVelocity);
             hoodServo.setPosition(hoodServoPosition);
         }
@@ -226,8 +217,12 @@ public class ShooterMcGavin {
     public void startShootingFromDistance(double distanceFromGoalInInches) { // if this version of startShooting is called with no arguments, use the LUTs to determine velocity and hood servo position
         // maybe with LEDs, if it's a distance we can shoot from, turn LED green.  otherwise turn it red.
         // may need to add some error handling here since InterpLUT will throw exceptions if we ask for a distance that is outside of the min/max values we measured
-        shooterTargetVelocity = velocityLUT.get(distanceFromGoalInInches);
-        hoodServoPosition = hoodServoPositionLUT.get(distanceFromGoalInInches);
+        try {
+            shooterTargetVelocity = velocityLUT.get(distanceFromGoalInInches);
+            hoodServoPosition = hoodServoPositionLUT.get(distanceFromGoalInInches);
+        } catch (Exception e) {
+            telemetry.addData("shooter", "NOT IN RANGE");
+        }
         setShootingState(ShootingState.START_SPIN_UP);
     }
 

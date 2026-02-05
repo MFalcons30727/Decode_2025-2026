@@ -8,11 +8,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name = "ImprovedTeleOp", group = "TeleOp")
 public class  ImprovedTeleOp extends OpMode {
     //NEED TO REMEMBER THAT SETTING THIS IS TRUE IS WHAT ENABLES US TO CARRY OVER LAST POSE FROM AUTO.
-    private static final boolean USE_LAST_POSE_FROM_AUTO = false;
+    private static final boolean USE_LAST_POSE_FROM_AUTO = true;
     private ElapsedTime runtime = new ElapsedTime();
     private DriverDanny driver;
     private ShooterMcGavin shooter;
-    private boolean headingLock = false;
 
     @Override
     public void init() {
@@ -45,35 +44,30 @@ public class  ImprovedTeleOp extends OpMode {
         driver.update();
         shooter.updateWithLUT(driver.getCurrentDistanceFromGoal());
 
-        // we only need to allow locking our heading and allowing restrictedShooting when shooting routine has been started
-        if(!shooter.isShooting()) {
-            headingLock = false;
-        }
-
         double joyY = -gamepad1.left_stick_y; // leaving this inverted so it works for robotCentricDrive (and we adjust for it on fieldCentricDrive)
         double joyX = gamepad1.left_stick_x;
         double rotate = gamepad1.right_stick_x;
 
         //region Gamepad1
-        if (gamepad1.leftBumperWasPressed()) {
+        if (gamepad1.dpadUpWasPressed() || gamepad1.dpadDownWasPressed()) {
             driver.swapCurrentAlliance(); // lets us swap our alliance (for auto-aim / driver testing)
         }
 
-        if (gamepad1.rightBumperWasPressed()) {
+        if (gamepad1.dpadLeftWasPressed() || gamepad1.dpadRightWasPressed()) {
             driver.swapCurrentDriveMode();
         }
 
-        if (gamepad1.aWasPressed()) {
-            driver.abortPath();
-        }
+//        if (gamepad1.aWasPressed()) {
+//            driver.abortPath();
+//        }
 
         if (gamepad1.bWasPressed()) {
             driver.toggleSlowMode(); // allows us to cut robot movement speed in half when precision is needed
         }
 
-        if (gamepad1.xWasPressed()) {
-            driver.finalPark();
-        }
+//        if (gamepad1.xWasPressed()) {
+//            driver.finalPark();
+//        }
 
         if (gamepad1.yWasPressed()) {
             driver.relocalize();
@@ -89,29 +83,11 @@ public class  ImprovedTeleOp extends OpMode {
             }
         }
 
-        if (gamepad2.bWasPressed() && !shooter.isShooting()) {
-            headingLock = true;
-            ShooterMcGavin.restrictedShooting = true;
-
-            try {
-                shooter.startShooting();
-            } catch (Exception e) {
-                telemetry.addData("shooter", "NOT IN RANGE");
-            }
-        }
-
         if (gamepad2.xWasPressed() && shooter.isShooting()) {
             shooter.stopShooting();
-            headingLock = false;
-            ShooterMcGavin.restrictedShooting = false;
         }
 
-        // auto aim using headingError on field-centric driving. no pedropathing needed.
-        if (gamepad2.right_trigger > 0.25 && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
-            rotate = driver.getHeadingErrorForAutoAimTrig();
-        }
-
-        if ((gamepad2.right_bumper || headingLock) && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
+        if ((gamepad2.right_bumper || gamepad2.right_trigger > 0.25) && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
             rotate = driver.getHeadingErrorForAutoAimLimelight();
 
             //if not able to find april tag revert to Trig based aiming
@@ -135,7 +111,6 @@ public class  ImprovedTeleOp extends OpMode {
         driver.drive(joyY, joyX, rotate);
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("HeadingLock", headingLock);
         telemetry.update();
     }
 }
