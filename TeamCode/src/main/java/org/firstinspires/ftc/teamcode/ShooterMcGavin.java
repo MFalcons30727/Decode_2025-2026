@@ -92,7 +92,7 @@ public class ShooterMcGavin {
                 indexer.setPower(FEEDER_POWER);
 
                 // instead of waiting a certain delay, check for velocity drop to tell if an artifact was shot
-                if (velocityDropDetected() || stepTimedOut()) {
+                if (velocityDropDetected()) {
                     shotsFired++;
 
                     if (shotsFired >= 3) { // after 3 shot attempts, power off shooter
@@ -103,6 +103,9 @@ public class ShooterMcGavin {
                         indexer.setPower(0); // stop feeding until we reach target velocity again
                         setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY); // if more shots to fire, wait for the shooter to reach target velocity again
                     }
+                } else if (stepTimedOut()) {
+                    shotsFired = 0;
+                    setShootingState(ShootingState.OFF);
                 }
                 break;
             case OFF:
