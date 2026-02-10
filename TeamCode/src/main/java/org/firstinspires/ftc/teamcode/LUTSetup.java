@@ -59,6 +59,8 @@ public class LUTSetup extends OpMode {
             shooter.turnOffIntake();
         }
 
+        //BIGGER STEP SIZES
+
         if (gamepad2.dpadUpWasPressed()) {
             currentHoodPosition += 0.05;
         }
@@ -74,6 +76,26 @@ public class LUTSetup extends OpMode {
         if (gamepad2.dpadRightWasPressed()) {
             currentTargetVelocity += 20;
         }
+
+        //SMALLER STEP SIZES
+
+        if (gamepad1.dpadUpWasPressed()) {
+            currentHoodPosition += 0.02;
+        }
+
+        if (gamepad1.dpadDownWasPressed()) {
+            currentHoodPosition -= 0.02;
+        }
+
+        if (gamepad1.dpadLeftWasPressed()) {
+            currentTargetVelocity -= 10;
+        }
+
+        if (gamepad1.dpadRightWasPressed()) {
+            currentTargetVelocity += 10;
+        }
+
+
 
         driver.drive(joyY, joyX, rotate);
 
