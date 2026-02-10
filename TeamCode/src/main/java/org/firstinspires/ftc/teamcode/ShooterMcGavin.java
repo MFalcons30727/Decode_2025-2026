@@ -34,6 +34,10 @@ public class ShooterMcGavin {
     public static boolean FLYWHEEL_ALWAYS_ON = true;
     //endregion
 
+    //region Static Variables
+    public static boolean restrictedShooting = false;
+    //endregion
+
     //region Class Members
     private double shooterTargetVelocity = 1200; // the velocity we want our shooter to be set to by default
     private double hoodServoPosition = 0; // the servo position of the adjustable hood
@@ -58,6 +62,7 @@ public class ShooterMcGavin {
         shootStateTimer = new ElapsedTime();
         currentShootingState = TEST_MODE ? ShootingState.TEST_MODE_ONLY : ShootingState.OFF;
         shotsFired = 0;
+        restrictedShooting = false;
         velocityLUT = new InterpLUT();
         hoodServoPositionLUT = new InterpLUT();
         buildLUTS();
@@ -83,7 +88,12 @@ public class ShooterMcGavin {
                 setShootingState(ShootingState.WAIT_FOR_TARGET_VELOCITY);
                 break;
             case WAIT_FOR_TARGET_VELOCITY: // wait until we're close to the target velocity for the shooter
-                if (atTargetVelocity() || stepTimedOut()) {
+                if ((!restrictedShooting && (atTargetVelocity() || stepTimedOut()))
+                        || (restrictedShooting && atTargetVelocity()
+                        && (DriverDanny.inFarShootingZone || DriverDanny.inNearShootingZone)
+                        && DriverDanny.isAlignedToGoal
+                        && DriverDanny.idleTimer.milliseconds() > 500))
+                {
                     setShootingState(ShootingState.START_FEEDING);
                 }
                 break;
@@ -127,6 +137,7 @@ public class ShooterMcGavin {
         telemetry.addData("TargetVelocity", shooterTargetVelocity);
         telemetry.addData("HoodTargetPosition", hoodServoPosition);
         telemetry.addData("ShotsFired", shotsFired);
+        telemetry.addData("RestrictedShooting", restrictedShooting);
     }
 
     public void updateWithLUT(double distanceFromGoalInInches) { // THIS MUST ALWAYS GO IN YOUR OPMODE LOOP EVERY CALL

@@ -5,6 +5,23 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+/* TODO - Ideas before state comp
+Programming
+1) Re-introduce super button and/or heading lock toggle instead of manual trigger depress (Done - need to test)
+2) Adjust goal pose on trig-based auto-aim to be more reliable (in case limelight fails again)
+3) Re-check tuning of flywheel and PedroPathing
+4) Program LEDs to light up when auto-aim is activated (maybe different for trig vs limelight?)
+5) Add "panic button" that can allow a set velocity (1100?) and bypass LUT tables if same issues happen
+6) Brainstorm new autos to work with other teams (including gate opening and grabbing 3 extra far artifacts)
+7) Do we need relocalization at all?  Need to run full match and take measurements of end pose from telemetry
+
+Build
+1) Check hood condition
+2) Add side-panel for easier gate opening
+3) Replace rubber band intake with vectored-wheel intake? (and fix "stuck" condition?)
+4) Add LEDs to light up when auto-aim is activated
+5) Add LEDs/Sensors to track how many artifacts in bot?
+ */
 @TeleOp(name = "ImprovedTeleOp", group = "TeleOp")
 public class  ImprovedTeleOp extends OpMode {
     //NEED TO REMEMBER THAT SETTING THIS IS TRUE IS WHAT ENABLES US TO CARRY OVER LAST POSE FROM AUTO.
@@ -12,6 +29,7 @@ public class  ImprovedTeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DriverDanny driver;
     private ShooterMcGavin shooter;
+    private boolean headingLock = false;
 
     @Override
     public void init() {
@@ -44,6 +62,11 @@ public class  ImprovedTeleOp extends OpMode {
         driver.update();
         shooter.updateWithLUT(driver.getCurrentDistanceFromGoal());
 
+        // we only need to allow locking our heading and allowing restrictedShooting when shooting routine has been started
+        if(!shooter.isShooting()) {
+            headingLock = false;
+        }
+
         double joyY = -gamepad1.left_stick_y; // leaving this inverted so it works for robotCentricDrive (and we adjust for it on fieldCentricDrive)
         double joyX = gamepad1.left_stick_x;
         double rotate = gamepad1.right_stick_x;
@@ -69,9 +92,9 @@ public class  ImprovedTeleOp extends OpMode {
 //            driver.finalPark();
 //        }
 
-        if (gamepad1.yWasPressed()) {
-            driver.relocalize();
-        }
+//        if (gamepad1.yWasPressed()) {
+//            driver.relocalize();
+//        }
         //endregion
 
         //region Gamepad2
@@ -83,11 +106,24 @@ public class  ImprovedTeleOp extends OpMode {
             }
         }
 
-        if (gamepad2.xWasPressed() && shooter.isShooting()) {
-            shooter.stopShooting();
+        if (gamepad2.bWasPressed() && !shooter.isShooting()) {
+            headingLock = true;
+            ShooterMcGavin.restrictedShooting = true;
+
+            try {
+                shooter.startShooting();
+            } catch (Exception e) {
+                telemetry.addData("shooter", "NOT IN RANGE");
+            }
         }
 
-        if ((gamepad2.right_bumper || gamepad2.right_trigger > 0.25) && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
+        if (gamepad2.xWasPressed() && shooter.isShooting()) {
+            shooter.stopShooting();
+            headingLock = false;
+            ShooterMcGavin.restrictedShooting = false;
+        }
+
+        if ((headingLock || gamepad2.right_bumper || gamepad2.right_trigger > 0.25) && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
             rotate = driver.getHeadingErrorForAutoAimLimelight();
 
             //if not able to find april tag revert to Trig based aiming
@@ -95,6 +131,9 @@ public class  ImprovedTeleOp extends OpMode {
                 rotate = driver.getHeadingErrorForAutoAimTrig();
             }
         }
+//        else {
+//            // TODO: Turn off auto-aim LED :)
+//        }
 
         if (gamepad2.left_trigger > 0.25 && !shooter.isShooting()) {
             shooter.turnOnIntake();
@@ -111,6 +150,7 @@ public class  ImprovedTeleOp extends OpMode {
         driver.drive(joyY, joyX, rotate);
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("HeadingLock", headingLock);
         telemetry.update();
     }
 }

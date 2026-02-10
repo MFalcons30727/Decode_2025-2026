@@ -148,6 +148,11 @@ public class DriverDanny {
     public static Pose lastKnownPose;
     public static Alliance currentAlliance;
     public static DriveMode currentDriveMode;
+    public static boolean inFarShootingZone = false;
+    public static boolean inNearShootingZone = false;
+    public static boolean isAlignedToGoal = false;
+    public static ElapsedTime idleTimer;
+    public static ElapsedTime lastGoodLimelightResultTimer;
     //endregion
 
     //region Class Members
@@ -179,6 +184,13 @@ public class DriverDanny {
         currentDriveMode = DriveMode.FIELD;
         limelightGoalHeadingError = -999;
 
+        inFarShootingZone = false;
+        inNearShootingZone = false;
+        isAlignedToGoal = false;
+
+        idleTimer = new ElapsedTime();
+        lastGoodLimelightResultTimer = new ElapsedTime();
+
         // initialize a new PIDF controller using the heading coefficients we already tuned for auto
         headingPIDFController = new PIDFController(follower.constants.coefficientsHeadingPIDF);
 
@@ -204,7 +216,21 @@ public class DriverDanny {
         follower.update(); // this will just update the Pedro Pathing following but can add additional steps if we need to later
         this.updateLimeLight(); // should update our limelight every loop
 
+        // if the robot has changed position, reset the timer so we can track how long we've been idle
+        if (lastKnownPose != null && lastKnownPose.distanceFrom(this.getPose()) > 0.5) {
+            idleTimer.reset();
+        }
+
         lastKnownPose = this.getPose();
+
+        checkForFarShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 9);
+        checkForNearShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 9);
+
+        if (Math.abs(limelightGoalHeadingError) < 2) {
+            isAlignedToGoal = true;
+        } else {
+            isAlignedToGoal = false;
+        }
 
         telemetry.addData("CurrentXPos", lastKnownPose.getX());
         telemetry.addData("CurrentYPos", lastKnownPose.getY());
@@ -213,13 +239,15 @@ public class DriverDanny {
         telemetry.addData("CurrentDistanceFromGoal", this.getCurrentDistanceFromGoal());
         telemetry.addData("CurrentDriveMode", currentDriveMode.toString());
         telemetry.addData("SlowModeEnabled", slowMode);
+        telemetry.addData("InFarShootingZone", inFarShootingZone);
+        telemetry.addData("InNearShootingZone", inNearShootingZone);
+        telemetry.addData("IsAlignedToGoal", isAlignedToGoal);
+        telemetry.addData("IdleTimer", idleTimer.milliseconds());
     }
 
     public void updateLimeLight() {
         double currentHeading = this.follower.getHeading();
         limelight.updateRobotOrientation(Math.toDegrees(currentHeading)-90); // subtract 90 degrees here for pedropathing heading conversion
-
-        limelightGoalHeadingError = -999;
 
         // Learned that Tx, Ty, and Ta are degrees of error from tag, not meters.
         LLResult result = limelight.getLatestResult();
@@ -230,13 +258,20 @@ public class DriverDanny {
 
                 if (currentAlliance == Alliance.BLUE && tagID == 20) {
                     limelightGoalHeadingError = fr.getTargetXDegrees();
+                    lastGoodLimelightResultTimer.reset();
                     break;
                 }
                 else if (currentAlliance == Alliance.RED && tagID == 24) {
                     limelightGoalHeadingError = fr.getTargetXDegrees();
+                    lastGoodLimelightResultTimer.reset();
                     break;
                 }
             }
+        }
+
+        // if last valid result was more than 1 second ago, assume limelight not visible
+        if (lastGoodLimelightResultTimer.milliseconds() > 1000) {
+            limelightGoalHeadingError = -999;
         }
     }
     //endregion
@@ -423,6 +458,22 @@ public class DriverDanny {
             this.follower.setPose(new Pose(8.5, 8.5, Math.toRadians(90)));
         } else {
             this.follower.setPose(new Pose(135.5, 8.5, Math.toRadians(90)));
+        }
+    }
+
+    public void checkForNearShootZone(double x, double y, double buffer) {
+        if ((y <= 144 + buffer) && (y >= -x + 144 - buffer) && (y >= x - buffer)) {
+            inNearShootingZone = true;
+        } else {
+            inNearShootingZone = false;
+        }
+    }
+
+    public void checkForFarShootZone(double x, double y, double buffer) {
+        if ((y >= 0 - buffer) && (y <= x - 48 + buffer) && (y <= -x + 96 + buffer)) {
+            inFarShootingZone = true;
+        } else {
+            inFarShootingZone = false;
         }
     }
     //endregion
