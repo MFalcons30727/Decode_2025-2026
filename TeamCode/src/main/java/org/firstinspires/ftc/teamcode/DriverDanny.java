@@ -25,7 +25,9 @@ public class DriverDanny {
     public static class Poses {
         //region shared poses
         public static Pose RED_GOAL_POSE = new Pose(144, 144, 0);
+        public static Pose RED_GOAL_AIMING_POSE = new Pose(138, 138, 0);
         public static Pose BLUE_GOAL_POSE = new Pose(0, 144, 0);
+        public static Pose BLUE_GOAL_AIMING_POSE = new Pose(6, 138, 0);
         public static Pose BLUE_FINAL_PARK_POSE = new Pose(105, 33, 0);
         public static Pose RED_FINAL_PARK_POSE = new Pose(38, 33, 0);
         //endregion
@@ -357,9 +359,9 @@ public class DriverDanny {
         Pose goalPose;
 
         if (currentAlliance == Alliance.RED) {
-            goalPose = Poses.RED_GOAL_POSE;
+            goalPose = Poses.RED_GOAL_AIMING_POSE;
         } else {
-            goalPose = Poses.BLUE_GOAL_POSE;
+            goalPose = Poses.BLUE_GOAL_AIMING_POSE;
         }
 
         // get the "vector" from current robot position to goal position
