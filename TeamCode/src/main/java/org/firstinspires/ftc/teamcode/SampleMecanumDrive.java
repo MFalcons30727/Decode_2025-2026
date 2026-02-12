@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
+@TeleOp (name="USE THIS JUST MECANUM", group = "TeleOp")
 
 public class SampleMecanumDrive extends LinearOpMode {
 private ElapsedTime runtime = new ElapsedTime();
@@ -12,7 +15,6 @@ private ElapsedTime runtime = new ElapsedTime();
     private DcMotor frontRightDrive = null;
     private DcMotor backLeftDrive = null;
     private DcMotor backRightDrive = null;
-    private DcMotor wheelSpin = null;
 
     @Override
     public void runOpMode() {
@@ -21,11 +23,10 @@ private ElapsedTime runtime = new ElapsedTime();
         frontRightDrive = hardwareMap.get(DcMotor.class, "rightFront");
         backLeftDrive = hardwareMap.get(DcMotor.class, "leftRear");
         backRightDrive = hardwareMap.get(DcMotor.class, "rightRear");
-        wheelSpin = hardwareMap.get(DcMotor.class, "lift");
 
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
         //wait for start (then player presses START)
@@ -53,14 +54,6 @@ private ElapsedTime runtime = new ElapsedTime();
             frontRightDrive.setPower(frontRightPower);
             backLeftDrive.setPower(backRightPower);
             backRightDrive.setPower(backLeftPower);
-
-            if(gamepad1.right_bumper) {
-                wheelSpin.setPower(1);
-            }
-
-            else {
-                wheelSpin.setPower(0);
-            }
 
 //            if (gamepad1.right_bumperWasPressed) {
 //                wheelSpin.setPower(1);
