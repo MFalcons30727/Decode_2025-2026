@@ -5,22 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/* TODO - Ideas before state comp
+/* TODO - Denham Practices
 Programming
-1) Re-introduce super button and/or heading lock toggle instead of manual trigger depress (Done - need to test)
-2) Adjust goal pose on trig-based auto-aim to be more reliable (in case limelight fails again)
-3) Re-check tuning of flywheel and PedroPathing
-4) Program LEDs to light up when auto-aim is activated (maybe different for trig vs limelight?)
-5) Add "panic button" that can allow a set velocity (1100?) and bypass LUT tables if same issues happen
-6) Brainstorm new autos to work with other teams (including gate opening and grabbing 3 extra far artifacts)
-7) Do we need relocalization at all?  Need to run full match and take measurements of end pose from telemetry
-
-Build
-1) Check hood condition
-2) Add side-panel for easier gate opening
-3) Replace rubber band intake with vectored-wheel intake? (and fix "stuck" condition?)
-4) Add LEDs to light up when auto-aim is activated
-5) Add LEDs/Sensors to track how many artifacts in bot?
+1) Re-measure LUT tables
+2) Re-tune Pedro Pathing
+2) Test adjusted trig goal pose (by unplugging the limelight)
+3) Test heading lock button
+4) New Autos (don't forget to open gate and collect the 3 far ones we haven't yet!)
  */
 @TeleOp(name = "ImprovedTeleOp", group = "TeleOp")
 public class  ImprovedTeleOp extends OpMode {
