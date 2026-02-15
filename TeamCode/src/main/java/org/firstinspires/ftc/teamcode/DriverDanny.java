@@ -91,9 +91,9 @@ public class DriverDanny {
         public static Pose ANBBA_EAT_TOP_ARTIFACTS_POSE = new Pose(22, 82, Math.toRadians(180));
         public static Pose ANBBA_MIDDLE_ARTIFACTS_POSE = new Pose(47, 59, Math.toRadians(180));
         public static Pose ANBBA_EAT_MIDDLE_ARTIFACTS_POSE = new Pose(15, 59, Math.toRadians(180));
-        public static Pose ANBBA_BOTTOM_ARTIFACTS_POSE = new Pose(47, 37, Math.toRadians(180));
-        public static Pose ANBBA_EAT_BOTTOM_ARTIFACTS_POSE = new Pose(15, 37, Math.toRadians(180));
-        public static Pose ANBBA_FINAL_SHOOTING_POSE = new Pose(53, 107, Math.toRadians(144));
+        public static Pose ANBBA_BOTTOM_ARTIFACTS_POSE = new Pose(47, 39, Math.toRadians(180));
+        public static Pose ANBBA_EAT_BOTTOM_ARTIFACTS_POSE = new Pose(15, 39, Math.toRadians(180));
+        public static Pose ANBBA_FINAL_SHOOTING_POSE = new Pose(53, 107, Math.toRadians(147));
         //endregion
 
         //region ANRBA (All Near Red Backup Auto)
@@ -124,9 +124,9 @@ public class DriverDanny {
         public static Pose AFRFA_START_POSE = new Pose(95, 8, Math.toRadians(90));
         public static Pose AFRFA_FAR_SHOOTING_POSE = new Pose(91, 14, Math.toRadians(69));
         public static Pose AFRFA_BOTTOM_ARTIFACTS_POSE = new Pose(99, 31, Math.toRadians(0));
-        public static Pose AFRFA_EAT_BOTTOM_ARTIFACTS_POSE = new Pose(129, 31, Math.toRadians(0));
+        public static Pose AFRFA_EAT_BOTTOM_ARTIFACTS_POSE = new Pose(131, 31, Math.toRadians(0));
         public static Pose AFRFA_MIDDLE_ARTIFACTS_POSE = new Pose(99, 56, Math.toRadians(0));
-        public static Pose AFRFA_EAT_MIDDLE_ARTIFACTS_POSE = new Pose(129, 56, Math.toRadians(0));
+        public static Pose AFRFA_EAT_MIDDLE_ARTIFACTS_POSE = new Pose(131, 56, Math.toRadians(0));
         public static Pose AFRFA_TOP_ARTIFACTS_POSE = new Pose(99, 82, Math.toRadians(0));
         public static Pose AFRFA_EAT_TOP_ARTIFACTS_POSE = new Pose(122, 82, Math.toRadians(0));
         public static Pose AFRFA_END_POSE = new Pose(96, 55, Math.toRadians(0));
