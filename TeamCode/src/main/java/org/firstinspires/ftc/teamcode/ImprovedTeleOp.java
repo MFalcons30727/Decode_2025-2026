@@ -72,6 +72,10 @@ public class  ImprovedTeleOp extends OpMode {
 //        if (gamepad1.yWasPressed()) {
 //            driver.relocalize();
 //        }
+
+        if (gamepad1.yWasPressed()) {
+            shooter.activateKickStand();
+        }
         //endregion
 
         //region Gamepad2

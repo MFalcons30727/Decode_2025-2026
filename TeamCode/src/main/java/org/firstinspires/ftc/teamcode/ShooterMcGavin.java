@@ -38,7 +38,7 @@ public class ShooterMcGavin {
     private double shooterTargetVelocity = 1200; // the velocity we want our shooter to be set to by default
     private double hoodServoPosition = 0; // the servo position of the adjustable hood
     private DcMotorEx shootMotor;
-    private DcMotor indexer, intake;
+    private DcMotor indexer, intake, kickstand;
     private Servo hoodServo;
     private Telemetry telemetry;
     private ElapsedTime shootStateTimer; // tried to use the Pedro Pathing timer first but it didn't allow for milliseconds, only seconds
@@ -54,6 +54,7 @@ public class ShooterMcGavin {
         indexer = hardwareMap.get(DcMotor.class, "indexer");
         intake = hardwareMap.get(DcMotor.class, "intake");
         hoodServo = hardwareMap.get(Servo.class, "hood");
+        kickstand = hardwareMap.get(DcMotor.class, "kickstand");
         telemetry = telemetryFromOpMode;
         shootStateTimer = new ElapsedTime();
         currentShootingState = TEST_MODE ? ShootingState.TEST_MODE_ONLY : ShootingState.OFF;
@@ -67,6 +68,7 @@ public class ShooterMcGavin {
 
         indexer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        kickstand.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(191,0,0,15);
         shootMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
@@ -247,5 +249,6 @@ public class ShooterMcGavin {
     public void turnOffIndexer() { indexer.setPower(0); }
     public void turnOnFlywheel() { shootMotor.setVelocity(1400); }
     public void turnOffFlywheel() { shootMotor.setVelocity(0); }
+    public void activateKickStand() { kickstand.setPower(1); }
     //endregion
 }
