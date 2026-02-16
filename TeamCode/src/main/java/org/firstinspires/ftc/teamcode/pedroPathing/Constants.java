@@ -16,14 +16,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(8.709) //has to be in kilograms, this is just a placeholder
+            .mass(13.608) //has to be in kilograms, this is just a placeholder
             // the placeholders I have right now are for the tuning part of this
             // TODO need to get values from telemetry by running each under automatic
             .forwardZeroPowerAcceleration(-36.23251140162128)
             .lateralZeroPowerAcceleration(-57.76687780044757)
             // the PIDF needs to be tuned accordingly, these are also placeholders
             .translationalPIDFCoefficients(new PIDFCoefficients(0.07, 0, 0.005, 0.025))
-            .headingPIDFCoefficients(new PIDFCoefficients(0.88, 0, 0.004, 0.025))
+            .headingPIDFCoefficients(new PIDFCoefficients(0.88, 0, 0.07, 0.025))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.06, 0, 0.0001, 0.4, 0.0025))
             //centripetal scaling is for curves, doesn't matter as much.
             .centripetalScaling(0.0005)
@@ -39,7 +39,7 @@ public class Constants {
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             // TODO this is the same as the top, 1 is just acting as a placeholder
-            .xVelocity(62.03094818836123)
+            .xVelocity(62.93198040338952)
             .yVelocity(49.822540523499015)
             ;
 

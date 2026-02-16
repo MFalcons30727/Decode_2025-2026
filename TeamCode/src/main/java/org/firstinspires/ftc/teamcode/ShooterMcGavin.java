@@ -119,7 +119,7 @@ public class ShooterMcGavin {
                 }
                 break;
             case OFF:
-                indexer.setPower(0);
+                 indexer.setPower(0);
                 shooterTargetVelocity = 1200;
                 hoodServoPosition = 0.5;
                 hoodServo.setPosition(hoodServoPosition);
@@ -129,7 +129,14 @@ public class ShooterMcGavin {
                 } else {
                     shootMotor.setVelocity(0);
                 }
+
+//                shootMotor.setVelocity(0);
+//                //hoodServo.setPosition(0);
+//                indexer.setPower(0);
+//                shooterTargetVelocity = 0;
+//                hoodServoPosition = 0;
                 break;
+//
         }
 
         telemetry.addData("ShooterState", currentShootingState.toString());
