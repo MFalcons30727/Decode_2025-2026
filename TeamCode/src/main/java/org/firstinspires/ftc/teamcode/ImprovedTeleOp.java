@@ -79,6 +79,10 @@ public class  ImprovedTeleOp extends OpMode {
             driver.toggleSlowMode(); // allows us to cut robot movement speed in half when precision is needed
         }
 
+        if (gamepad1.yWasPressed()) {
+            shooter.activateKickstand();
+        }
+
 //        if (gamepad1.xWasPressed()) {
 //            driver.finalPark();
 //        }

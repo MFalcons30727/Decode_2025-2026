@@ -30,6 +30,7 @@ public class DriverDanny {
         public static Pose BLUE_GOAL_AIMING_POSE = new Pose(10, 134, 0);
         public static Pose BLUE_FINAL_PARK_POSE = new Pose(105, 33, 0);
         public static Pose RED_FINAL_PARK_POSE = new Pose(38, 33, 0);
+        public static Pose BLUE_OPEN_GATE_POSE = new Pose (20, 70,90);
         //endregion
 
         //region BFA (Blue Far Auto)
@@ -228,7 +229,7 @@ public class DriverDanny {
         checkForFarShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 9);
         checkForNearShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 9);
 
-        if (Math.abs(limelightGoalHeadingError) < 2) {
+        if (Math.abs(limelightGoalHeadingError) < 2 || this.getHeadingErrorForAutoAimTrig() < 2) {
             isAlignedToGoal = true;
         } else {
             isAlignedToGoal = false;
@@ -402,6 +403,7 @@ public class DriverDanny {
 
     public void swapCurrentAlliance() {
         if (currentAlliance == Alliance.BLUE) {
+
             currentAlliance = Alliance.RED;
         } else {
             currentAlliance = Alliance.BLUE;
