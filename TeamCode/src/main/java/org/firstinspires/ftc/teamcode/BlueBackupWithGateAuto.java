@@ -57,7 +57,7 @@ public class BlueBackupWithGateAuto extends OpMode {
                 if (!driver.isBusy() && !shooter.isShooting()){
                     driver.moveToPose(DriverDanny.Poses.BBA_EAT_TOP_ARTIFACTS_POSE, true);
                     shooter.turnOnIntake();
-                    setAutoState(AutoState.MOVE_FROM_TOP_BLUE_ARTIFACTS_TO_SHOOTING_LINE);
+                    setAutoState(AutoState.OPEN_GATE);
                 }
                 break;
             case OPEN_GATE:
