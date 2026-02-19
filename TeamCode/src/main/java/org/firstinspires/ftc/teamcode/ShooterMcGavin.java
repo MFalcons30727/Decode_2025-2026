@@ -122,7 +122,7 @@ public class ShooterMcGavin {
                 break;
             case OFF:
                  indexer.setPower(0);
-                shooterTargetVelocity = 1200;
+                shooterTargetVelocity = 1000;
                 hoodServoPosition = 0.5;
                 hoodServo.setPosition(hoodServoPosition);
 
