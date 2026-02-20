@@ -61,7 +61,7 @@ public class AllNearRedBackupAuto extends OpMode {
             case MOVE_FROM_TOP_RED_ARTIFACTS_TO_SHOOTING_LINE:
                 if (!driver.isBusy() && !shooter.isShooting()){
                     driver.moveToPose(DriverDanny.Poses.ANRBA_NEAR_SHOOTING_POSE, true);
-                    setAutoState(AutoState.SHOOT_TOP_RED_ARTIFACTS);
+                      setAutoState(AutoState.SHOOT_TOP_RED_ARTIFACTS);
                 }
                 break;
             case SHOOT_TOP_RED_ARTIFACTS:

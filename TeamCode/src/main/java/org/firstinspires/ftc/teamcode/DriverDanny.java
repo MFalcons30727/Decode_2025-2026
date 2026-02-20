@@ -27,7 +27,7 @@ public class DriverDanny {
         public static Pose RED_GOAL_POSE = new Pose(144, 144, 0);
         public static Pose RED_GOAL_AIMING_POSE = new Pose(134, 134, 0);
         public static Pose BLUE_GOAL_POSE = new Pose(0, 144, 0);
-        public static Pose BLUE_GOAL_AIMING_POSE = new Pose(10, 134, 0);
+        public static Pose BLUE_GOAL_AIMING_POSE = new Pose(6, 134, 0);
         public static Pose BLUE_FINAL_PARK_POSE = new Pose(105, 33, 0);
         public static Pose RED_FINAL_PARK_POSE = new Pose(38, 33, 0);
         public static Pose BLUE_OPEN_GATE_POSE = new Pose (23, 75,90);
@@ -77,13 +77,13 @@ public class DriverDanny {
         //region RBA (Red Backup Auto)
         public static Pose RBA_START_POSE = new Pose(122, 123, Math.toRadians(37));
         public static Pose RBA_NEAR_SHOOTING_POSE = new Pose(95, 96, Math.toRadians(45));
-        public static Pose RBA_TOP_ARTIFACTS_POSE = new Pose(99, 82, Math.toRadians(0));
-        public static Pose RBA_AVOID_RUNNING_INTO_GATE_TOP_ARTIFACTS_POSE = new Pose(100, 82, Math.toRadians(0));
-        public static Pose RBA_EAT_TOP_ARTIFACTS_POSE = new Pose(122, 82, Math.toRadians(0));
-        public static Pose RBA_MIDDLE_ARTIFACTS_POSE = new Pose(99, 56, Math.toRadians(0));
-        public static Pose RBA_EAT_MIDDLE_ARTIFACTS_POSE = new Pose(129, 56, Math.toRadians(0));
-        public static Pose RBA_BOTTOM_ARTIFACTS_POSE = new Pose(99, 31, Math.toRadians(0));
-        public static Pose RBA_EAT_BOTTOM_ARTIFACTS_POSE = new Pose(129, 31, Math.toRadians(0));
+        public static Pose RBA_TOP_ARTIFACTS_POSE = new Pose(97, 84, Math.toRadians(0));
+        public static Pose RBA_AVOID_RUNNING_INTO_GATE_TOP_ARTIFACTS_POSE = new Pose(100, 84, Math.toRadians(0));
+        public static Pose RBA_EAT_TOP_ARTIFACTS_POSE = new Pose(120, 84, Math.toRadians(0));
+        public static Pose RBA_MIDDLE_ARTIFACTS_POSE = new Pose(97, 59, Math.toRadians(0));
+        public static Pose RBA_EAT_MIDDLE_ARTIFACTS_POSE = new Pose(129, 59, Math.toRadians(0));
+        public static Pose RBA_BOTTOM_ARTIFACTS_POSE = new Pose(97, 42, Math.toRadians(0));
+        public static Pose RBA_EAT_BOTTOM_ARTIFACTS_POSE = new Pose(129, 42, Math.toRadians(0));
         public static Pose RBA_FAR_SHOOTING_POSE = new Pose(91, 14, Math.toRadians(72));
         public static Pose RBA_END_POSE = new Pose(96, 55, Math.toRadians(0));
         //endregion
@@ -121,9 +121,11 @@ public class DriverDanny {
         public static Pose AFBFA_EAT_MIDDLE_ARTIFACTS_POSE = new Pose(15, 56, Math.toRadians(180));
         public static Pose AFBFA_TOP_ARTIFACTS_POSE = new Pose(45, 82, Math.toRadians(180));
         public static Pose AFBFA_EAT_TOP_ARTIFACTS_POSE = new Pose(22, 82, Math.toRadians(180));
-        public static Pose AFBFA_END_POSE = new Pose(48, 50, Math.toRadians(180));
-        public static Pose AFBFA_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(12, 8, Math.toRadians(180));
-        public static Pose AFBFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(8, 8, Math.toRadians(180));
+        public static Pose AFBFA_END_POSE = new Pose(48, 45, Math.toRadians(180));
+        public static Pose AFBFA_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(16, 20, Math.toRadians(120));
+        public static Pose AFBFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(12, 33, Math.toRadians(120));
+        public static Pose AFBFA_HUMAN_PLAYER_AREA_ARTIFACTS_SECOND_TIME_POSE = new Pose(12, 8, Math.toRadians(180));
+        public static Pose AFBFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_SECOND_TIME_POSE = new Pose(8, 8, Math.toRadians(180));
         //endregion
 
         //region AFRFA (All Far Red Far Auto)
@@ -135,9 +137,11 @@ public class DriverDanny {
         public static Pose AFRFA_EAT_MIDDLE_ARTIFACTS_POSE = new Pose(131, 56, Math.toRadians(0));
         public static Pose AFRFA_TOP_ARTIFACTS_POSE = new Pose(99, 82, Math.toRadians(0));
         public static Pose AFRFA_EAT_TOP_ARTIFACTS_POSE = new Pose(122, 82, Math.toRadians(0));
-        public static Pose AFRFA_END_POSE = new Pose(96, 55, Math.toRadians(0));
-        public static Pose AFRFA_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(132, 8, Math.toRadians(0));
-        public static Pose AFRFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(135, 8, Math.toRadians(0));
+        public static Pose AFRFA_END_POSE = new Pose(96, 50, Math.toRadians(0));
+        public static Pose AFRFA_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(128, 20, Math.toRadians(75));
+        public static Pose AFRFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(132, 33, Math.toRadians(75));
+        public static Pose AFRFA_HUMAN_PLAYER_AREA_ARTIFACTS_SECOND_TIME_POSE = new Pose(125, 8, Math.toRadians(0));
+        public static Pose AFRFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_SECOND_TIME_POSE = new Pose(130, 8, Math.toRadians(0));
 
         //endregion
     }

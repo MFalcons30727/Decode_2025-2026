@@ -66,7 +66,7 @@ public class BlueFarAuto extends OpMode {
             case SHOOT_BOTTOM_BLUE_ARTIFACTS:
                 if (!driver.isBusy()) {
                     shooter.startShootingAtVelocityAndHoodPosition(1320, 1);
-                    setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_MIDDLE_ARTIFACTS);
+                    setAutoState(AutoState.MOVE_FROM_TOP_BLUE_ARTIFACTS_TO_FINAL_SHOOTING_LINE);
                 }
                 break;
             case MOVE_FROM_SHOOTING_LINE_TO_BLUE_MIDDLE_ARTIFACTS:
@@ -113,7 +113,7 @@ public class BlueFarAuto extends OpMode {
                 break;
             case MOVE_FROM_TOP_BLUE_ARTIFACTS_TO_FINAL_SHOOTING_LINE:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    driver.moveToPose(DriverDanny.Poses.BFA_FINAL_SHOOTING_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.AFBFA_END_POSE, true);
                     setAutoState(AutoState.SHOOT_TOP_BLUE_ARTIFACTS);
                 }
                 break;
