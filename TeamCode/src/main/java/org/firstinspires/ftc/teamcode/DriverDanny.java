@@ -228,8 +228,12 @@ public class DriverDanny {
         this.updateLimeLight(); // should update our limelight every loop
 
         // if the robot has changed position, reset the timer so we can track how long we've been idle
-        if (lastKnownPose != null && lastKnownPose.distanceFrom(this.getPose()) > 0.5
-                && Math.abs(Math.toDegrees(lastKnownPose.getHeading()) - Math.toDegrees(this.getPose().getHeading())) > 0.25) {
+        if (lastKnownPose != null &&
+                (
+                    lastKnownPose.distanceFrom(this.getPose()) > 0.5
+                    || Math.abs(Math.toDegrees(lastKnownPose.getHeading()) - Math.toDegrees(this.getPose().getHeading())) > 0.1
+                )
+            ) {
             idleTimer.reset();
         }
 
