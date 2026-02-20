@@ -171,6 +171,7 @@ public class ShooterMcGavin {
         // the first parameter of both velocityLUT and hoodServoPositionLUT below is the measured distance from goal (use tape measure from goal to front of robot)
         // on velocityLUT, the second parameter is what velocity we need to set the flywheel to for it to make it
         // on hoodServoPositionLUT, the second parameter is what position we need to set the hood servo to for the best angle
+        velocityLUT.add(48, 940);
         velocityLUT.add(60, 980);
         velocityLUT.add(72, 1020);
         velocityLUT.add(84, 1080);
@@ -180,8 +181,10 @@ public class ShooterMcGavin {
         velocityLUT.add(132, 1300);
         velocityLUT.add(144, 1340);
         velocityLUT.add(156, 1400);
+        velocityLUT.add(168, 1450);
         velocityLUT.createLUT();
 
+        hoodServoPositionLUT.add(48, 0.1);
         hoodServoPositionLUT.add(60, 0.1);
         hoodServoPositionLUT.add(72, 0.1);
         hoodServoPositionLUT.add(84, 0.35);
@@ -191,6 +194,7 @@ public class ShooterMcGavin {
         hoodServoPositionLUT.add(132, 0.8);
         hoodServoPositionLUT.add(144, 0.9);
         hoodServoPositionLUT.add(156, 1);
+        hoodServoPositionLUT.add(168, 1);
         hoodServoPositionLUT.createLUT();
     }
 

@@ -30,7 +30,8 @@ public class DriverDanny {
         public static Pose BLUE_GOAL_AIMING_POSE = new Pose(10, 134, 0);
         public static Pose BLUE_FINAL_PARK_POSE = new Pose(105, 33, 0);
         public static Pose RED_FINAL_PARK_POSE = new Pose(38, 33, 0);
-        public static Pose BLUE_OPEN_GATE_POSE = new Pose (20, 70,90);
+        public static Pose BLUE_OPEN_GATE_POSE = new Pose (23, 75,90);
+        public static Pose RED_OPEN_GATE_POSE = new Pose (120, 75,90);
         //endregion
 
         //region BFA (Blue Far Auto)
@@ -63,6 +64,7 @@ public class DriverDanny {
         public static Pose BBA_START_POSE = new Pose(22, 123, Math.toRadians(144));
         public static Pose BBA_NEAR_SHOOTING_POSE = new Pose(49, 96, Math.toRadians(140));
         public static Pose BBA_TOP_ARTIFACTS_POSE = new Pose(47, 82, Math.toRadians(180));
+        public static Pose BBA_AVOID_RUNNING_INTO_GATE_TOP_ARTIFACTS_POSE = new Pose(44, 82, Math.toRadians(180));
         public static Pose BBA_EAT_TOP_ARTIFACTS_POSE = new Pose(22, 82, Math.toRadians(180));
         public static Pose BBA_MIDDLE_ARTIFACTS_POSE = new Pose(47, 59, Math.toRadians(180));
         public static Pose BBA_EAT_MIDDLE_ARTIFACTS_POSE = new Pose(15, 59, Math.toRadians(180));
@@ -76,6 +78,7 @@ public class DriverDanny {
         public static Pose RBA_START_POSE = new Pose(122, 123, Math.toRadians(37));
         public static Pose RBA_NEAR_SHOOTING_POSE = new Pose(95, 96, Math.toRadians(45));
         public static Pose RBA_TOP_ARTIFACTS_POSE = new Pose(99, 82, Math.toRadians(0));
+        public static Pose RBA_AVOID_RUNNING_INTO_GATE_TOP_ARTIFACTS_POSE = new Pose(100, 82, Math.toRadians(0));
         public static Pose RBA_EAT_TOP_ARTIFACTS_POSE = new Pose(122, 82, Math.toRadians(0));
         public static Pose RBA_MIDDLE_ARTIFACTS_POSE = new Pose(99, 56, Math.toRadians(0));
         public static Pose RBA_EAT_MIDDLE_ARTIFACTS_POSE = new Pose(129, 56, Math.toRadians(0));
@@ -118,7 +121,9 @@ public class DriverDanny {
         public static Pose AFBFA_EAT_MIDDLE_ARTIFACTS_POSE = new Pose(15, 56, Math.toRadians(180));
         public static Pose AFBFA_TOP_ARTIFACTS_POSE = new Pose(45, 82, Math.toRadians(180));
         public static Pose AFBFA_EAT_TOP_ARTIFACTS_POSE = new Pose(22, 82, Math.toRadians(180));
-        public static Pose AFBFA_END_POSE = new Pose(48, 55, Math.toRadians(180));
+        public static Pose AFBFA_END_POSE = new Pose(48, 50, Math.toRadians(180));
+        public static Pose AFBFA_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(12, 8, Math.toRadians(180));
+        public static Pose AFBFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(8, 8, Math.toRadians(180));
         //endregion
 
         //region AFRFA (All Far Red Far Auto)
@@ -131,6 +136,9 @@ public class DriverDanny {
         public static Pose AFRFA_TOP_ARTIFACTS_POSE = new Pose(99, 82, Math.toRadians(0));
         public static Pose AFRFA_EAT_TOP_ARTIFACTS_POSE = new Pose(122, 82, Math.toRadians(0));
         public static Pose AFRFA_END_POSE = new Pose(96, 55, Math.toRadians(0));
+        public static Pose AFRFA_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(132, 8, Math.toRadians(0));
+        public static Pose AFRFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(135, 8, Math.toRadians(0));
+
         //endregion
     }
     //endregion
@@ -220,7 +228,8 @@ public class DriverDanny {
         this.updateLimeLight(); // should update our limelight every loop
 
         // if the robot has changed position, reset the timer so we can track how long we've been idle
-        if (lastKnownPose != null && lastKnownPose.distanceFrom(this.getPose()) > 0.5) {
+        if (lastKnownPose != null && lastKnownPose.distanceFrom(this.getPose()) > 0.5
+                && Math.abs(Math.toDegrees(lastKnownPose.getHeading()) - Math.toDegrees(this.getPose().getHeading())) > 0.25) {
             idleTimer.reset();
         }
 
