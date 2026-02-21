@@ -14,8 +14,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import com.bylazar.field.FieldManager;
+import com.bylazar.field.PanelsField;
+import com.bylazar.field.Style;
+import com.pedropathing.util.PoseHistory;
 
 import java.util.List;
 
@@ -164,6 +166,10 @@ public class DriverDanny {
     public static boolean isAlignedToGoal = false;
     public static ElapsedTime idleTimer;
     public static ElapsedTime lastGoodLimelightResultTimer;
+
+    private static final Style robotLook = new Style("", "#3F51B5", 0.75);
+    private static final Style historyLook = new Style("", "#4CAF50", 0.75);
+    private static final Style limelightLook = new Style("", "#FF9800", 0.75);
     //endregion
 
     //region Class Members
@@ -172,9 +178,14 @@ public class DriverDanny {
     private Telemetry telemetry;
     private Follower follower; // part of the Pedro Pathing package, follows the path
 
+    public boolean debug = false;
     private boolean slowMode = false;
     private double limelightGoalHeadingError;
     private PIDFController headingPIDFController;
+
+    private boolean shouldRelocalize = false;
+    private double relocalizePedroX;
+    private double relocalizePedroY;
     //endregion
 
     //region Constructors
@@ -189,6 +200,8 @@ public class DriverDanny {
         // think of this like our "init" but for the DriverDanny specifically
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startingPose);
+
+        PanelsField.INSTANCE.getField().setOffsets(PanelsField.INSTANCE.getPresets().getPEDRO_PATHING());
 
         telemetry = telemetryFromOpMode;
         currentAlliance = alliance;
@@ -227,6 +240,10 @@ public class DriverDanny {
         follower.update(); // this will just update the Pedro Pathing following but can add additional steps if we need to later
         this.updateLimeLight(); // should update our limelight every loop
 
+        if (debug) {
+            drawDebugField();
+        }
+
         // if the robot has changed position, reset the timer so we can track how long we've been idle
         if (lastKnownPose != null &&
                 (
@@ -259,6 +276,9 @@ public class DriverDanny {
         telemetry.addData("InNearShootingZone", inNearShootingZone);
         telemetry.addData("IsAlignedToGoal", isAlignedToGoal);
         telemetry.addData("IdleTimer", idleTimer.milliseconds());
+
+        telemetry.addData("LLPedroX", relocalizePedroX);
+        telemetry.addData("LLPedroY", relocalizePedroY);
     }
 
     public void updateLimeLight() {
@@ -283,12 +303,70 @@ public class DriverDanny {
                     break;
                 }
             }
+
+            if (shouldRelocalize && idleTimer.milliseconds() > 500) {
+                Pose3D botpose = result.getBotpose_MT2();
+
+                if (botpose != null) {
+                    // convert from meters to inches and adjust for 0,0 origin like pedropathing instead of -72,-72 that limelight uses
+                    relocalizePedroX = (botpose.getPosition().y * 39.3700787) + 72.0; // x and y are intentionally flipped here
+                    relocalizePedroY = -(botpose.getPosition().x * 39.3700787) + 72.0;
+
+                    Pose newPedroPose = new Pose(relocalizePedroX, relocalizePedroY, currentHeading);
+
+                    this.follower.setPose(newPedroPose);
+                    shouldRelocalize = false;
+                }
+            }
         }
 
         // if last valid result was more than 1 second ago, assume limelight not visible
         if (lastGoodLimelightResultTimer.milliseconds() > 1000) {
             limelightGoalHeadingError = -999;
         }
+    }
+
+    private void drawDebugField() {
+        Pose pose = follower.getPose();
+        FieldManager panelsField = PanelsField.INSTANCE.getField();
+        PoseHistory poseHistory = follower.getPoseHistory();
+
+        if (pose == null || Double.isNaN(pose.getX()) || Double.isNaN(pose.getY()) || Double.isNaN(pose.getHeading())) {
+            return;
+        }
+
+        // Draw pose history
+        panelsField.setStyle(historyLook);
+        if (poseHistory != null) {
+            int size = poseHistory.getXPositionsArray().length;
+            for (int i = 0; i < size - 1; i++) {
+                panelsField.moveCursor(poseHistory.getXPositionsArray()[i], poseHistory.getYPositionsArray()[i]);
+                panelsField.line(poseHistory.getXPositionsArray()[i + 1], poseHistory.getYPositionsArray()[i + 1]);
+            }
+        }
+
+        // Draw robot
+        panelsField.setStyle(robotLook);
+        panelsField.moveCursor(pose.getX(), pose.getY());
+        panelsField.circle(9); // ROBOT_RADIUS
+
+        Vector v = pose.getHeadingAsUnitVector();
+        v.setMagnitude(v.getMagnitude() * 9);
+        double x1 = pose.getX() + v.getXComponent() / 2, y1 = pose.getY() + v.getYComponent() / 2;
+        double x2 = pose.getX() + v.getXComponent(), y2 = pose.getY() + v.getYComponent();
+
+        panelsField.setStyle(robotLook);
+        panelsField.moveCursor(x1, y1);
+        panelsField.line(x2, y2);
+
+        // Draw limelight relocalization position
+        if (relocalizePedroX != 0.0 && relocalizePedroY != 0.0) {
+            panelsField.setStyle(limelightLook);
+            panelsField.moveCursor(relocalizePedroX, relocalizePedroY);
+            panelsField.circle(5); // Draw a slightly smaller circle for the limelight pose
+        }
+
+        panelsField.update();
     }
     //endregion
 
@@ -470,12 +548,12 @@ public class DriverDanny {
 
     // to localize right now, make sure to drive into your alliance corner and make sure the robot is facing upfield towards the goals (90 degrees)
     public void relocalize() {
-        //shouldRelocalize = true;
-        if (currentAlliance == Alliance.RED) {
-            this.follower.setPose(new Pose(8.5, 8.5, Math.toRadians(90)));
-        } else {
-            this.follower.setPose(new Pose(135.5, 8.5, Math.toRadians(90)));
-        }
+        shouldRelocalize = true;
+        // if (currentAlliance == Alliance.RED) {
+        //     this.follower.setPose(new Pose(8.5, 8.5, Math.toRadians(90)));
+        // } else {
+        //     this.follower.setPose(new Pose(135.5, 8.5, Math.toRadians(90)));
+        // }
     }
 
     public void checkForNearShootZone(double x, double y, double buffer) {

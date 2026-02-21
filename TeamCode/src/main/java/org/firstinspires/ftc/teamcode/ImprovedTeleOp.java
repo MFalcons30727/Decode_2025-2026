@@ -87,9 +87,9 @@ public class  ImprovedTeleOp extends OpMode {
 //            driver.finalPark();
 //        }
 
-//        if (gamepad1.yWasPressed()) {
-//            driver.relocalize();
-//        }
+       if (gamepad1.yWasPressed()) {
+           driver.relocalize();
+       }
         //endregion
 
         //region Gamepad2
