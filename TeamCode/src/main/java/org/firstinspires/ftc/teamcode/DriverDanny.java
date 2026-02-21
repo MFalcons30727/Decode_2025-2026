@@ -321,14 +321,13 @@ public class DriverDanny {
 
                 Pose newPedroPose = new Pose(relocalizePedroX, relocalizePedroY, currentHeading);
 
-                //if (shouldRelocalize && idleTimer.milliseconds() > 250) {
-                if (lastRelocalizeTimer.milliseconds() > 250
+                if (shouldRelocalize
+                        && lastRelocalizeTimer.milliseconds() > 250
                         && Math.abs(botpose.getPosition().z) < 0.1
                         && relocalizePedroX > 0 && relocalizePedroX < 144
                         && relocalizePedroY > 0 && relocalizePedroY < 144) {
                     this.follower.setPose(newPedroPose);
                     lastRelocalizeTimer.reset();
-                    //shouldRelocalize = false;
                 }
             }
 
