@@ -34,7 +34,7 @@ public class DriverDanny {
         public static Pose RED_GOAL_POSE = new Pose(144, 144, Math.toRadians(0));
         public static Pose RED_GOAL_AIMING_POSE = new Pose(134, 134, Math.toRadians(0));
         public static Pose BLUE_GOAL_POSE = new Pose(0, 144, Math.toRadians(0));
-        public static Pose BLUE_GOAL_AIMING_POSE = new Pose(10, 134, Math.toRadians(0));
+        public static Pose BLUE_GOAL_AIMING_POSE = new Pose(6, 134, Math.toRadians(0));
         public static Pose BLUE_FINAL_PARK_POSE = new Pose(105, 33, Math.toRadians(0));
         public static Pose RED_FINAL_PARK_POSE = new Pose(38, 33, Math.toRadians(0));
         public static Pose BLUE_OPEN_GATE_POSE = new Pose (23, 75,Math.toRadians(90));
