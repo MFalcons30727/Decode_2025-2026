@@ -26,6 +26,7 @@ public class  ImprovedTeleOp extends OpMode {
     public void init() {
         DriverDanny.Alliance startingAlliance = DriverDanny.Alliance.BLUE;
         Pose startingPose = DriverDanny.Poses.BFA_START_POSE;
+        //Pose startingPose = DriverDanny.Poses.TEST_START_POSE;
 
         if (USE_LAST_POSE_FROM_AUTO && DriverDanny.currentAlliance != null) {
             startingAlliance = DriverDanny.currentAlliance;
@@ -39,6 +40,8 @@ public class  ImprovedTeleOp extends OpMode {
                 telemetry,
                 startingAlliance,
                 startingPose);
+
+        driver.autoRelocalize(true);
 
         shooter = new ShooterMcGavin(hardwareMap, telemetry);
 
@@ -79,16 +82,16 @@ public class  ImprovedTeleOp extends OpMode {
             driver.toggleSlowMode(); // allows us to cut robot movement speed in half when precision is needed
         }
 
-        if (gamepad1.yWasPressed()) {
-            shooter.activateKickstand();
-        }
+//        if (gamepad1.yWasPressed()) {
+//            shooter.activateKickstand();
+//        }
 
 //        if (gamepad1.xWasPressed()) {
 //            driver.finalPark();
 //        }
 
        if (gamepad1.yWasPressed()) {
-           driver.relocalize();
+           driver.autoRelocalize(false);
        }
         //endregion
 
@@ -119,12 +122,12 @@ public class  ImprovedTeleOp extends OpMode {
         }
 
         if ((headingLock || gamepad2.right_bumper || gamepad2.right_trigger > 0.25) && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
-            rotate = driver.getHeadingErrorForAutoAimLimelight();
+            //rotate = driver.getHeadingErrorForAutoAimLimelight();
 
             //if not able to find april tag revert to Trig based aiming
-            if (rotate == -1) {
+            //if (rotate == -1) {
                 rotate = driver.getHeadingErrorForAutoAimTrig();
-            }
+            //}
         }
 //        else {
 //            // TODO: Turn off auto-aim LED :)

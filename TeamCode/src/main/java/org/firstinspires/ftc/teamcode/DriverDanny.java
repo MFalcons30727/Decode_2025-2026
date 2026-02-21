@@ -5,6 +5,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
+import com.pedropathing.math.Vector;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
@@ -19,6 +20,10 @@ import com.bylazar.field.PanelsField;
 import com.bylazar.field.Style;
 import com.pedropathing.util.PoseHistory;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
 import java.util.List;
 
 public class DriverDanny {
@@ -26,14 +31,15 @@ public class DriverDanny {
     //region Poses
     public static class Poses {
         //region shared poses
-        public static Pose RED_GOAL_POSE = new Pose(144, 144, 0);
-        public static Pose RED_GOAL_AIMING_POSE = new Pose(134, 134, 0);
-        public static Pose BLUE_GOAL_POSE = new Pose(0, 144, 0);
-        public static Pose BLUE_GOAL_AIMING_POSE = new Pose(10, 134, 0);
-        public static Pose BLUE_FINAL_PARK_POSE = new Pose(105, 33, 0);
-        public static Pose RED_FINAL_PARK_POSE = new Pose(38, 33, 0);
-        public static Pose BLUE_OPEN_GATE_POSE = new Pose (23, 75,90);
-        public static Pose RED_OPEN_GATE_POSE = new Pose (120, 75,90);
+        public static Pose TEST_START_POSE = new Pose(72, 72, Math.toRadians(90));
+        public static Pose RED_GOAL_POSE = new Pose(144, 144, Math.toRadians(0));
+        public static Pose RED_GOAL_AIMING_POSE = new Pose(134, 134, Math.toRadians(0));
+        public static Pose BLUE_GOAL_POSE = new Pose(0, 144, Math.toRadians(0));
+        public static Pose BLUE_GOAL_AIMING_POSE = new Pose(10, 134, Math.toRadians(0));
+        public static Pose BLUE_FINAL_PARK_POSE = new Pose(105, 33, Math.toRadians(0));
+        public static Pose RED_FINAL_PARK_POSE = new Pose(38, 33, Math.toRadians(0));
+        public static Pose BLUE_OPEN_GATE_POSE = new Pose (23, 75,Math.toRadians(90));
+        public static Pose RED_OPEN_GATE_POSE = new Pose (120, 75,Math.toRadians(90));
         //endregion
 
         //region BFA (Blue Far Auto)
@@ -166,6 +172,7 @@ public class DriverDanny {
     public static boolean isAlignedToGoal = false;
     public static ElapsedTime idleTimer;
     public static ElapsedTime lastGoodLimelightResultTimer;
+    public static ElapsedTime lastRelocalizeTimer;
 
     private static final Style robotLook = new Style("", "#3F51B5", 0.75);
     private static final Style historyLook = new Style("", "#4CAF50", 0.75);
@@ -178,7 +185,7 @@ public class DriverDanny {
     private Telemetry telemetry;
     private Follower follower; // part of the Pedro Pathing package, follows the path
 
-    public boolean debug = false;
+    public boolean debug = true;
     private boolean slowMode = false;
     private double limelightGoalHeadingError;
     private PIDFController headingPIDFController;
@@ -214,6 +221,7 @@ public class DriverDanny {
 
         idleTimer = new ElapsedTime();
         lastGoodLimelightResultTimer = new ElapsedTime();
+        lastRelocalizeTimer = new ElapsedTime();
 
         // initialize a new PIDF controller using the heading coefficients we already tuned for auto
         headingPIDFController = new PIDFController(follower.constants.coefficientsHeadingPIDF);
@@ -279,11 +287,12 @@ public class DriverDanny {
 
         telemetry.addData("LLPedroX", relocalizePedroX);
         telemetry.addData("LLPedroY", relocalizePedroY);
+        telemetry.addData("LastRelocalizeTimer", lastRelocalizeTimer.milliseconds());
     }
 
     public void updateLimeLight() {
         double currentHeading = this.follower.getHeading();
-        limelight.updateRobotOrientation(Math.toDegrees(currentHeading)-90); // subtract 90 degrees here for pedropathing heading conversion
+        limelight.updateRobotOrientation(Math.toDegrees(currentHeading)+90); // subtract 90 degrees here for pedropathing heading conversion
 
         // Learned that Tx, Ty, and Ta are degrees of error from tag, not meters.
         LLResult result = limelight.getLatestResult();
@@ -304,20 +313,26 @@ public class DriverDanny {
                 }
             }
 
-            if (shouldRelocalize && idleTimer.milliseconds() > 500) {
-                Pose3D botpose = result.getBotpose_MT2();
+            Pose3D botpose = result.getBotpose_MT2();
 
-                if (botpose != null) {
-                    // convert from meters to inches and adjust for 0,0 origin like pedropathing instead of -72,-72 that limelight uses
-                    relocalizePedroX = (botpose.getPosition().y * 39.3700787) + 72.0; // x and y are intentionally flipped here
-                    relocalizePedroY = -(botpose.getPosition().x * 39.3700787) + 72.0;
+            if (botpose != null) {
+                // convert from meters to inches and adjust for 0,0 origin like pedropathing instead of -72,-72 that limelight uses
+                relocalizePedroX = (botpose.getPosition().y * 39.3700787) + 72.0; // x and y are intentionally flipped here
+                relocalizePedroY = -(botpose.getPosition().x * 39.3700787) + 72.0;
 
-                    Pose newPedroPose = new Pose(relocalizePedroX, relocalizePedroY, currentHeading);
+                Pose newPedroPose = new Pose(relocalizePedroX, relocalizePedroY, currentHeading);
 
+                //if (shouldRelocalize && idleTimer.milliseconds() > 250) {
+                if (lastRelocalizeTimer.milliseconds() > 250
+                        && Math.abs(botpose.getPosition().z) < 0.1
+                        && relocalizePedroX > 0 && relocalizePedroX < 144
+                        && relocalizePedroY > 0 && relocalizePedroY < 144) {
                     this.follower.setPose(newPedroPose);
-                    shouldRelocalize = false;
+                    lastRelocalizeTimer.reset();
+                    //shouldRelocalize = false;
                 }
             }
+
         }
 
         // if last valid result was more than 1 second ago, assume limelight not visible
@@ -547,8 +562,8 @@ public class DriverDanny {
     }
 
     // to localize right now, make sure to drive into your alliance corner and make sure the robot is facing upfield towards the goals (90 degrees)
-    public void relocalize() {
-        shouldRelocalize = true;
+    public void autoRelocalize(boolean allow) {
+        shouldRelocalize = allow;
         // if (currentAlliance == Alliance.RED) {
         //     this.follower.setPose(new Pose(8.5, 8.5, Math.toRadians(90)));
         // } else {
