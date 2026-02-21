@@ -5,14 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/* TODO - Denham Practices
-Programming
-1) Re-measure LUT tables
-2) Re-tune Pedro Pathing
-2) Test adjusted trig goal pose (by unplugging the limelight)
-3) Test heading lock button
-4) New Autos (don't forget to open gate and collect the 3 far ones we haven't yet!)
- */
 @TeleOp(name = "ImprovedTeleOp", group = "TeleOp")
 public class  ImprovedTeleOp extends OpMode {
     //NEED TO REMEMBER THAT SETTING THIS IS TRUE IS WHAT ENABLES US TO CARRY OVER LAST POSE FROM AUTO.
@@ -26,7 +18,6 @@ public class  ImprovedTeleOp extends OpMode {
     public void init() {
         DriverDanny.Alliance startingAlliance = DriverDanny.Alliance.BLUE;
         Pose startingPose = DriverDanny.Poses.BFA_START_POSE;
-        //Pose startingPose = DriverDanny.Poses.TEST_START_POSE;
 
         if (USE_LAST_POSE_FROM_AUTO && DriverDanny.currentAlliance != null) {
             startingAlliance = DriverDanny.currentAlliance;
@@ -74,10 +65,6 @@ public class  ImprovedTeleOp extends OpMode {
             driver.swapCurrentDriveMode();
         }
 
-//        if (gamepad1.aWasPressed()) {
-//            driver.abortPath();
-//        }
-
         if (gamepad1.bWasPressed()) {
             driver.toggleSlowMode(); // allows us to cut robot movement speed in half when precision is needed
         }
@@ -85,14 +72,6 @@ public class  ImprovedTeleOp extends OpMode {
 //        if (gamepad1.yWasPressed()) {
 //            shooter.activateKickstand();
 //        }
-
-//        if (gamepad1.xWasPressed()) {
-//            driver.finalPark();
-//        }
-
-       if (gamepad1.yWasPressed()) {
-           driver.autoRelocalize(false);
-       }
         //endregion
 
         //region Gamepad2
@@ -122,16 +101,8 @@ public class  ImprovedTeleOp extends OpMode {
         }
 
         if ((headingLock || gamepad2.right_bumper || gamepad2.right_trigger > 0.25) && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
-            //rotate = driver.getHeadingErrorForAutoAimLimelight();
-
-            //if not able to find april tag revert to Trig based aiming
-            //if (rotate == -1) {
                 rotate = driver.getHeadingErrorForAutoAimTrig();
-            //}
         }
-//        else {
-//            // TODO: Turn off auto-aim LED :)
-//        }
 
         if (gamepad2.left_trigger > 0.25 && !shooter.isShooting()) {
             shooter.turnOnIntake();

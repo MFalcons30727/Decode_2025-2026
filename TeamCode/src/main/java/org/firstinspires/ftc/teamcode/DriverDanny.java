@@ -31,7 +31,6 @@ public class DriverDanny {
     //region Poses
     public static class Poses {
         //region shared poses
-        public static Pose TEST_START_POSE = new Pose(72, 72, Math.toRadians(90));
         public static Pose RED_GOAL_POSE = new Pose(144, 144, Math.toRadians(0));
         public static Pose RED_GOAL_AIMING_POSE = new Pose(134, 134, Math.toRadians(0));
         public static Pose BLUE_GOAL_POSE = new Pose(0, 144, Math.toRadians(0));
@@ -264,8 +263,8 @@ public class DriverDanny {
 
         lastKnownPose = this.getPose();
 
-        checkForFarShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 9);
-        checkForNearShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 9);
+        checkForFarShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 12);
+        checkForNearShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 12);
 
         if (Math.abs(limelightGoalHeadingError) < 2 || this.getHeadingErrorForAutoAimTrig() < 2) {
             isAlignedToGoal = true;
