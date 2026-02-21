@@ -508,7 +508,6 @@ public class DriverDanny {
 
     public void swapCurrentAlliance() {
         if (currentAlliance == Alliance.BLUE) {
-
             currentAlliance = Alliance.RED;
         } else {
             currentAlliance = Alliance.BLUE;
@@ -563,11 +562,11 @@ public class DriverDanny {
     // to localize right now, make sure to drive into your alliance corner and make sure the robot is facing upfield towards the goals (90 degrees)
     public void autoRelocalize(boolean allow) {
         shouldRelocalize = allow;
-        // if (currentAlliance == Alliance.RED) {
-        //     this.follower.setPose(new Pose(8.5, 8.5, Math.toRadians(90)));
-        // } else {
-        //     this.follower.setPose(new Pose(135.5, 8.5, Math.toRadians(90)));
-        // }
+    }
+
+    public void resetHeadingTo90Degrees() {
+        Pose newHeadingPose = new Pose(this.getPose().getX(), this.getPose().getY(), Math.toRadians(90));
+        this.follower.setPose(newHeadingPose);
     }
 
     public void checkForNearShootZone(double x, double y, double buffer) {

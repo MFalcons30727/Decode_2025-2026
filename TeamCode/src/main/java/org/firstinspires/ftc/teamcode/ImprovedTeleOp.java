@@ -69,6 +69,10 @@ public class  ImprovedTeleOp extends OpMode {
             driver.toggleSlowMode(); // allows us to cut robot movement speed in half when precision is needed
         }
 
+        if (gamepad1.backWasPressed()) {
+            driver.resetHeadingTo90Degrees(); // ONLY USE THIS IF THE HEADING IS ABSOLUTELY BROKEN!!
+        }
+
 //        if (gamepad1.yWasPressed()) {
 //            shooter.activateKickstand();
 //        }
