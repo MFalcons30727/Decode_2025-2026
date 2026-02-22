@@ -42,6 +42,12 @@ public class DriverDanny {
         //endregion
 
         //region BFA (Blue Far Auto)
+        public static Pose TEST_POSE1 = new Pose(72-8, 72+12, Math.toRadians(90));
+        public static Pose TEST_POSE2 = new Pose(72+8, 72-12, Math.toRadians(90));
+        public static Pose TEST_POSE3 = new Pose(72-8, 72+12, Math.toRadians(144));
+        public static Pose TEST_POSE4 = new Pose(72+8, 72-12, Math.toRadians(144));
+
+
         public static Pose BFA_START_POSE = new Pose(49, 8, Math.toRadians(90));
         public static Pose BFA_FAR_SHOOTING_POSE = new Pose(53, 14, Math.toRadians(111));
         public static Pose BFA_BOTTOM_ARTIFACTS_POSE = new Pose(45, 31, Math.toRadians(180));
@@ -537,6 +543,7 @@ public class DriverDanny {
         PathChain newPath = follower.pathBuilder()
                 .addPath(new BezierLine(getPose(), newPose))
                 .setLinearHeadingInterpolation(getPose().getHeading(), newPose.getHeading(), 0.8)
+                .setGlobalDeceleration()
                 .build();
 
         follower.followPath(newPath,0.89, holdEnd); // start the robot moving towards the new pose immediately

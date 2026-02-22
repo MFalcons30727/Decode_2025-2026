@@ -22,7 +22,7 @@ public class Constants {
             .forwardZeroPowerAcceleration(-36.23251140162128)
             .lateralZeroPowerAcceleration(-57.76687780044757)
             // the PIDF needs to be tuned accordingly, these are also placeholders
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.07, 0, 0.005, 0.025))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.075, 0, 0.005, 0.03))
             .headingPIDFCoefficients(new PIDFCoefficients(0.88, 0, 0.07, 0.025))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.06, 0, 0.0001, 0.4, 0.0025))
             //centripetal scaling is for curves, doesn't matter as much.
@@ -53,8 +53,8 @@ public class Constants {
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
     public static PathConstraints pathConstraints = new PathConstraints(0.99,
             100,
-            1.25,
-            1);
+            0.725,
+            0.9);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
