@@ -76,25 +76,25 @@ public class CoOpAllFarBlueFarAuto extends OpMode {
                 break;
             case MOVE_FROM_SHOOTING_LINE_TO_HUMAN_PLAYER_ZONE_FIRST_TIME:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    //driver.moveToPose(DriverDanny.Poses.BLUE_HUMAN_PLAYER_AREA_ARTIFACTS_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.BLUE_HUMAN_PLAYER_ZONE_POSE1, true);
                     setAutoState(AutoState.EAT_HUMAN_PLAYER_ZONE_ARTIFACTS_FIRST_TIME);
                 }
                 break;
             case EAT_HUMAN_PLAYER_ZONE_ARTIFACTS_FIRST_TIME:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    //driver.moveToPose(DriverDanny.Poses.BLUE_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.BLUE_EAT_HUMAN_PLAYER_ZONE_POSE1, true);
                     setAutoState(AutoState.PREPARE_FOR_DOUBLE_EAT_FIRST_TIME);
                 }
                 break;
             case PREPARE_FOR_DOUBLE_EAT_FIRST_TIME:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    //driver.moveToPose(DriverDanny.Poses.BLUE_HUMAN_PLAYER_AREA_ARTIFACTS_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.BLUE_HUMAN_PLAYER_ZONE_POSE2, true);
                     setAutoState(AutoState.DOUBLE_EAT_HUMAN_PLAYER_ZONE_ARTIFACTS_FIRST_TIME);
                 }
                 break;
             case DOUBLE_EAT_HUMAN_PLAYER_ZONE_ARTIFACTS_FIRST_TIME:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    //driver.moveToPose(DriverDanny.Poses.BLUE_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.BLUE_EAT_HUMAN_PLAYER_ZONE_POSE2, true);
                     setAutoState(AutoState.MOVE_FROM_HUMAN_PLAYER_ZONE_ARTIFACTS_TO_SHOOTING_LINE_FIRST_TIME);
                 }
                 break;
@@ -112,25 +112,25 @@ public class CoOpAllFarBlueFarAuto extends OpMode {
                 break;
             case MOVE_FROM_SHOOTING_LINE_TO_HUMAN_PLAYER_ZONE_SECOND_TIME:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    //driver.moveToPose(DriverDanny.Poses.BLUE_HUMAN_PLAYER_AREA_ARTIFACTS_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.BLUE_HUMAN_PLAYER_ZONE_POSE1, true);
                     setAutoState(AutoState.EAT_HUMAN_PLAYER_ZONE_ARTIFACTS_SECOND_TIME);
                 }
                 break;
             case EAT_HUMAN_PLAYER_ZONE_ARTIFACTS_SECOND_TIME:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    //driver.moveToPose(DriverDanny.Poses.BLUE_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.BLUE_EAT_HUMAN_PLAYER_ZONE_POSE1, true);
                     setAutoState(AutoState.PREPARE_FOR_DOUBLE_EAT_SECOND_TIME);
                 }
                 break;
             case PREPARE_FOR_DOUBLE_EAT_SECOND_TIME:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    //driver.moveToPose(DriverDanny.Poses.BLUE_HUMAN_PLAYER_AREA_ARTIFACTS_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.BLUE_HUMAN_PLAYER_ZONE_POSE2, true);
                     setAutoState(AutoState.DOUBLE_EAT_HUMAN_PLAYER_ZONE_ARTIFACTS_SECOND_TIME);
                 }
                 break;
             case DOUBLE_EAT_HUMAN_PLAYER_ZONE_ARTIFACTS_SECOND_TIME:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    //driver.moveToPose(DriverDanny.Poses.BLUE_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.BLUE_EAT_HUMAN_PLAYER_ZONE_POSE2, true);
                     setAutoState(AutoState.MOVE_FROM_HUMAN_PLAYER_ZONE_ARTIFACTS_TO_SHOOTING_LINE_SECOND_TIME);
                 }
                 break;

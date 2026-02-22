@@ -53,7 +53,7 @@ public class Constants {
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
     public static PathConstraints pathConstraints = new PathConstraints(0.99,
             100,
-            1.25,
+            1.25, // TODO: need to increase D on drive coefficients or decrease brakingStrength to 1 to fix overshoot on auto.
             1);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
