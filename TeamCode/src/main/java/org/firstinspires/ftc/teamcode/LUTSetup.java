@@ -16,7 +16,7 @@ public class LUTSetup extends OpMode {
     @Override
     public void init() {
         DriverDanny.Alliance startingAlliance = DriverDanny.Alliance.BLUE;
-        Pose startingPose = DriverDanny.Poses.BFA_START_POSE;
+        Pose startingPose = DriverDanny.Poses.BLUE_FAR_START_POSE;
 
         driver = new DriverDanny(hardwareMap,
                 telemetry,
@@ -45,12 +45,7 @@ public class LUTSetup extends OpMode {
         }
 
         if (gamepad2.right_bumper) {
-            rotate = driver.getHeadingErrorForAutoAimLimelight();
-
-            //if not able to find april tag revert to Trig based aiming
-            if (rotate == -1) {
-                rotate = driver.getHeadingErrorForAutoAimTrig();
-            }
+            rotate = driver.getHeadingErrorForAutoAimTrig();
         }
 
         if (gamepad2.left_trigger > 0.25 && !shooter.isShooting()) {
