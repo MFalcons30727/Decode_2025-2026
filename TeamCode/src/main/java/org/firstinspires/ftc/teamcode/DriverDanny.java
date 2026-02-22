@@ -113,8 +113,7 @@ public class DriverDanny {
     public boolean debug = true;
     private boolean slowMode = false;
     private PIDFController headingPIDFController;
-    private double lastGoalHeadingErrorDegrees = 999;
-    private double lastAutoAimRotateError = 0;
+    private double lastAutoAimHeadingError = 999;
     private double relocalizePedroX;
     private double relocalizePedroY;
     //endregion
@@ -186,10 +185,9 @@ public class DriverDanny {
 
         checkForFarShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 12);
         checkForNearShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 12);
+        updateHeadingErrorForAutoAimTrig();
 
-        lastAutoAimRotateError = this.getHeadingErrorForAutoAimTrig(); // use this to update lastGoalHeadingErrorDegrees
-
-        if (Math.abs(lastGoalHeadingErrorDegrees) < 2) {
+        if (Math.abs(Math.toDegrees(lastAutoAimHeadingError)) < 2) {
             isAlignedToGoal = true;
         } else {
             isAlignedToGoal = false;
@@ -306,7 +304,7 @@ public class DriverDanny {
     //endregion
 
     //region Auto-aim Functions
-    public double getHeadingErrorForAutoAimTrig() {
+    public void updateHeadingErrorForAutoAimTrig() {
         Pose currentPose = this.getPose();
         Pose goalPose;
 
@@ -327,13 +325,15 @@ public class DriverDanny {
         double angleDifference = MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), targetHeading);
         double headingError = turnDirection * angleDifference;
 
-        lastGoalHeadingErrorDegrees = Math.toDegrees(headingError);
+        lastAutoAimHeadingError = headingError;
+    }
 
+    public double getHeadingErrorForAutoAimTrig() {
         // Use deadband to protect against sign flipping near PI
-        if (Math.abs(headingError) < Math.toRadians(1.5)) {
+        if (Math.abs(lastAutoAimHeadingError) < Math.toRadians(1.5)) {
             headingPIDFController.updateError(0);
         } else {
-            headingPIDFController.updateError(headingError);
+            headingPIDFController.updateError(lastAutoAimHeadingError);
         }
 
         // Use PIDF controller for smooth heading correction
@@ -384,6 +384,7 @@ public class DriverDanny {
         PathChain newPath = follower.pathBuilder()
                 .addPath(new BezierLine(getPose(), newPose))
                 .setLinearHeadingInterpolation(getPose().getHeading(), newPose.getHeading(), 0.8)
+                .setGlobalDeceleration()
                 .build();
 
         follower.followPath(newPath,0.89, holdEnd); // start the robot moving towards the new pose immediately
