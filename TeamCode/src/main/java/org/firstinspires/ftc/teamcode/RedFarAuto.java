@@ -33,94 +33,94 @@ public class RedFarAuto extends OpMode {
     private DriverDanny driver;
     private ShooterMcGavin shooter;
 
-    public void autoStateUpdate(){
-        switch (currentAutoState){
+    public void autoStateUpdate() {
+        switch (currentAutoState) {
             case MOVE_FROM_START_POS_TO_SHOOTING_LINE:
-                driver.moveToPose(DriverDanny.Poses.RFA_FAR_SHOOTING_POSE, true);
+                driver.moveToPose(DriverDanny.Poses.RED_FAR_SHOOTING_POSE, true);
+                shooter.turnOnIntake();
                 setAutoState(AutoState.SHOOT_PRELOAD);
                 break;
             case SHOOT_PRELOAD:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocityAndHoodPosition(1320, 1);
+                    shooter.startShooting();
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_RED_BOTTOM_ARTIFACTS);
                 }
                 break;
             case MOVE_FROM_SHOOTING_LINE_TO_RED_BOTTOM_ARTIFACTS:
-                if (!driver.isBusy() && !shooter.isShooting()){
-                    driver.moveToPose(DriverDanny.Poses.RFA_BOTTOM_ARTIFACTS_POSE, true);
+                if (!driver.isBusy() && !shooter.isShooting()) {
+                    driver.moveToPose(DriverDanny.Poses.RED_BOTTOM_ARTIFACTS_POSE, true);
                     setAutoState(AutoState.EAT_BOTTOM_RED_ARTIFACTS);
                 }
                 break;
             case EAT_BOTTOM_RED_ARTIFACTS:
-                if (!driver.isBusy() && !shooter.isShooting()){
-                    driver.moveToPose(DriverDanny.Poses.RFA_EAT_BOTTOM_ARTIFACTS_POSE, true);
-                    shooter.turnOnIntake();
+                if (!driver.isBusy() && !shooter.isShooting()) {
+                    driver.moveToPose(DriverDanny.Poses.RED_EAT_BOTTOM_ARTIFACTS_POSE, true);
                     setAutoState(AutoState.MOVE_FROM_BOTTOM_RED_ARTIFACTS_TO_SHOOTING_LINE);
                 }
                 break;
             case MOVE_FROM_BOTTOM_RED_ARTIFACTS_TO_SHOOTING_LINE:
-                if (!driver.isBusy() && !shooter.isShooting()){
-                    driver.moveToPose(DriverDanny.Poses.RFA_FAR_SHOOTING_POSE, true);
+                if (!driver.isBusy() && !shooter.isShooting()) {
+                    driver.moveToPose(DriverDanny.Poses.RED_FAR_SHOOTING_POSE, true);
                     setAutoState(AutoState.SHOOT_BOTTOM_RED_ARTIFACTS);
                 }
                 break;
             case SHOOT_BOTTOM_RED_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocityAndHoodPosition(1320, 1);
+                    shooter.startShooting();
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_RED_MIDDLE_ARTIFACTS);
                 }
                 break;
             case MOVE_FROM_SHOOTING_LINE_TO_RED_MIDDLE_ARTIFACTS:
-                if (!driver.isBusy() && !shooter.isShooting()){
-                    driver.moveToPose(DriverDanny.Poses.RFA_MIDDLE_ARTIFACTS_POSE, true);
+                if (!driver.isBusy() && !shooter.isShooting()) {
+                    driver.moveToPose(DriverDanny.Poses.RED_MIDDLE_ARTIFACTS_POSE, true);
                     setAutoState(AutoState.EAT_MIDDLE_RED_ARTIFACTS);
                 }
                 break;
             case EAT_MIDDLE_RED_ARTIFACTS:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    driver.moveToPose(DriverDanny.Poses.RFA_EAT_MIDDLE_ARTIFACTS_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.RED_EAT_MIDDLE_ARTIFACTS_POSE, true);
                     setAutoState(AutoState.AVOID_GATE_AFTER_EATING_MIDDLE_RED_ARTIFACTS);
                 }
                 break;
             case AVOID_GATE_AFTER_EATING_MIDDLE_RED_ARTIFACTS:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    driver.moveToPose(DriverDanny.Poses.RFA_MIDDLE_ARTIFACTS_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.RED_MIDDLE_ARTIFACTS_POSE, true);
                     setAutoState(AutoState.MOVE_FROM_MIDDLE_RED_ARTIFACTS_TO_SHOOTING_LINE);
                 }
                 break;
             case MOVE_FROM_MIDDLE_RED_ARTIFACTS_TO_SHOOTING_LINE:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    driver.moveToPose(DriverDanny.Poses.RFA_NEAR_SHOOTING_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.RED_NEAR_SHOOTING_POSE, true);
                     setAutoState(AutoState.SHOOT_MIDDLE_RED_ARTIFACTS);
                 }
                 break;
             case SHOOT_MIDDLE_RED_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocityAndHoodPosition(980, 0.6);
+                    shooter.startShooting();
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_RED_TOP_ARTIFACTS);
                 }
                 break;
             case MOVE_FROM_SHOOTING_LINE_TO_RED_TOP_ARTIFACTS:
-                if (!driver.isBusy() && !shooter.isShooting()){
-                    driver.moveToPose(DriverDanny.Poses.RFA_TOP_ARTIFACTS_POSE, true);
+                if (!driver.isBusy() && !shooter.isShooting()) {
+                    driver.moveToPose(DriverDanny.Poses.RED_TOP_ARTIFACTS_POSE, true);
                     setAutoState(AutoState.EAT_TOP_RED_ARTIFACTS);
                 }
                 break;
             case EAT_TOP_RED_ARTIFACTS:
-                if (!driver.isBusy() && !shooter.isShooting()){
-                    driver.moveToPose(DriverDanny.Poses.RFA_EAT_TOP_ARTIFACTS_POSE, true);
+                if (!driver.isBusy() && !shooter.isShooting()) {
+                    driver.moveToPose(DriverDanny.Poses.RED_EAT_TOP_ARTIFACTS_POSE, true);
                     setAutoState(AutoState.MOVE_FROM_TOP_RED_ARTIFACTS_TO_FINAL_SHOOTING_LINE);
                 }
                 break;
             case MOVE_FROM_TOP_RED_ARTIFACTS_TO_FINAL_SHOOTING_LINE:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    driver.moveToPose(DriverDanny.Poses.RFA_FINAL_SHOOTING_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.RED_FINAL_NEAR_SHOOTING_POSE, true);
                     setAutoState(AutoState.SHOOT_TOP_RED_ARTIFACTS);
                 }
                 break;
             case SHOOT_TOP_RED_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocityAndHoodPosition(980, 0.6);
+                    shooter.startShooting();
                     setAutoState(AutoState.DONE);
                 }
                 break;
@@ -146,7 +146,7 @@ public class RedFarAuto extends OpMode {
         driver = new DriverDanny(hardwareMap,
                 telemetry,
                 DriverDanny.Alliance.RED,
-                DriverDanny.Poses.RFA_START_POSE);
+                DriverDanny.Poses.RED_FAR_START_POSE);
         shooter = new ShooterMcGavin(hardwareMap, telemetry);
     }
 
@@ -159,7 +159,7 @@ public class RedFarAuto extends OpMode {
     @Override
     public void loop(){
         driver.update();
-        shooter.update();
+        shooter.updateWithLUT(driver.getCurrentDistanceFromGoal());
         autoStateUpdate();
 
         telemetry.addData("AutoState", currentAutoState.toString());

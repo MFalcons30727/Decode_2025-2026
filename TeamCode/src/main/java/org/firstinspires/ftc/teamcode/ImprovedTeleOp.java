@@ -17,7 +17,7 @@ public class  ImprovedTeleOp extends OpMode {
     @Override
     public void init() {
         DriverDanny.Alliance startingAlliance = DriverDanny.Alliance.BLUE;
-        Pose startingPose = DriverDanny.Poses.BFA_START_POSE;
+        Pose startingPose = DriverDanny.Poses.BLUE_FAR_START_POSE;
 
         if (USE_LAST_POSE_FROM_AUTO && DriverDanny.currentAlliance != null) {
             startingAlliance = DriverDanny.currentAlliance;
@@ -31,8 +31,6 @@ public class  ImprovedTeleOp extends OpMode {
                 telemetry,
                 startingAlliance,
                 startingPose);
-
-        driver.autoRelocalize(true);
 
         shooter = new ShooterMcGavin(hardwareMap, telemetry);
 
@@ -105,7 +103,7 @@ public class  ImprovedTeleOp extends OpMode {
         }
 
         if ((headingLock || gamepad2.right_bumper || gamepad2.right_trigger > 0.25) && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
-                rotate = driver.getHeadingErrorForAutoAimTrig();
+            rotate = driver.getHeadingErrorForAutoAimTrig();
         }
 
         if (gamepad2.left_trigger > 0.25 && !shooter.isShooting()) {
