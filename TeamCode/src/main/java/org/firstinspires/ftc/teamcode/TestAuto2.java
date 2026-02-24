@@ -7,7 +7,7 @@ import com.pedropathing.util.Timer;
 // panels dashboard: 192.168.43.1:8001
 
 @Autonomous
-public class TestAuto extends OpMode {
+public class TestAuto2 extends OpMode {
 
     public enum AutoState {
         POSE1,
@@ -24,7 +24,7 @@ public class TestAuto extends OpMode {
     public void autoStateUpdate(){
         switch (currentAutoState){
             case POSE1:
-                driver.moveToPose(DriverDanny.Poses.BLUE_FAR_START_POSE, true);
+                driver.moveToPose(DriverDanny.Poses.BLUE_BACKUP_START_POSE, true);
                 setAutoState(AutoState.POSE2);
                 break;
             case POSE2:
@@ -67,7 +67,7 @@ public class TestAuto extends OpMode {
         driver = new DriverDanny(hardwareMap,
                 telemetry,
                 DriverDanny.Alliance.BLUE,
-                DriverDanny.Poses.BLUE_FAR_START_POSE);
+                DriverDanny.Poses.BLUE_BACKUP_START_POSE);
         shooter = new ShooterMcGavin(hardwareMap, telemetry);
     }
 

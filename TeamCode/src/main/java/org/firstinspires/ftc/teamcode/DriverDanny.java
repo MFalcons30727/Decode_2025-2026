@@ -71,9 +71,9 @@ public class DriverDanny {
         public static Pose BLUE_OPEN_GATE_POSE = new Pose (18, 75, Math.toRadians(90));
         public static Pose BLUE_FAR_START_POSE = new Pose(49, 8, Math.toRadians(90));
         public static Pose BLUE_BACKUP_START_POSE = new Pose(22, 123, Math.toRadians(144));
-        public static Pose BLUE_FAR_SHOOTING_POSE = new Pose(53, 14, Math.toRadians(111));
-        public static Pose BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(45, 35, Math.toRadians(180));
-        public static Pose BLUE_EAT_BOTTOM_ARTIFACTS_POSE = new Pose(15, 35, Math.toRadians(180));
+        public static Pose BLUE_FAR_SHOOTING_POSE = new Pose(58, 14, Math.toRadians(108));
+        public static Pose BLUE_BOTTOM_ARTIFACTS_POSE = new Pose(47, 35, Math.toRadians(180));
+        public static Pose BLUE_EAT_BOTTOM_ARTIFACTS_POSE = new Pose(10, 35, Math.toRadians(180));
         public static Pose BLUE_MIDDLE_ARTIFACTS_POSE = new Pose(45, 57, Math.toRadians(180));
         public static Pose BLUE_EAT_MIDDLE_ARTIFACTS_POSE = new Pose(15, 57, Math.toRadians(180));
         public static Pose BLUE_NEAR_SHOOTING_POSE = new Pose(49, 96, Math.toRadians(140));
