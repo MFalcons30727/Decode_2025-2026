@@ -90,13 +90,13 @@ public class DriverDanny {
         //region RBA (Red Backup Auto)
         public static Pose RBA_START_POSE = new Pose(122, 123, Math.toRadians(37));
         public static Pose RBA_NEAR_SHOOTING_POSE = new Pose(95, 96, Math.toRadians(45));
-        public static Pose RBA_TOP_ARTIFACTS_POSE = new Pose(99, 82, Math.toRadians(0));
-        public static Pose RBA_AVOID_RUNNING_INTO_GATE_TOP_ARTIFACTS_POSE = new Pose(100, 82, Math.toRadians(0));
-        public static Pose RBA_EAT_TOP_ARTIFACTS_POSE = new Pose(122, 82, Math.toRadians(0));
-        public static Pose RBA_MIDDLE_ARTIFACTS_POSE = new Pose(99, 56, Math.toRadians(0));
-        public static Pose RBA_EAT_MIDDLE_ARTIFACTS_POSE = new Pose(129, 56, Math.toRadians(0));
-        public static Pose RBA_BOTTOM_ARTIFACTS_POSE = new Pose(99, 31, Math.toRadians(0));
-        public static Pose RBA_EAT_BOTTOM_ARTIFACTS_POSE = new Pose(129, 31, Math.toRadians(0));
+        public static Pose RBA_TOP_ARTIFACTS_POSE = new Pose(97, 84, Math.toRadians(0));
+        public static Pose RBA_AVOID_RUNNING_INTO_GATE_TOP_ARTIFACTS_POSE = new Pose(100, 84, Math.toRadians(0));
+        public static Pose RBA_EAT_TOP_ARTIFACTS_POSE = new Pose(120, 84, Math.toRadians(0));
+        public static Pose RBA_MIDDLE_ARTIFACTS_POSE = new Pose(97, 59, Math.toRadians(0));
+        public static Pose RBA_EAT_MIDDLE_ARTIFACTS_POSE = new Pose(129, 59, Math.toRadians(0));
+        public static Pose RBA_BOTTOM_ARTIFACTS_POSE = new Pose(97, 42, Math.toRadians(0));
+        public static Pose RBA_EAT_BOTTOM_ARTIFACTS_POSE = new Pose(129, 42, Math.toRadians(0));
         public static Pose RBA_FAR_SHOOTING_POSE = new Pose(91, 14, Math.toRadians(72));
         public static Pose RBA_END_POSE = new Pose(96, 55, Math.toRadians(0));
         //endregion
@@ -135,8 +135,10 @@ public class DriverDanny {
         public static Pose AFBFA_TOP_ARTIFACTS_POSE = new Pose(45, 82, Math.toRadians(180));
         public static Pose AFBFA_EAT_TOP_ARTIFACTS_POSE = new Pose(22, 82, Math.toRadians(180));
         public static Pose AFBFA_END_POSE = new Pose(48, 50, Math.toRadians(180));
-        public static Pose AFBFA_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(12, 8, Math.toRadians(180));
-        public static Pose AFBFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(8, 8, Math.toRadians(180));
+        public static Pose AFBFA_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(16, 20, Math.toRadians(120));
+        public static Pose AFBFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(12, 33, Math.toRadians(120));
+        public static Pose AFBFA_HUMAN_PLAYER_AREA_ARTIFACTS_SECOND_TIME_POSE = new Pose(12, 8, Math.toRadians(180));
+        public static Pose AFBFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_SECOND_TIME_POSE = new Pose(8, 8, Math.toRadians(180));
         //endregion
 
         //region AFRFA (All Far Red Far Auto)
@@ -149,8 +151,10 @@ public class DriverDanny {
         public static Pose AFRFA_TOP_ARTIFACTS_POSE = new Pose(99, 82, Math.toRadians(0));
         public static Pose AFRFA_EAT_TOP_ARTIFACTS_POSE = new Pose(122, 82, Math.toRadians(0));
         public static Pose AFRFA_END_POSE = new Pose(96, 55, Math.toRadians(0));
-        public static Pose AFRFA_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(132, 8, Math.toRadians(0));
-        public static Pose AFRFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(135, 8, Math.toRadians(0));
+        public static Pose AFRFA_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(128, 20, Math.toRadians(75));
+        public static Pose AFRFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_POSE = new Pose(132, 33, Math.toRadians(75));
+        public static Pose AFRFA_HUMAN_PLAYER_AREA_ARTIFACTS_SECOND_TIME_POSE = new Pose(125, 8, Math.toRadians(0));
+        public static Pose AFRFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_SECOND_TIME_POSE = new Pose(130, 8, Math.toRadians(0));
 
         //endregion
     }
@@ -176,7 +180,6 @@ public class DriverDanny {
     public static boolean inNearShootingZone = false;
     public static boolean isAlignedToGoal = false;
     public static ElapsedTime idleTimer;
-    public static ElapsedTime lastGoodLimelightResultTimer;
     public static ElapsedTime lastRelocalizeTimer;
 
     private static final Style robotLook = new Style("", "#3F51B5", 0.75);
@@ -190,12 +193,12 @@ public class DriverDanny {
     private Telemetry telemetry;
     private Follower follower; // part of the Pedro Pathing package, follows the path
 
-    public boolean debug = true;
+    public boolean debug = false;
     private boolean slowMode = false;
-    private double limelightGoalHeadingError;
     private PIDFController headingPIDFController;
 
     private boolean shouldRelocalize = false;
+    private double lastAutoAimHeadingError = 999;
     private double relocalizePedroX;
     private double relocalizePedroY;
     //endregion
@@ -218,14 +221,12 @@ public class DriverDanny {
         telemetry = telemetryFromOpMode;
         currentAlliance = alliance;
         currentDriveMode = DriveMode.FIELD;
-        limelightGoalHeadingError = -999;
 
         inFarShootingZone = false;
         inNearShootingZone = false;
         isAlignedToGoal = false;
 
         idleTimer = new ElapsedTime();
-        lastGoodLimelightResultTimer = new ElapsedTime();
         lastRelocalizeTimer = new ElapsedTime();
 
         // initialize a new PIDF controller using the heading coefficients we already tuned for auto
@@ -253,15 +254,11 @@ public class DriverDanny {
         follower.update(); // this will just update the Pedro Pathing following but can add additional steps if we need to later
         this.updateLimeLight(); // should update our limelight every loop
 
-        if (debug) {
-            drawDebugField();
-        }
-
         // if the robot has changed position, reset the timer so we can track how long we've been idle
         if (lastKnownPose != null &&
                 (
                     lastKnownPose.distanceFrom(this.getPose()) > 0.5
-                    || Math.abs(Math.toDegrees(lastKnownPose.getHeading()) - Math.toDegrees(this.getPose().getHeading())) > 0.1
+                    || Math.abs(Math.toDegrees(lastKnownPose.getHeading()) - Math.toDegrees(this.getPose().getHeading())) > 0.5
                 )
             ) {
             idleTimer.reset();
@@ -271,8 +268,9 @@ public class DriverDanny {
 
         checkForFarShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 12);
         checkForNearShootZone(lastKnownPose.getX(), lastKnownPose.getY(), 12);
+        updateHeadingErrorForAutoAimTrig();
 
-        if (Math.abs(limelightGoalHeadingError) < 2 || this.getHeadingErrorForAutoAimTrig() < 2) {
+        if (Math.abs(Math.toDegrees(lastAutoAimHeadingError)) < 3) {
             isAlignedToGoal = true;
         } else {
             isAlignedToGoal = false;
@@ -293,101 +291,41 @@ public class DriverDanny {
         telemetry.addData("LLPedroX", relocalizePedroX);
         telemetry.addData("LLPedroY", relocalizePedroY);
         telemetry.addData("LastRelocalizeTimer", lastRelocalizeTimer.milliseconds());
+
+        if (debug) { drawDebugField(); }
     }
 
     public void updateLimeLight() {
         double currentHeading = this.follower.getHeading();
         limelight.updateRobotOrientation(Math.toDegrees(currentHeading)+90); // subtract 90 degrees here for pedropathing heading conversion
 
-        // Learned that Tx, Ty, and Ta are degrees of error from tag, not meters.
-        LLResult result = limelight.getLatestResult();
-        if (result != null && result.isValid()) {
-            List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
-            for (LLResultTypes.FiducialResult fr : fiducialResults) {
-                int tagID = fr.getFiducialId();
+        if (shouldRelocalize
+                && lastRelocalizeTimer.milliseconds() > 5000
+                && idleTimer.milliseconds() > 100) {
 
-                if (currentAlliance == Alliance.BLUE && tagID == 20) {
-                    limelightGoalHeadingError = fr.getTargetXDegrees();
-                    lastGoodLimelightResultTimer.reset();
-                    break;
-                }
-                else if (currentAlliance == Alliance.RED && tagID == 24) {
-                    limelightGoalHeadingError = fr.getTargetXDegrees();
-                    lastGoodLimelightResultTimer.reset();
-                    break;
-                }
-            }
+            // Learned that Tx, Ty, and Ta are degrees of error from tag, not meters.
+            LLResult result = limelight.getLatestResult();
+            if (result != null && result.isValid()) {
+                Pose3D botpose = result.getBotpose_MT2();
 
-            Pose3D botpose = result.getBotpose_MT2();
+                if (botpose != null) {
+                    // convert from meters to inches and adjust for 0,0 origin like pedropathing instead of -72,-72 that limelight uses
+                    relocalizePedroX = (botpose.getPosition().y * 39.3700787) + 72.0; // x and y are intentionally flipped here
+                    relocalizePedroY = -(botpose.getPosition().x * 39.3700787) + 72.0;
 
-            if (botpose != null) {
-                // convert from meters to inches and adjust for 0,0 origin like pedropathing instead of -72,-72 that limelight uses
-                relocalizePedroX = (botpose.getPosition().y * 39.3700787) + 72.0; // x and y are intentionally flipped here
-                relocalizePedroY = -(botpose.getPosition().x * 39.3700787) + 72.0;
+                    Pose newPedroPose = new Pose(relocalizePedroX, relocalizePedroY, currentHeading);
 
-                Pose newPedroPose = new Pose(relocalizePedroX, relocalizePedroY, currentHeading);
-
-                if (shouldRelocalize
-                        && lastRelocalizeTimer.milliseconds() > 250
-                        && idleTimer.milliseconds() > 250
-                        && Math.abs(botpose.getPosition().z) < 0.1
-                        && relocalizePedroX > 0 && relocalizePedroX < 144
-                        && relocalizePedroY > 0 && relocalizePedroY < 144) {
-                    this.follower.setPose(newPedroPose);
-                    lastRelocalizeTimer.reset();
+                    if (Math.abs(botpose.getPosition().z) < 0.1
+                            && relocalizePedroX > 0 && relocalizePedroX < 144
+                            && relocalizePedroY > 0 && relocalizePedroY < 144) {
+                        this.follower.setPose(newPedroPose);
+                        lastRelocalizeTimer.reset();
+                    }
                 }
             }
-
-        }
-
-        // if last valid result was more than 1 second ago, assume limelight not visible
-        if (lastGoodLimelightResultTimer.milliseconds() > 1000) {
-            limelightGoalHeadingError = -999;
         }
     }
 
-    private void drawDebugField() {
-        Pose pose = follower.getPose();
-        FieldManager panelsField = PanelsField.INSTANCE.getField();
-        PoseHistory poseHistory = follower.getPoseHistory();
-
-        if (pose == null || Double.isNaN(pose.getX()) || Double.isNaN(pose.getY()) || Double.isNaN(pose.getHeading())) {
-            return;
-        }
-
-        // Draw pose history
-        panelsField.setStyle(historyLook);
-        if (poseHistory != null) {
-            int size = poseHistory.getXPositionsArray().length;
-            for (int i = 0; i < size - 1; i++) {
-                panelsField.moveCursor(poseHistory.getXPositionsArray()[i], poseHistory.getYPositionsArray()[i]);
-                panelsField.line(poseHistory.getXPositionsArray()[i + 1], poseHistory.getYPositionsArray()[i + 1]);
-            }
-        }
-
-        // Draw robot
-        panelsField.setStyle(robotLook);
-        panelsField.moveCursor(pose.getX(), pose.getY());
-        panelsField.circle(9); // ROBOT_RADIUS
-
-        Vector v = pose.getHeadingAsUnitVector();
-        v.setMagnitude(v.getMagnitude() * 9);
-        double x1 = pose.getX() + v.getXComponent() / 2, y1 = pose.getY() + v.getYComponent() / 2;
-        double x2 = pose.getX() + v.getXComponent(), y2 = pose.getY() + v.getYComponent();
-
-        panelsField.setStyle(robotLook);
-        panelsField.moveCursor(x1, y1);
-        panelsField.line(x2, y2);
-
-        // Draw limelight relocalization position
-        if (relocalizePedroX != 0.0 && relocalizePedroY != 0.0) {
-            panelsField.setStyle(limelightLook);
-            panelsField.moveCursor(relocalizePedroX, relocalizePedroY);
-            panelsField.circle(5); // Draw a slightly smaller circle for the limelight pose
-        }
-
-        panelsField.update();
-    }
     //endregion
 
     //region Drive Functions
@@ -453,20 +391,7 @@ public class DriverDanny {
     //endregion
 
     //region Auto-aim Functions
-    public double getHeadingErrorForAutoAimLimelight() {
-        // Use deadband to protect against sign flipping near PI
-        if (Math.abs(limelightGoalHeadingError) < 2) {
-            headingPIDFController.updateError(0);
-            return Range.clip(headingPIDFController.run(), -0.3, 0.3);
-        } else if (limelightGoalHeadingError != -999) {
-            headingPIDFController.updateError(limelightGoalHeadingError);
-            return Range.clip(headingPIDFController.run(), -0.2, 0.2);
-        } else {
-            return -1;
-        }
-    }
-
-    public double getHeadingErrorForAutoAimTrig() {
+    public void updateHeadingErrorForAutoAimTrig() {
         Pose currentPose = this.getPose();
         Pose goalPose;
 
@@ -482,18 +407,20 @@ public class DriverDanny {
 
         // use atan2 to get heading from x-axis to goal in radians
         double targetHeading = Math.atan2(dy, dx);
-        //telemetry.addData("Target Heading", Math.toDegrees(targetHeading));
 
         double turnDirection = MathFunctions.getTurnDirection(currentPose.getHeading(), targetHeading);
         double angleDifference = MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), targetHeading);
         double headingError = turnDirection * angleDifference;
-        //telemetry.addData("Heading Error", Math.toDegrees(headingError));
 
+        lastAutoAimHeadingError = headingError;
+    }
+
+    public double getHeadingErrorForAutoAimTrig() {
         // Use deadband to protect against sign flipping near PI
-        if (Math.abs(headingError) < Math.toRadians(1.5)) {
+        if (Math.abs(lastAutoAimHeadingError) < Math.toRadians(1.5)) {
             headingPIDFController.updateError(0);
         } else {
-            headingPIDFController.updateError(headingError);
+            headingPIDFController.updateError(lastAutoAimHeadingError);
         }
 
         // Use PIDF controller for smooth heading correction
@@ -590,6 +517,49 @@ public class DriverDanny {
         } else {
             inFarShootingZone = false;
         }
+    }
+
+    private void drawDebugField() {
+        Pose pose = follower.getPose();
+        FieldManager panelsField = PanelsField.INSTANCE.getField();
+        PoseHistory poseHistory = follower.getPoseHistory();
+
+        if (pose == null || Double.isNaN(pose.getX()) || Double.isNaN(pose.getY()) || Double.isNaN(pose.getHeading())) {
+            return;
+        }
+
+        // Draw pose history
+        panelsField.setStyle(historyLook);
+        if (poseHistory != null) {
+            int size = poseHistory.getXPositionsArray().length;
+            for (int i = 0; i < size - 1; i++) {
+                panelsField.moveCursor(poseHistory.getXPositionsArray()[i], poseHistory.getYPositionsArray()[i]);
+                panelsField.line(poseHistory.getXPositionsArray()[i + 1], poseHistory.getYPositionsArray()[i + 1]);
+            }
+        }
+
+        // Draw robot
+        panelsField.setStyle(robotLook);
+        panelsField.moveCursor(pose.getX(), pose.getY());
+        panelsField.circle(9); // ROBOT_RADIUS
+
+        Vector v = pose.getHeadingAsUnitVector();
+        v.setMagnitude(v.getMagnitude() * 9);
+        double x1 = pose.getX() + v.getXComponent() / 2, y1 = pose.getY() + v.getYComponent() / 2;
+        double x2 = pose.getX() + v.getXComponent(), y2 = pose.getY() + v.getYComponent();
+
+        panelsField.setStyle(robotLook);
+        panelsField.moveCursor(x1, y1);
+        panelsField.line(x2, y2);
+
+        // Draw limelight relocalization position
+        if (relocalizePedroX != 0.0 && relocalizePedroY != 0.0) {
+            panelsField.setStyle(limelightLook);
+            panelsField.moveCursor(relocalizePedroX, relocalizePedroY);
+            panelsField.circle(5); // Draw a slightly smaller circle for the limelight pose
+        }
+
+        panelsField.update();
     }
     //endregion
 }

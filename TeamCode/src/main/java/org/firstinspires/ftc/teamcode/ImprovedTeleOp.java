@@ -87,7 +87,7 @@ public class  ImprovedTeleOp extends OpMode {
             }
         }
 
-        if (gamepad2.bWasPressed() && !shooter.isShooting()) {
+        if (gamepad2.bWasPressed() && !shooter.isShooting() && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
             headingLock = true;
             ShooterMcGavin.restrictedShooting = true;
 

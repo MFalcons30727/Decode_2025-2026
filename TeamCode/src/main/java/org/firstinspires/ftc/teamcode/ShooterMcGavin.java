@@ -94,7 +94,7 @@ public class ShooterMcGavin {
                         || (restrictedShooting && atTargetVelocity()
                         && (DriverDanny.inFarShootingZone || DriverDanny.inNearShootingZone)
                         && DriverDanny.isAlignedToGoal
-                        && DriverDanny.idleTimer.milliseconds() > 500))
+                        && DriverDanny.idleTimer.milliseconds() > 60))
                 {
                     setShootingState(ShootingState.START_FEEDING);
                 }

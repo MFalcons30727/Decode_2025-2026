@@ -40,7 +40,7 @@ public class BlueFarAuto extends OpMode {
                 break;
             case SHOOT_PRELOAD:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocityAndHoodPosition(1320, 1);
+                    shooter.startShooting();
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_BOTTOM_ARTIFACTS);
                 }
                 break;
@@ -65,7 +65,7 @@ public class BlueFarAuto extends OpMode {
                 break;
             case SHOOT_BOTTOM_BLUE_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocityAndHoodPosition(1320, 1);
+                    shooter.startShooting();
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_MIDDLE_ARTIFACTS);
                 }
                 break;
@@ -95,7 +95,7 @@ public class BlueFarAuto extends OpMode {
                 break;
             case SHOOT_MIDDLE_BLUE_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocityAndHoodPosition(980, 0.6);
+                    shooter.startShooting();
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_TOP_ARTIFACTS);
                 }
                 break;
@@ -119,7 +119,7 @@ public class BlueFarAuto extends OpMode {
                 break;
             case SHOOT_TOP_BLUE_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocityAndHoodPosition(980, 0.6);
+                    shooter.startShooting();
                     setAutoState(AutoState.DONE);
                 }
                 break;
@@ -158,7 +158,7 @@ public class BlueFarAuto extends OpMode {
     @Override
     public void loop(){
         driver.update();
-        shooter.update();
+        shooter.updateWithLUT(driver.getCurrentDistanceFromGoal());
         autoStateUpdate();
 
         telemetry.addData("AutoState", currentAutoState.toString());

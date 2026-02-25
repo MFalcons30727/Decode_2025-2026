@@ -44,7 +44,7 @@ public class CoOpAllFarBlueFarAuto extends OpMode {
                 break;
             case SHOOT_PRELOAD:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocityAndHoodPosition(1320, 1);
+                    shooter.startShooting();
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_BOTTOM_ARTIFACTS);
                 }
                 break;
@@ -69,7 +69,7 @@ public class CoOpAllFarBlueFarAuto extends OpMode {
                 break;
             case SHOOT_BOTTOM_BLUE_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocityAndHoodPosition(1320, 1);
+                    shooter.startShooting();
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_HUMAN_PLAYER_ZONE_FIRST_TIME);
                 }
                 break;
@@ -108,33 +108,33 @@ public class CoOpAllFarBlueFarAuto extends OpMode {
                 break;
             case SHOOT_HUMAN_PLAYER_ZONE_ARTIFACTS_FIRST_TIME:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocityAndHoodPosition(1320, 1);
+                    shooter.startShooting();
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_HUMAN_PLAYER_ZONE_SECOND_TIME);
                 }
                 break;
             case MOVE_FROM_SHOOTING_LINE_TO_HUMAN_PLAYER_ZONE_SECOND_TIME:
                 if (!driver.isBusy() && !shooter.isShooting()){
-                    driver.moveToPose(DriverDanny.Poses.AFBFA_HUMAN_PLAYER_AREA_ARTIFACTS_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.AFBFA_HUMAN_PLAYER_AREA_ARTIFACTS_SECOND_TIME_POSE, true);
                     setAutoState(AutoState.EAT_HUMAN_PLAYER_ZONE_ARTIFACTS_SECOND_TIME);
                 }
                 break;
             case EAT_HUMAN_PLAYER_ZONE_ARTIFACTS_SECOND_TIME:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    driver.moveToPose(DriverDanny.Poses.AFBFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.AFBFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_SECOND_TIME_POSE, true);
                     shooter.turnOnIntake();
                     setAutoState(AutoState.PREPARE_FOR_DOUBLE_EAT_SECOND_TIME);
                 }
                 break;
             case PREPARE_FOR_DOUBLE_EAT_SECOND_TIME:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    driver.moveToPose(DriverDanny.Poses.AFBFA_HUMAN_PLAYER_AREA_ARTIFACTS_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.AFBFA_HUMAN_PLAYER_AREA_ARTIFACTS_SECOND_TIME_POSE, true);
                     shooter.turnOnIntake();
                     setAutoState(AutoState.DOUBLE_EAT_HUMAN_PLAYER_ZONE_ARTIFACTS_SECOND_TIME);
                 }
                 break;
             case DOUBLE_EAT_HUMAN_PLAYER_ZONE_ARTIFACTS_SECOND_TIME:
                 if (!driver.isBusy() && !shooter.isShooting()) {
-                    driver.moveToPose(DriverDanny.Poses.AFBFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_POSE, true);
+                    driver.moveToPose(DriverDanny.Poses.AFBFA_EAT_HUMAN_PLAYER_AREA_ARTIFACTS_SECOND_TIME_POSE, true);
                     shooter.turnOnIntake();
                     setAutoState(AutoState.MOVE_FROM_HUMAN_PLAYER_ZONE_ARTIFACTS_TO_SHOOTING_LINE_SECOND_TIME);
                 }
@@ -147,7 +147,7 @@ public class CoOpAllFarBlueFarAuto extends OpMode {
                 break;
             case SHOOT_HUMAN_PLAYER_ZONE_ARTIFACTS_SECOND_TIME:
                 if (!driver.isBusy()) {
-                    shooter.startShootingAtVelocityAndHoodPosition(1320, 1);
+                    shooter.startShooting();
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_END_POSE);
                 }
                 break;
@@ -192,7 +192,7 @@ public class CoOpAllFarBlueFarAuto extends OpMode {
     @Override
     public void loop(){
         driver.update();
-        shooter.update();
+        shooter.updateWithLUT(driver.getCurrentDistanceFromGoal());
         autoStateUpdate();
 
         telemetry.addData("AutoState", currentAutoState.toString());

@@ -80,7 +80,7 @@ public class TestAuto extends OpMode {
     @Override
     public void loop(){
         driver.update();
-        shooter.update();
+        shooter.updateWithLUT(driver.getCurrentDistanceFromGoal());
         autoStateUpdate();
 
         telemetry.addData("AutoState", currentAutoState.toString());
