@@ -42,7 +42,7 @@ public class BlueBackupAuto extends OpMode {
                 break;
             case SHOOT_PRELOAD:
                 if (!driver.isBusy()) {
-                    shooter.startShooting();
+                    shooter.startShootingAtVelocityAndHoodPosition(980, 0.3);
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_TOP_ARTIFACTS);
                 }
                 break;
@@ -67,7 +67,7 @@ public class BlueBackupAuto extends OpMode {
                 break;
             case SHOOT_TOP_BLUE_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShooting();
+                    shooter.startShootingAtVelocityAndHoodPosition(980, 0.3);
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_MIDDLE_ARTIFACTS);
                 }
                 break;
