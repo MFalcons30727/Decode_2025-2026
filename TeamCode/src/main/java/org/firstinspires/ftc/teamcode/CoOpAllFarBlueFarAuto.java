@@ -44,7 +44,7 @@ public class CoOpAllFarBlueFarAuto extends OpMode {
                 break;
             case SHOOT_PRELOAD:
                 if (!driver.isBusy()) {
-                    shooter.startShooting();
+                    shooter.startShootingAtVelocityAndHoodPosition(1320, 1);
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_BOTTOM_ARTIFACTS);
                 }
                 break;
@@ -69,7 +69,7 @@ public class CoOpAllFarBlueFarAuto extends OpMode {
                 break;
             case SHOOT_BOTTOM_BLUE_ARTIFACTS:
                 if (!driver.isBusy()) {
-                    shooter.startShooting();
+                    shooter.startShootingAtVelocityAndHoodPosition(1320, 1);
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_HUMAN_PLAYER_ZONE_FIRST_TIME);
                 }
                 break;
@@ -108,7 +108,7 @@ public class CoOpAllFarBlueFarAuto extends OpMode {
                 break;
             case SHOOT_HUMAN_PLAYER_ZONE_ARTIFACTS_FIRST_TIME:
                 if (!driver.isBusy()) {
-                    shooter.startShooting();
+                    shooter.startShootingAtVelocityAndHoodPosition(1320, 1);
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_HUMAN_PLAYER_ZONE_SECOND_TIME);
                 }
                 break;
@@ -147,7 +147,7 @@ public class CoOpAllFarBlueFarAuto extends OpMode {
                 break;
             case SHOOT_HUMAN_PLAYER_ZONE_ARTIFACTS_SECOND_TIME:
                 if (!driver.isBusy()) {
-                    shooter.startShooting();
+                    shooter.startShootingAtVelocityAndHoodPosition(1320, 1);
                     setAutoState(AutoState.MOVE_FROM_SHOOTING_LINE_TO_BLUE_END_POSE);
                 }
                 break;
@@ -192,7 +192,7 @@ public class CoOpAllFarBlueFarAuto extends OpMode {
     @Override
     public void loop(){
         driver.update();
-        shooter.updateWithLUT(driver.getCurrentDistanceFromGoal());
+        shooter.update();
         autoStateUpdate();
 
         telemetry.addData("AutoState", currentAutoState.toString());
