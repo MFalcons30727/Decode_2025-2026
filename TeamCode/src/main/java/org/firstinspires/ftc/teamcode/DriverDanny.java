@@ -257,10 +257,10 @@ public class DriverDanny {
         // if the robot has changed position, reset the timer so we can track how long we've been idle
         if (lastKnownPose != null &&
                 (
-                    lastKnownPose.distanceFrom(this.getPose()) > 0.5
-                    || Math.abs(Math.toDegrees(lastKnownPose.getHeading()) - Math.toDegrees(this.getPose().getHeading())) > 0.5
+                        lastKnownPose.distanceFrom(this.getPose()) > 0.5
+                                || Math.abs(Math.toDegrees(lastKnownPose.getHeading()) - Math.toDegrees(this.getPose().getHeading())) > 0.5
                 )
-            ) {
+        ) {
             idleTimer.reset();
         }
 
@@ -448,10 +448,10 @@ public class DriverDanny {
     }
 
     public void swapCurrentDriveMode() {
-        if (currentDriveMode == DriveMode.FIELD) {
-            currentDriveMode = DriveMode.ROBOT;
-        } else {
+        if (currentDriveMode == DriveMode.ROBOT) {
             currentDriveMode = DriveMode.FIELD;
+        } else {
+            currentDriveMode = DriveMode.ROBOT;
         }
     }
 

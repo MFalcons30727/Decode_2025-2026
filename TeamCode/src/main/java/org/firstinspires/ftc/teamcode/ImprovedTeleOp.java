@@ -45,10 +45,10 @@ public class  ImprovedTeleOp extends OpMode {
     @Override
     public void loop() {
         driver.update();
-        shooter.updateWithLUT(driver.getCurrentDistanceFromGoal());
+        shooter.update();
 
         // we only need to allow locking our heading and allowing restrictedShooting when shooting routine has been started
-        if(!shooter.isShooting()) {
+        if (!shooter.isShooting()) {
             headingLock = false;
         }
 
@@ -57,9 +57,9 @@ public class  ImprovedTeleOp extends OpMode {
         double rotate = gamepad1.right_stick_x;
 
         //region Gamepad1
-        if (gamepad1.dpadUpWasPressed() || gamepad1.dpadDownWasPressed()) {
-            driver.swapCurrentAlliance(); // lets us swap our alliance (for auto-aim / driver testing)
-        }
+//        if (gamepad1.dpadUpWasPressed() || gamepad1.dpadDownWasPressed()) {
+//            driver.swapCurrentAlliance(); // lets us swap our alliance (for auto-aim / driver testing)
+//        }
 
         if (gamepad1.dpadLeftWasPressed() || gamepad1.dpadRightWasPressed()) {
             driver.swapCurrentDriveMode();
@@ -68,10 +68,10 @@ public class  ImprovedTeleOp extends OpMode {
         if (gamepad1.bWasPressed()) {
             driver.toggleSlowMode(); // allows us to cut robot movement speed in half when precision is needed
         }
-
-        if (gamepad1.backWasPressed()) {
-            driver.resetHeadingTo90Degrees(); // ONLY USE THIS IF THE HEADING IS ABSOLUTELY BROKEN!!
-        }
+//
+//        if (gamepad1.backWasPressed()) {
+//            driver.resetHeadingTo90Degrees(); // ONLY USE THIS IF THE HEADING IS ABSOLUTELY BROKEN!!
+//        }
 
 //        if (gamepad1.yWasPressed()) {
 //            shooter.activateKickstand();
@@ -79,36 +79,43 @@ public class  ImprovedTeleOp extends OpMode {
         //endregion
 
         //region Gamepad2
-        if (gamepad2.aWasPressed() && !shooter.isShooting()) {
-            try {
-                shooter.startShooting();
-            } catch (Exception e) {
-                telemetry.addData("shooter", "NOT IN RANGE");
-            }
+
+        if (gamepad2.right_trigger > 0.25) {
+            shooter.turnOnFlywheel();
+        }   else {
+            shooter.turnOffFlywheel();
+
         }
+//        if (gamepad2.aWasPressed() && !shooter.isShooting()) {
+//            try {
+//                shooter.startShooting();
+//            } catch (Exception e) {
+//                telemetry.addData("shooter", "NOT IN RANGE");
+//            }
+//        }
 
-        if (gamepad2.bWasPressed() && !shooter.isShooting() && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
-            headingLock = true;
-            ShooterMcGavin.restrictedShooting = true;
+//        if (gamepad2.bWasPressed() && !shooter.isShooting() && DriverDanny.currentDriveMode == DriverDanny.DriveMode.ROBOT) {
+//            headingLock = true;
+//            ShooterMcGavin.restrictedShooting = true;
+//
+//            try {
+//                shooter.startShooting();
+//            } catch (Exception e) {
+//                telemetry.addData("shooter", "NOT IN RANGE");
+//            }
+//        }
+//
+//        if (gamepad2.xWasPressed() && shooter.isShooting()) {
+//            shooter.stopShooting();
+//            headingLock = false;
+//            ShooterMcGavin.restrictedShooting = false;
+//        }
+//
+//        if ((headingLock || gamepad2.right_bumper || gamepad2.right_trigger > 0.25) && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
+//                rotate = driver.getHeadingErrorForAutoAimTrig();
+//        }
 
-            try {
-                shooter.startShooting();
-            } catch (Exception e) {
-                telemetry.addData("shooter", "NOT IN RANGE");
-            }
-        }
-
-        if (gamepad2.xWasPressed() && shooter.isShooting()) {
-            shooter.stopShooting();
-            headingLock = false;
-            ShooterMcGavin.restrictedShooting = false;
-        }
-
-        if ((headingLock || gamepad2.right_bumper || gamepad2.right_trigger > 0.25) && DriverDanny.currentDriveMode == DriverDanny.DriveMode.FIELD) {
-                rotate = driver.getHeadingErrorForAutoAimTrig();
-        }
-
-        if (gamepad2.left_trigger > 0.25 && !shooter.isShooting()) {
+        if (gamepad2.left_trigger > 0.25) {
             shooter.turnOnIntake();
         } else if (!shooter.isShooting()) {
             shooter.turnOffIntake();

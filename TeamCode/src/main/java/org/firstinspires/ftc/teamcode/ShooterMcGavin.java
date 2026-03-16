@@ -262,7 +262,7 @@ public class ShooterMcGavin {
     public void setHoodDown() { hoodServo.setPosition(0); }
     public void turnOnIndexer() { indexer.setPower(1); }
     public void turnOffIndexer() { indexer.setPower(0); }
-    public void turnOnFlywheel() { shootMotor.setVelocity(1400); }
+    public void turnOnFlywheel() { shootMotor.setVelocity(1200); }
     public void turnOffFlywheel() { shootMotor.setVelocity(0); }
     public void activateKickstand() { kickstand.setPower(1); }
     //endregion
