@@ -31,7 +31,7 @@ public class ShooterMcGavin {
     private static double FEEDER_POWER = 1; // the power we send to the indexer motor to feed
     private static double STEP_TIMEOUT_IN_MILLISECONDS = 3000; // this helps to make sure our "waiting for" steps never run longer than a certain time
     public static boolean TEST_MODE = false;
-    public static boolean FLYWHEEL_ALWAYS_ON = true;
+    public static boolean FLYWHEEL_ALWAYS_ON = false;
     //endregion
 
     //region Static Variables
@@ -121,7 +121,7 @@ public class ShooterMcGavin {
                 }
                 break;
             case OFF:
-                indexer.setPower(0);
+                //indexer.setPower(0);
                 shooterTargetVelocity = 1000;
                 hoodServoPosition = 0.5;
                 hoodServo.setPosition(hoodServoPosition);

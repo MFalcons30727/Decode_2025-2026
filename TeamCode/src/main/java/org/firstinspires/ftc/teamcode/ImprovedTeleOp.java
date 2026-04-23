@@ -115,15 +115,24 @@ public class  ImprovedTeleOp extends OpMode {
 //                rotate = driver.getHeadingErrorForAutoAimTrig();
 //        }
 
-        if (gamepad2.left_trigger > 0.25) {
+        if (gamepad2.left_bumper) {
             shooter.turnOnIntake();
         } else if (!shooter.isShooting()) {
             shooter.turnOffIntake();
         }
 
-        if (gamepad2.left_bumper && !shooter.isShooting()) {
-            shooter.reverseIntake();
+//        if (gamepad2.left_bumper && !shooter.isShooting()) {
+//            shooter.reverseIntake();
+//        }
+
+        if (gamepad2.right_bumper) {
+            shooter.turnOnIndexer();
+            shooter.turnOnIntake();
+        } else if (!shooter.isShooting()) {
+            shooter.turnOffIndexer();
+            shooter.turnOffIntake();
         }
+
         //endregion
 
         // this drive function uses field-centric driving by default unless toggled to robot
